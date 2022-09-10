@@ -16,7 +16,7 @@ import kotlin.test.Test
 
 //@JsonTypeResolver(EmailResolver::class)
 sealed class Email {
-    data class ValidEmail(val value: String)
+    data class ValidEmail(val user: String, val domain: String)
     data class InvalidEmail(val value: String) {
         companion object {
             @JvmStatic
@@ -74,9 +74,7 @@ class EmailResolver: TypeResolverBuilder<EmailResolver> {
 
 data class RegistrationForm(val email: Email.InvalidEmail, val anonymous: Boolean, val name: String)
 
-
 class ParsingTest {
-
 
     @Test
     fun testShouldParseBasicJson() {
