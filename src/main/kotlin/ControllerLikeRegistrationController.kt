@@ -17,11 +17,34 @@ sealed class Email {
             }
         }
     }
-
-
 }
 
-data class RegistrationForm(val email: Email, val anonymous: Boolean, val name: String)
+
+sealed class RegistrationForm {
+    data class InvalidAnonymousRegistrationForm(
+        val email: Email, val anonymous: Boolean, val name: String?, val errors: List<String>
+    ) : RegistrationForm()
+
+    data class ValidAnonymousRegistrationForm(val email: Email.ValidEmail) : RegistrationForm()
+    data class ValidRegistrationForm(val email: Email.ValidEmail, val name: String) : RegistrationForm()
+
+    companion object {
+        @JvmStatic
+        @JsonCreator
+        fun create(email: Email, anonymous: Boolean, name: String?): RegistrationForm {
+            return when (email) {
+                is Email.InvalidEmail -> InvalidAnonymousRegistrationForm(email, anonymous, name, email.messages)
+                is Email.ValidEmail -> if (anonymous && name == null) {
+                    ValidAnonymousRegistrationForm(email)
+                } else if (name != null && !anonymous) {
+                    ValidRegistrationForm(email, name)
+                } else {
+                    InvalidAnonymousRegistrationForm(email, anonymous, name, listOf("Invalid combination"))
+                }
+            }
+        }
+    }
+}
 
 sealed class Response {
     data class OkResponse(val result: String) : Response()
@@ -33,9 +56,10 @@ class ControllerLikeRegistrationController {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(jsonString)
 
-        return when (parsed.email) {
-            is Email.ValidEmail -> Response.OkResponse("Congrats!")
-            is Email.InvalidEmail -> Response.ErrorResponse(parsed.email.messages)
+        return when (parsed) {
+            is RegistrationForm.ValidRegistrationForm -> Response.OkResponse("Congrats ${parsed.name}!")
+            is RegistrationForm.ValidAnonymousRegistrationForm -> Response.OkResponse("Congrats!")
+            is RegistrationForm.InvalidAnonymousRegistrationForm -> Response.ErrorResponse(parsed.errors)
         }
     }
 }

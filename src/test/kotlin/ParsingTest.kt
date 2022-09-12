@@ -12,9 +12,12 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello"))
 
-        assertThat(parsed.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
-        (parsed.email as Email.InvalidEmail).let {
-            assertThat(it.value).isEqualTo("hello")
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.InvalidAnonymousRegistrationForm::class.java)
+        (parsed as RegistrationForm.InvalidAnonymousRegistrationForm).let {
+            assertThat(it.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
+            (it.email as Email.InvalidEmail).let {
+                assertThat(it.value).isEqualTo("hello")
+            }
         }
     }
 
@@ -23,11 +26,11 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello@hello.com"))
 
-        assertThat(parsed.email).isExactlyInstanceOf(ValidEmail::class.java)
-        (parsed.email as ValidEmail).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.ValidRegistrationForm::class.java)
+        (parsed as RegistrationForm.ValidRegistrationForm).let {
             assertAll(
-                { assertThat(it.user).isEqualTo("hello") },
-                { assertThat(it.domain).isEqualTo("hello.com") }
+                { assertThat(it.email.user).isEqualTo("hello") },
+                { assertThat(it.email.domain).isEqualTo("hello.com") }
             )
         }
     }
@@ -36,6 +39,7 @@ class ParsingTest {
     fun testShouldFailWhenInvalidEmailInController() {
         val controller = ControllerLikeRegistrationController()
         val result = controller.registerUser(getTestJson("invalid-email"))
+
         assertThat(result).isExactlyInstanceOf(Response.ErrorResponse::class.java)
         (result as Response.ErrorResponse).let {
             assertThat(it.errors).isNotEmpty
