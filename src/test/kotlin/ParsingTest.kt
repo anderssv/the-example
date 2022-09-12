@@ -1,30 +1,9 @@
-import com.fasterxml.jackson.annotation.JsonCreator
+import Email.ValidEmail
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
-
-sealed class Email {
-    data class ValidEmail(val user: String, val domain: String) : Email()
-    data class InvalidEmail(val value: String, val messages: List<String>) : Email()
-
-    companion object {
-        @JvmStatic
-        @JsonCreator
-        fun create(createValue: String): Email {
-            return if (createValue.contains("@")) {
-                createValue.split("@").let { ValidEmail(it.first(), it.last()) }
-            } else {
-                InvalidEmail(createValue, listOf("Not a valid Email ;)"))
-            }
-        }
-    }
-
-
-}
-
-data class RegistrationForm(val email: Email, val anonymous: Boolean, val name: String)
 
 class ParsingTest {
 
@@ -33,9 +12,9 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello"))
 
-        when (parsed.email) {
-            is Email.InvalidEmail -> assertThat(parsed.email.value).isEqualTo("hello")
-            else -> throw RuntimeException("Hello")
+        assertThat(parsed.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
+        (parsed.email as Email.InvalidEmail).let {
+            assertThat(it.value).isEqualTo("hello")
         }
     }
 
@@ -44,13 +23,22 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello@hello.com"))
 
-        when (parsed.email) {
-            is Email.ValidEmail -> assertAll(
-                { assertThat(parsed.email.user).isEqualTo("hello") },
-                { assertThat(parsed.email.domain).isEqualTo("hello.com") }
+        assertThat(parsed.email).isExactlyInstanceOf(ValidEmail::class.java)
+        (parsed.email as ValidEmail).let {
+            assertAll(
+                { assertThat(it.user).isEqualTo("hello") },
+                { assertThat(it.domain).isEqualTo("hello.com") }
             )
+        }
+    }
 
-            else -> throw RuntimeException("Hello")
+    @Test
+    fun testShouldFailWhenInvalidEmailInController() {
+        val controller = ControllerLikeRegistrationController()
+        val result = controller.registerUser(getTestJson("invalid-email"))
+        assertThat(result).isExactlyInstanceOf(Response.ErrorResponse::class.java)
+        (result as Response.ErrorResponse).let {
+            assertThat(it.errors).isNotEmpty
         }
     }
 
