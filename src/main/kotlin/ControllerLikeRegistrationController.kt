@@ -2,15 +2,17 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
+data class ValidationError(val path: String, val message: String, val value: String)
+
 interface InvalidDataClass {
     fun hasErrors(): Boolean = getErrors().isNotEmpty()
-    fun getErrors(): List<String>
+    fun getErrors(): List<ValidationError>
 }
 
 sealed class Email {
     data class ValidEmail(val user: String, val domain: String) : Email()
-    data class InvalidEmail(val value: String, val messages: List<String>) : Email(), InvalidDataClass {
-        override fun getErrors(): List<String> {
+    data class InvalidEmail(val value: String, val messages: List<ValidationError>) : Email(), InvalidDataClass {
+        override fun getErrors(): List<ValidationError> {
             return messages
         }
     }
@@ -22,7 +24,7 @@ sealed class Email {
             return if (createValue.contains("@")) {
                 createValue.split("@").let { ValidEmail(it.first(), it.last()) }
             } else {
-                InvalidEmail(createValue, listOf("Not a valid Email ;)"))
+                InvalidEmail(createValue, listOf(ValidationError("", "Not a valid Email ;)", createValue)))
             }
         }
     }
@@ -37,10 +39,9 @@ sealed class Address {
         val city: String?,
         val poCode: String?,
         val country: String?,
-        val messages: List<String>
-    ) :
-        Address(), InvalidDataClass {
-        override fun getErrors(): List<String> {
+        val messages: List<ValidationError>
+    ) : Address(), InvalidDataClass {
+        override fun getErrors(): List<ValidationError> {
             return this.messages
         }
     }
@@ -50,7 +51,13 @@ sealed class Address {
         @JsonCreator
         fun create(streetName: String?, city: String?, poCode: String?, country: String?): Address {
             return if (streetName.isNullOrEmpty() || city.isNullOrEmpty() || poCode.isNullOrBlank() || country.isNullOrBlank()) {
-                InvalidAddress(streetName, city, poCode, country, listOf("Missing values"))
+                InvalidAddress(
+                    streetName, city, poCode, country, listOf(
+                        ValidationError(
+                            "", "Missing values", listOf(streetName, city, poCode, country).joinToString(":")
+                        )
+                    )
+                )
             } else {
                 ValidAddress(streetName, city, poCode, country)
             }
@@ -61,8 +68,16 @@ sealed class Address {
 
 sealed class RegistrationForm {
     data class InvalidAnonymousRegistrationForm(
-        val email: Email, val anonymous: Boolean, val name: String?, val address: Address?, val errors: List<String>
-    ) : RegistrationForm()
+        val email: Email,
+        val anonymous: Boolean,
+        val name: String?,
+        val address: Address?,
+        val messages: List<ValidationError>
+    ) : RegistrationForm(), InvalidDataClass {
+        override fun getErrors(): List<ValidationError> {
+            return messages
+        }
+    }
 
     data class ValidAnonymousRegistrationForm(val email: Email.ValidEmail) : RegistrationForm()
     data class ValidRegistrationForm(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
@@ -72,7 +87,16 @@ sealed class RegistrationForm {
         @JvmStatic
         @JsonCreator
         fun create(email: Email, anonymous: Boolean, name: String?, address: Address?): RegistrationForm {
-            val errors = listOf(email, address).filterIsInstance<InvalidDataClass>().map { it.getErrors() }.flatten()
+            // How can we rely less on typing here? Maybe the mapOf part is good enough...
+            val errors = mapOf("email" to email, "address" to address).filter {
+                it.value is InvalidDataClass
+            }.map {
+                (it.value as InvalidDataClass).let { dataClass ->
+                    dataClass.getErrors()
+                        .map { error -> error.copy(path = it.key + if (error.path.isNotEmpty()) ".${error.path}" else "") }
+                }
+            }.flatten()
+
             return if (errors.isNotEmpty()) {
                 InvalidAnonymousRegistrationForm(email, anonymous, name, address, errors)
             } else if (anonymous) {
@@ -80,7 +104,9 @@ sealed class RegistrationForm {
             } else if (name != null) {
                 ValidRegistrationForm(email as Email.ValidEmail, name, address as Address.ValidAddress)
             } else {
-                InvalidAnonymousRegistrationForm(email, anonymous, name, address, listOf("Invalid combination!"))
+                InvalidAnonymousRegistrationForm(
+                    email, anonymous, name, address, listOf(ValidationError("", "Invalid combination!", "someValue"))
+                )
             }
         }
     }
@@ -88,18 +114,17 @@ sealed class RegistrationForm {
 
 sealed class Response {
     data class OkResponse(val result: String) : Response()
-    data class ErrorResponse(val errors: List<String>) : Response()
+    data class ErrorResponse(val errors: List<ValidationError>) : Response()
 }
 
 class ControllerLikeRegistrationController {
     fun registerUser(jsonString: String): Response {
         val mapper = jacksonObjectMapper()
-        val parsed: RegistrationForm = mapper.readValue(jsonString)
 
-        return when (parsed) {
+        return when (val parsed: RegistrationForm = mapper.readValue(jsonString)) {
             is RegistrationForm.ValidRegistrationForm -> Response.OkResponse("Congrats ${parsed.name}!")
             is RegistrationForm.ValidAnonymousRegistrationForm -> Response.OkResponse("Congrats!")
-            is RegistrationForm.InvalidAnonymousRegistrationForm -> Response.ErrorResponse(parsed.errors)
+            is RegistrationForm.InvalidAnonymousRegistrationForm -> Response.ErrorResponse(parsed.messages)
         }
     }
 }

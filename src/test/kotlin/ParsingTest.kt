@@ -95,6 +95,7 @@ class ParsingTest {
         assertThat(result).isExactlyInstanceOf(Response.ErrorResponse::class.java)
         (result as Response.ErrorResponse).let {
             assertThat(it.errors).isNotEmpty
+            assertThat(it.errors).contains(ValidationError("email", "Not a valid Email ;)", "invalid-email"))
         }
     }
 
