@@ -5,6 +5,10 @@
 - Have a unified way of doing validation that makes sure error responses are the same across multiple endpoints
 - Validate at the edges of our application code, helping us have a lazer sharp focus on busniess logic
 
+# The example
+
+The example is a bit contrived, but I think it serves it purpose and challenges the type system enough to see how the concepts play out.
+
 # The story
 
 Ever since I read Domain Driven Design I have realized that there are some untapped potential to how we write code. And especially in Object Oriented languages. It always felt clunky how we do parsing/validation/values and how our code has to take this into account, or assume everything is in order really.

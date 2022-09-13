@@ -8,7 +8,12 @@ interface InvalidDataClass {
 }
 
 sealed class Email {
-    data class ValidEmail(val user: String, val domain: String) : Email()
+    data class ValidEmail(val user: String, val domain: String) : Email() {
+        fun stringRepresentation(): String {
+            return "$user@$domain"
+        }
+    }
+
     data class InvalidEmail(val value: String, val _errors: List<ValidationError>) : Email(), InvalidDataClass {
         override fun getErrors(): List<ValidationError> {
             return _errors
@@ -77,10 +82,13 @@ sealed class RegistrationForm {
         }
     }
 
-    sealed class Valid: RegistrationForm() {
-        data class AnonymousRegistration(val email: Email.ValidEmail) : Valid()
-        data class Registration(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
-            Valid()
+    sealed class Valid(open val email: Email.ValidEmail) : RegistrationForm() {
+        data class AnonymousRegistration(override val email: Email.ValidEmail) : Valid(email)
+        data class Registration(
+            override val email: Email.ValidEmail,
+            val name: String,
+            val address: Address.ValidAddress
+        ) : Valid(email)
     }
 
     companion object {
