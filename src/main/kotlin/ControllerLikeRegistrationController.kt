@@ -14,14 +14,13 @@ class ControllerLikeRegistrationController(val registrationService: Registration
             // Doing two levels here like the classes are wrapped, but you can
             // actually do all three on the "same level".
             is RegistrationForm.Valid -> {
+                registrationService.createNewRegistration(parsed)
                 when (parsed) {
                     is RegistrationForm.Valid.Registration -> {
-                        registrationService.createNewRegistration(parsed)
                         ControllerResponse.OkResponse("Congrats ${parsed.name}!")
                     }
 
                     is RegistrationForm.Valid.AnonymousRegistration -> {
-                        registrationService.createNewRegistration(parsed)
                         ControllerResponse.OkResponse("Congrats!")
                     }
                 }

@@ -1,10 +1,7 @@
 class RegistrationService(private val registrationRepository: RegistrationRepository) {
 
-    fun createNewRegistration(newRegistration: RegistrationForm.Valid.Registration) {
+    fun createNewRegistration(newRegistration: RegistrationForm.Valid) {
         registrationRepository.register(newRegistration)
     }
 
-    fun createNewRegistration(newRegistration: RegistrationForm.Valid.AnonymousRegistration) {
-        registrationRepository.register(newRegistration)
-    }
 }
