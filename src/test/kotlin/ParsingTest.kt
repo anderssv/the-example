@@ -5,6 +5,7 @@ import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 
 class ParsingTest {
+    private val controller = ControllerLikeRegistrationController(RegistrationService(RegistrationRepository()))
 
     @Test
     fun testShouldParseInvalidEmail() {
@@ -89,11 +90,10 @@ class ParsingTest {
 
     @Test
     fun testShouldFailWhenInvalidEmailInController() {
-        val controller = ControllerLikeRegistrationController()
         val result = controller.registerUser(getTestJson("invalid-email"))
 
-        assertThat(result).isExactlyInstanceOf(Response.ErrorResponse::class.java)
-        (result as Response.ErrorResponse).let {
+        assertThat(result).isExactlyInstanceOf(ControllerResponse.ErrorResponse::class.java)
+        (result as ControllerResponse.ErrorResponse).let {
             assertThat(it.errors).isNotEmpty
             assertThat(it.errors).contains(ValidationError("email", "Not a valid Email ;)", "invalid-email"))
         }
