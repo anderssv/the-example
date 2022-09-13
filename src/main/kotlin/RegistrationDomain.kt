@@ -83,12 +83,12 @@ sealed class RegistrationForm {
     }
 
     sealed class Valid(open val email: Email.ValidEmail) : RegistrationForm() {
-        data class AnonymousRegistration(override val email: Email.ValidEmail) : Valid(email)
+        data class AnonymousRegistration(val _email: Email.ValidEmail) : Valid(_email)
         data class Registration(
-            override val email: Email.ValidEmail,
+            val _email: Email.ValidEmail,
             val name: String,
             val address: Address.ValidAddress
-        ) : Valid(email)
+        ) : Valid(_email)
     }
 
     companion object {
