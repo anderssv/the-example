@@ -65,7 +65,7 @@ sealed class Address {
 }
 
 sealed class RegistrationForm {
-    data class InvalidAnonymousRegistrationForm(
+    data class Invalid(
         val email: Email,
         val anonymous: Boolean,
         val name: String?,
@@ -78,8 +78,8 @@ sealed class RegistrationForm {
     }
 
     sealed class Valid: RegistrationForm() {
-        data class ValidAnonymousRegistrationForm(val email: Email.ValidEmail) : Valid()
-        data class ValidRegistrationForm(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
+        data class AnonymousRegistration(val email: Email.ValidEmail) : Valid()
+        data class Registration(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
             Valid()
     }
 
@@ -98,13 +98,13 @@ sealed class RegistrationForm {
             }.flatten()
 
             return if (errors.isNotEmpty()) {
-                InvalidAnonymousRegistrationForm(email, anonymous, name, address, errors)
+                Invalid(email, anonymous, name, address, errors)
             } else if (anonymous) {
-                Valid.ValidAnonymousRegistrationForm(email as Email.ValidEmail)
+                Valid.AnonymousRegistration(email as Email.ValidEmail)
             } else if (name != null) {
-                Valid.ValidRegistrationForm(email as Email.ValidEmail, name, address as Address.ValidAddress)
+                Valid.Registration(email as Email.ValidEmail, name, address as Address.ValidAddress)
             } else {
-                InvalidAnonymousRegistrationForm(
+                Invalid(
                     email, anonymous, name, address, listOf(ValidationError("", "Invalid combination!", "someValue"))
                 )
             }

@@ -11,15 +11,23 @@ class ControllerLikeRegistrationController(val registrationService: Registration
         val mapper = jacksonObjectMapper()
 
         return when (val parsed: RegistrationForm = mapper.readValue(jsonString)) {
-            is RegistrationForm.Valid.ValidRegistrationForm -> {
-                registrationService.createNewRegistration(parsed)
-                ControllerResponse.OkResponse("Congrats ${parsed.name}!")
+            // Doing two levels here like the classes are wrapped, but you can
+            // actually do all three on the "same level".
+            is RegistrationForm.Valid -> {
+                when (parsed) {
+                    is RegistrationForm.Valid.Registration -> {
+                        registrationService.createNewRegistration(parsed)
+                        ControllerResponse.OkResponse("Congrats ${parsed.name}!")
+                    }
+
+                    is RegistrationForm.Valid.AnonymousRegistration -> {
+                        registrationService.createNewRegistration(parsed)
+                        ControllerResponse.OkResponse("Congrats!")
+                    }
+                }
             }
-            is RegistrationForm.Valid.ValidAnonymousRegistrationForm -> {
-                registrationService.createNewRegistration(parsed)
-                ControllerResponse.OkResponse("Congrats!")
-            }
-            is RegistrationForm.InvalidAnonymousRegistrationForm -> ControllerResponse.ErrorResponse(parsed.getErrors())
+
+            is RegistrationForm.Invalid -> ControllerResponse.ErrorResponse(parsed.getErrors())
         }
     }
 }

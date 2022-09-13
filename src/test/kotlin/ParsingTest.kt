@@ -13,8 +13,8 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello"))
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.InvalidAnonymousRegistrationForm::class.java)
-        (parsed as RegistrationForm.InvalidAnonymousRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Invalid::class.java)
+        (parsed as RegistrationForm.Invalid).let {
             assertThat(it.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
             (it.email as Email.InvalidEmail).let {
                 assertThat(it.value).isEqualTo("hello")
@@ -27,8 +27,8 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello", addressJson = null))
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.InvalidAnonymousRegistrationForm::class.java)
-        (parsed as RegistrationForm.InvalidAnonymousRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Invalid::class.java)
+        (parsed as RegistrationForm.Invalid).let {
             assertThat(it.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
             (it.email as Email.InvalidEmail).let {
                 assertThat(it.value).isEqualTo("hello")
@@ -42,8 +42,8 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello"))
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.InvalidAnonymousRegistrationForm::class.java)
-        (parsed as RegistrationForm.InvalidAnonymousRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Invalid::class.java)
+        (parsed as RegistrationForm.Invalid).let {
             assertThat(it.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
             (it.email as Email.InvalidEmail).let {
                 assertThat(it.value).isEqualTo("hello")
@@ -65,8 +65,8 @@ class ParsingTest {
             )
         )
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.InvalidAnonymousRegistrationForm::class.java)
-        (parsed as RegistrationForm.InvalidAnonymousRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Invalid::class.java)
+        (parsed as RegistrationForm.Invalid).let {
             assertThat(it.email).isExactlyInstanceOf(Email.InvalidEmail::class.java)
             (it.email as Email.InvalidEmail).let {
                 assertThat(it.value).isEqualTo("hello")
@@ -82,8 +82,8 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello@hello.com"))
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Valid.ValidRegistrationForm::class.java)
-        (parsed as RegistrationForm.Valid.ValidRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Valid.Registration::class.java)
+        (parsed as RegistrationForm.Valid.Registration).let {
             assertAll({ assertThat(it.email.user).isEqualTo("hello") },
                 { assertThat(it.email.domain).isEqualTo("hello.com") })
         }
