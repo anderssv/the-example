@@ -11,11 +11,11 @@ class ControllerLikeRegistrationController(val registrationService: Registration
         val mapper = jacksonObjectMapper()
 
         return when (val parsed: RegistrationForm = mapper.readValue(jsonString)) {
-            is RegistrationForm.ValidRegistrationForm -> {
+            is RegistrationForm.Valid.ValidRegistrationForm -> {
                 registrationService.createNewRegistration(parsed)
                 ControllerResponse.OkResponse("Congrats ${parsed.name}!")
             }
-            is RegistrationForm.ValidAnonymousRegistrationForm -> {
+            is RegistrationForm.Valid.ValidAnonymousRegistrationForm -> {
                 registrationService.createNewRegistration(parsed)
                 ControllerResponse.OkResponse("Congrats!")
             }

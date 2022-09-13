@@ -77,9 +77,11 @@ sealed class RegistrationForm {
         }
     }
 
-    data class ValidAnonymousRegistrationForm(val email: Email.ValidEmail) : RegistrationForm()
-    data class ValidRegistrationForm(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
-        RegistrationForm()
+    sealed class Valid: RegistrationForm() {
+        data class ValidAnonymousRegistrationForm(val email: Email.ValidEmail) : Valid()
+        data class ValidRegistrationForm(val email: Email.ValidEmail, val name: String, val address: Address.ValidAddress) :
+            Valid()
+    }
 
     companion object {
         @JvmStatic
@@ -98,9 +100,9 @@ sealed class RegistrationForm {
             return if (errors.isNotEmpty()) {
                 InvalidAnonymousRegistrationForm(email, anonymous, name, address, errors)
             } else if (anonymous) {
-                ValidAnonymousRegistrationForm(email as Email.ValidEmail)
+                Valid.ValidAnonymousRegistrationForm(email as Email.ValidEmail)
             } else if (name != null) {
-                ValidRegistrationForm(email as Email.ValidEmail, name, address as Address.ValidAddress)
+                Valid.ValidRegistrationForm(email as Email.ValidEmail, name, address as Address.ValidAddress)
             } else {
                 InvalidAnonymousRegistrationForm(
                     email, anonymous, name, address, listOf(ValidationError("", "Invalid combination!", "someValue"))

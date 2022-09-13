@@ -5,7 +5,8 @@ import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 
 class ParsingTest {
-    private val controller = ControllerLikeRegistrationController(RegistrationService(RegistrationRepository()))
+    private val repo = RegistrationRepository()
+    private val controller = ControllerLikeRegistrationController(RegistrationService(repo))
 
     @Test
     fun testShouldParseInvalidEmail() {
@@ -81,8 +82,8 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(getTestJson("hello@hello.com"))
 
-        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.ValidRegistrationForm::class.java)
-        (parsed as RegistrationForm.ValidRegistrationForm).let {
+        assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Valid.ValidRegistrationForm::class.java)
+        (parsed as RegistrationForm.Valid.ValidRegistrationForm).let {
             assertAll({ assertThat(it.email.user).isEqualTo("hello") },
                 { assertThat(it.email.domain).isEqualTo("hello.com") })
         }
@@ -99,11 +100,33 @@ class ParsingTest {
         }
     }
 
-    private fun getTestJson(email: String, addressJson: String? = getAddressJson()) = """
+    @Test
+    fun testShouldStoreValidRegistrationInController() {
+        val result = controller.registerUser(getTestJson("valid@mail.com"))
+
+        assertThat(result).isExactlyInstanceOf(ControllerResponse.OkResponse::class.java)
+        (result as ControllerResponse.OkResponse).let {
+            assertThat(it.result).isEqualTo("Congrats Myname!")
+        }
+        assertThat(repo.getRegistration(Email.ValidEmail("valid", "mail.com"))).isNotNull
+    }
+
+    @Test
+    fun testShouldStoreValidAnonymousRegistrationInController() {
+        val result = controller.registerUser(getTestJson("valid@mail.com", addressJson = null, anonymous = true))
+
+        assertThat(result).isExactlyInstanceOf(ControllerResponse.OkResponse::class.java)
+        (result as ControllerResponse.OkResponse).let {
+            assertThat(it.result).isEqualTo("Congrats!")
+        }
+        assertThat(repo.getRegistration(Email.ValidEmail("valid", "mail.com"))).isNotNull
+    }
+
+    private fun getTestJson(email: String, addressJson: String? = getAddressJson(), anonymous: Boolean = false) = """
                 {
                     "email": "$email",
                     ${if (addressJson != null) "$addressJson," else ""}
-                    "anonymous": false,
+                    "anonymous": $anonymous,
                     "name": "Myname"   
                 }
             """.trimIndent()
