@@ -1,8 +1,9 @@
 Hi. This is a small collection of code I hope shows some good concepts. Please let me know what you think. :)
 
 Separate docs:
-- [Sum types](doc/sum-types.md)
+- [Test Driven Development](doc/tdd.md)
 - [Test Fakes](doc/fakes.md)
+- [Sum types](doc/sum-types.md)
 
 Reach out:
 - https://twitter.com/anderssv
