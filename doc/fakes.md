@@ -4,7 +4,7 @@ You can find some example code here: [ApplicationFakeTest.kt](../src/test/kotlin
 
 # I make fakes like...
 
-It is quite simple really. Almost anything can be faked with a HashMap. Sometimes you need other solutions. 
+It is quite simple really. Almost anything can be faked with a HashMap[[1](../src/test/kotlin/fakes/ApplicationRepositoryFake.kt)][[2](../src/test/kotlin/fakes/UserNotificationFake.kt)]. Sometimes you need other solutions. 
 
 Unlike Mocks you don't really need a library. Just implement the interface you are faking, and put, update and fetch to/from the HashMap. 
 
