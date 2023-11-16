@@ -25,6 +25,18 @@ A little bit, yes. But it reduces the long time overhead and maintenance of test
 
 And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fin to use IDEAS "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :)
 
+# What about the rest?
+
+It all has to be tested. :) By using fakes I find that I do:
+
+- Dedicated repository tests to check input/output.
+- Dedicated incoming tests for checking ok+error cases in APIs and HTTP endpoints etc
+- Domain oriented tests with fakes
+
+These aren't always exclusive. I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB). They run blazingly fast. :)
+
+The clue here is to being able to express and test all the weird combinations the system has to cater for in the domain oriented tests with fakes, and then have basic sanity checks for the "outer edges".
+
 # Related reading
 - [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
 - [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)
