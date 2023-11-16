@@ -1,3 +1,5 @@
+package sum_types
+
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
@@ -59,9 +61,10 @@ class ParsingTest {
         val mapper = jacksonObjectMapper()
         val parsed: RegistrationForm = mapper.readValue(
             getTestJson(
-                "hello", """
-                  "address": { "city": "Oslo" }
-                """.trimIndent()
+                email = "hello",
+                addressJson = """
+                                  "address": { "city": "Oslo" }
+                              """.trimIndent()
             )
         )
 

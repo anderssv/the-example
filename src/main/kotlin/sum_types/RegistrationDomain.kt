@@ -1,3 +1,5 @@
+package sum_types
+
 import com.fasterxml.jackson.annotation.JsonCreator
 
 data class ValidationError(val path: String, val message: String, val value: String)
