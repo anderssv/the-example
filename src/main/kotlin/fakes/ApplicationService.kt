@@ -19,7 +19,7 @@ class ApplicationService(private val applicationRepo: ApplicationRepository) {
             }
     }
 
-    fun ongoingApplicationsForName(name: String): List<Application> {
+    fun openApplicationsFor(name: String): List<Application> {
         return applicationRepo.getApplicationsForName(name).filter { it.status == ApplicationStatus.ACTIVE }
     }
 
