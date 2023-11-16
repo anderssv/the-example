@@ -9,17 +9,24 @@ These are the main techniques that I use:
 - Testing Through the Domain, where I use the system actions to mutate state to the point in time I want to write assertions. This helps improve the domain code, forcing it to be clear at a high level readable steps, but also reduces the exposure tests have to changes in the logic of the system. A test that sets up assumed data is more exposed when the logic that produces those data changes.
 
 ```mermaid
-mindmap
-  root((TDD))
-    Object Mother
-        Re-usable test data setup
-        Reduces coupling between test and data models
-    Fakes
-        Reusable across tests
-        Hides sequence of actions from the test
-    Testing Through the Domain
-        Clarity in the domain
-        Clarity in tests
-        Reduces coupling between tests and system behavior
+flowchart LR
+    TTTD[Testing Through<br/>the Domain]
+    ReusableTestSetup[Reusable set up across tests]
+    SequenceIsolation[Hides internal sequence of<br/> interactions from the test]
+    ReusableTestData[Reusable test data set up<br/>across tests]
+    ReducedCouplingData[Reduces coupling between test <br/>and data models]
+    ReducedCouplingBehaviour[Reduces coupling between tests<br/>and system behavior]
+    ClarityDomain[Clearer domain because it is repeatedly<br/>expressed in tests]
+    ClarityTests[Clearer tests as they<br/>reflect domain operations]
+    
+    TDD --> Fakes
+    TDD --> ObjectMother
+    TDD --> TTTD
+    Fakes --> ReusableTestSetup
+    Fakes --> SequenceIsolation
+    ObjectMother --> ReusableTestData
+    ObjectMother --> ReducedCouplingData
+    TTTD --> ReducedCouplingBehaviour
+    TTTD --> ClarityDomain
+    TTTD --> ClarityTests
 ```
-
