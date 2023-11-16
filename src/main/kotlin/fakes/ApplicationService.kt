@@ -2,7 +2,7 @@ package fakes
 
 import java.time.LocalDate
 
-class ApplicationService(private val applicationRepo: ApplicationRepository) {
+class ApplicationService(private val applicationRepo: ApplicationRepository, val userNotificationClient: UserNotificationClient) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
     }
@@ -16,6 +16,7 @@ class ApplicationService(private val applicationRepo: ApplicationRepository) {
             .filter { it.applicationDate.isBefore(LocalDate.now().minusMonths(2)) }
             .forEach {
                 applicationRepo.updateApplication(it.copy(status = ApplicationStatus.EXPIRED))
+                userNotificationClient.notifyUser(it.name, "Your application ${it.id} has expired")
             }
     }
 

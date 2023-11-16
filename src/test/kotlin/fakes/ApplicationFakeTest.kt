@@ -11,7 +11,8 @@ class ApplicationFakeTest {
      * etc. Will have to try and show at a later time.
      */
     private val applicationRepo = ApplicationRepositoryFake()
-    private val appService = ApplicationService(applicationRepo)
+    private val notificationRepo = UserNotificationFake()
+    private val appService = ApplicationService(applicationRepo, notificationRepo)
 
     @Test
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
@@ -35,8 +36,22 @@ class ApplicationFakeTest {
         // Assertions
         appService.openApplicationsFor(applications.first().name).let {
             assertThat(it).doesNotContain(applications.first())
+            // Spot the bug ;)
             //assertThat(it).contains(applications.last())
         }
     }
 
+    @Test
+    fun shouldSendNotificationWhenApplicationIsExpired() {
+        val application = Application.valid(addToMonth = -6)
+        appService.registerInitialApplication(application)
+
+        appService.expireApplications()
+
+        assertThat(appService.openApplicationsFor(application.name)).isEmpty()
+        notificationRepo.getNotificationForUser(application.name).also {
+            assertThat(it).isNotEmpty
+            assertThat(it).contains("Your application ${application.id} has expired")
+        }
+    }
 }
