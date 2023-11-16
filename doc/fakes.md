@@ -1,8 +1,10 @@
 When writing tests it is often important to isolate the tests. This can be done in many ways, but most of them are described in [this classic article by Martin Fowler called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
+--- Insert example links
+
 # I make fakes like...
 
-It's simple really. Almost anything can be faked with a little HashMaps. Sometimes you find other solutions. 
+It's simple really. Almost anything can be faked with a little HashMap. Sometimes you need other solutions. 
 
 Unlike Mocks you don't really need a library. Just implement the interface you are faking, and put, update and fetch to/from the HashMap. 
 
@@ -15,13 +17,13 @@ The different test doubles are all useful, but in general I tend to start with F
 - Changes in behaviour. 20 tests to fix because the data addded in your real code doesn't match test setup anymore?
 - Temporary issues outside your control. Network, 3rd party downtime, test envs that are slow
 - Slow Speed. It's all in memory baby.
-- Flakyness. If they become flaky you have other issues. ;)
+- Flakyness. If fakes become flaky you have other issues. ;)
 
 # Isn't this a lot of work?
 
 A little bit, yes. But it reduces the long time overhead and maintenance of tests. And it increases the speed you can run tests at right away. Running stuff in memory is infinitely faster, even if the DB is on localhost.
 
-And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly find to use IDEAS implement interface that leaves (exception throwing) TODOs for every method. Then you fix the ones needed to get your test passing. Rinse and repeat. :)
+And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fin to use IDEAS "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :)
 
 # Related reading
 - [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
