@@ -1,10 +1,15 @@
 package fakes
 
 interface ApplicationRepository {
-    fun addApplication(application: Application)
     fun getApplicationsForName(name: String): List<Application>
-    fun allApplications(): List<Application>
-    fun activeApplications(): List<Application>
+    fun getAllApplications(): List<Application>
+
+    /**
+     * Whether you want separate methods for each filter or do some andvanced filtering
+     * depends a bit on your data volumes and DB design. YMMV. :)
+     */
+    fun getAllActiveApplications(): List<Application>
+    fun addApplication(application: Application)
     fun updateApplication(application: Application)
 
 }
@@ -21,11 +26,11 @@ class ApplicationRepositoryImpl: ApplicationRepository {
         TODO("Not yet implemented")
     }
 
-    override fun allApplications(): List<Application> {
+    override fun getAllApplications(): List<Application> {
         TODO("Not yet implemented")
     }
 
-    override fun activeApplications(): List<Application> {
+    override fun getAllActiveApplications(): List<Application> {
         TODO("Not yet implemented")
     }
 

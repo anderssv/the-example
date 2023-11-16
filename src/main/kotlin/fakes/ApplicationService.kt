@@ -12,7 +12,7 @@ class ApplicationService(private val applicationRepo: ApplicationRepository) {
     }
 
     fun expireApplications() {
-        applicationRepo.activeApplications()
+        applicationRepo.getAllActiveApplications()
             .filter { it.applicationDate.isBefore(LocalDate.now().minusMonths(2)) }
             .forEach {
                 applicationRepo.updateApplication(it.copy(status = ApplicationStatus.EXPIRED))
