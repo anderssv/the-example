@@ -50,6 +50,10 @@ class ApplicationFakeTest {
 
         assertThat(appService.openApplicationsFor(application.name)).isEmpty()
         notificationRepo.getNotificationForUser(application.name).also {
+            // Notice how this is a specific method in the Fake. In the case of something
+            // like e-mail, there is no way of fetching the actual messages after the fact.
+            // So this method is used to verify the outcome, which should be that notifications
+            // are sent to the user.
             assertThat(it).isNotEmpty
             assertThat(it).contains("Your application ${application.id} has expired")
         }
