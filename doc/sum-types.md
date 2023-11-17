@@ -1,3 +1,5 @@
+Part of [System Design](system-design.md)
+
 # Why?
 
 - Increase type safety, make sure you handle all outcomes
