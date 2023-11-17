@@ -1,4 +1,4 @@
-package sum_types
+package user.registration
 
 class RegistrationService(private val registrationRepository: RegistrationRepository) {
 

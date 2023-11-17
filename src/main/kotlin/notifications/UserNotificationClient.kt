@@ -1,4 +1,4 @@
-package fakes
+package notifications
 
 interface UserNotificationClient {
     fun notifyUser(name: String, message: String)

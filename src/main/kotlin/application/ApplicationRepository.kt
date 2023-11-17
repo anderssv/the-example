@@ -1,4 +1,4 @@
-package fakes
+package application
 
 interface ApplicationRepository {
     fun getApplicationsForName(name: String): List<Application>

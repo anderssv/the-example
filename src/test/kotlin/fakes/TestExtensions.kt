@@ -1,5 +1,7 @@
 package fakes
 
+import application.Application
+import application.ApplicationStatus
 import java.time.LocalDate
 import java.util.*
 

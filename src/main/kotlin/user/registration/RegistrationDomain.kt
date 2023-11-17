@@ -1,4 +1,4 @@
-package sum_types
+package user.registration
 
 import com.fasterxml.jackson.annotation.JsonCreator
 

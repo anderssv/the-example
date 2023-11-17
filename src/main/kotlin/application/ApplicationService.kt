@@ -1,5 +1,6 @@
-package fakes
+package application
 
+import notifications.UserNotificationClient
 import java.time.LocalDate
 
 class ApplicationService(private val applicationRepo: ApplicationRepository, val userNotificationClient: UserNotificationClient) {

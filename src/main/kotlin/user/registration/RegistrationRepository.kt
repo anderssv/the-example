@@ -1,4 +1,4 @@
-package sum_types
+package user.registration
 
 class RegistrationRepository {
     private val db = mutableMapOf<Email.ValidEmail, RegistrationForm.Valid>()
