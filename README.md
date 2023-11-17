@@ -12,3 +12,5 @@ Reach out:
 - https://twitter.com/anderssv
 - https://bsky.app/profile/anders.f12.no
 - [anders@f12.no](mailto:anders@f12.no)
+
+A lot of this content has come out of endless disuscussions with fellow developers. But a special thanks goes out to Asgaut Mjølne, Ola Hast and Terje Heen for the regular discussions we have.
