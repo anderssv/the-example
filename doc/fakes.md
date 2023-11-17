@@ -38,7 +38,12 @@ These aren't always exclusive. I actually run most edge tests with a "full syste
 The clue here is to being able to express and test all the weird combinations the system has to cater for in the domain oriented tests with fakes, and then have basic sanity checks for the "outer edges".
 
 # Related reading
-- [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
-- [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)
-- [Easy and maintainable test data - The Kotlin way](https://anderssv.medium.com/easy-and-maintainable-test-data-the-kotlin-way-9ecbbf53d822)
-
+- Test Doubles
+  - [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)
+  - [Test Doubles — Fakes, Mocks and Stubs](https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da)
+  - [Test Doubles from the "Software Engineering at Google" book](https://abseil.io/resources/swe-book/html/ch13.html)
+  - [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
+- Test design and scopes
+  - [Easy and maintainable test data - The Kotlin way](https://anderssv.medium.com/easy-and-maintainable-test-data-the-kotlin-way-9ecbbf53d822)
+  - [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html)
+  - [Test scopes by Wisen Tanasa on Twitter](https://twitter.com/ceilfors/status/1687780512277069824)
