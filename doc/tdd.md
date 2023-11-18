@@ -74,29 +74,6 @@ stateDiagram-v2
 
 ```
 
-```mermaid
-stateDiagram-v2
-  HighLevelTest --> LowLevelTest
-  HighLevelTest --> TestCycle
-  LowLevelTest --> HighLevelTest
-  LowLevelTest --> TestCycle
-  state TestCycle {
-    [*] --> SetUp
-    SetUp --> AddToCode
-    SetUp --> Refactor
-    Refactor --> SetUp
-    AddToCode --> SetUp
-    AddToCode --> Assert
-    AddToCode --> Switch
-    Assert --> AddToCode
-    Assert --> SetUp
-    Switch --> [*]
-    Assert --> [*]
-  }
-
-
-```
-
 # Related reading
 - [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html)
 - [Test scopes by Wisen Tanasa on Twitter](https://twitter.com/ceilfors/status/1687780512277069824)
