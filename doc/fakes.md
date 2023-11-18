@@ -25,7 +25,7 @@ The different test doubles are all useful, but in general I tend to start with F
 
 A little bit, yes. But it reduces the long time overhead and maintenance of tests. And it increases the speed you can run tests at right away. Running stuff in memory is infinitely faster, even if the DB is on localhost.
 
-And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fin to use IDEAS "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :)
+And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fine to use InteilliJs "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :)
 
 # What about the rest?
 
@@ -38,6 +38,8 @@ It all has to be tested. :) By using fakes I find that I do:
 These aren't always exclusive. I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB). They run blazingly fast. :)
 
 The clue here is to being able to express and test all the weird combinations the system has to cater for in the domain oriented tests with fakes, and then have basic sanity checks for the "outer edges".
+
+Also see [TDD](tdd.md) for some relevant considerations and articles about what to test when.
 
 # Related reading
 - [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)
