@@ -71,6 +71,30 @@ stateDiagram-v2
     LowLevelTest --> HighLevelTest: That was easy!
     AddToService --> AssertFeature: Don't forget to make<br/>assertions great too!
     AssertFeature --> [*]
+
+```
+
+```mermaid
+stateDiagram-v2
+  HighLevelTest --> LowLevelTest
+  HighLevelTest --> TestCycle
+  LowLevelTest --> HighLevelTest
+  LowLevelTest --> TestCycle
+  state TestCycle {
+    [*] --> SetUp
+    SetUp --> AddToCode
+    SetUp --> Refactor
+    Refactor --> SetUp
+    AddToCode --> SetUp
+    AddToCode --> Assert
+    AddToCode --> Switch
+    Assert --> AddToCode
+    Assert --> SetUp
+    Switch --> [*]
+    Assert --> [*]
+  }
+
+
 ```
 
 # Related reading
