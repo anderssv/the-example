@@ -15,6 +15,7 @@ To write good tests they should be:
 
 There are a bunch of other attributes as well, but these are the things I tend focus the most on. And these are the triangle of techniques that I use:
 
+- Easy wiring. Think like Spring context, but I prefer not to. :wink: Should also enable easy access to fakes for set up. TODO
 - [Object Mother or similar patterns](test-setup.md) to centralise and re-use test data set up. This makes it easier to find test data and write tests. It also reduces the exposure that each test has to the datastructures, and because of that it makes changes easier.
 - [Fakes](fakes.md) as the main method for setting up test doubles. Fakes are more reusable than the alternatives, and gives a lower coupling to internal implementation details than for example mocks. Because of this they make it easier to write tests, and less exposed to irrelevant changes.
 - [Testing Through the Domain](tttd.md), where you use the system actions to mutate state to the point in time you want to write assertions. This helps improve the domain code, forcing it to be clear at a high level readable steps, but also reduces the exposure tests have to changes in the logic of the system. A test that sets up assumed data is more exposed when the logic that produces those data changes.
@@ -77,3 +78,5 @@ stateDiagram-v2
 # Related reading
 - [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html)
 - [Test scopes by Wisen Tanasa on Twitter](https://twitter.com/ceilfors/status/1687780512277069824)
+
+Go [here to reach out for input or questions](../README.md). :smile:
