@@ -16,24 +16,26 @@ Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkw
 
 The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at leas it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
 - Changes in data structures. 100 compile errors when a central class changes?
-- Changes in behaviour. 20 tests to fix because the data addded in your real code doesn't match test setup anymore?
+- Changes in behaviour. 20 tests to fix because the data added in your real code doesn't match test setup anymore?
 - Temporary issues outside your control. Network, 3rd party downtime, test envs that are slow
-- Slow Speed. It's all in memory baby.
-- Flakyness. If fakes become flaky you have other issues. ;)
+- Slow Speed. It's all in memory baby. <3
+- Flakyness. If fakes become flaky you have other issues to figure out. ;-)
 
 # Isn't this a lot of work?
 
-A little bit, yes. But it reduces the long time overhead and maintenance of tests. And it increases the speed you can run tests at right away. Running stuff in memory is infinitely faster, even if the DB is on localhost.
+Yes, a little bit. But it reduces the long time overhead and maintenance of tests. And it increases the speed you can run tests at right away. Running stuff in memory is infinitely faster, even if the DB is on localhost.
 
-And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fine to use InteilliJs "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :)
+And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fine to use InteilliJs "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :-)
+
+And once the method is implemented (with a HashMap) it is reusable across all your tests. #winning ;-)
 
 # What about the rest?
 
 It all has to be tested. :) By using fakes I find that I do:
 
-- Dedicated repository tests to check input/output.
-- Dedicated incoming tests for checking ok+error cases in APIs and HTTP endpoints etc
-- Domain oriented tests with fakes
+- Dedicated repository tests to check input/output. Without Fakes.
+- Dedicated incoming tests for checking ok+error cases in APIs and HTTP endpoints etc. With fakes.
+- Domain oriented tests. With fakes.
 
 These aren't always exclusive. I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB). They run blazingly fast. :)
 
