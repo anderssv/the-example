@@ -8,7 +8,7 @@ When writing tests it is often important to isolate the tests. This can be done 
 
 It is quite simple really. Almost anything can be faked with a HashMap[[1](../src/test/kotlin/fakes/ApplicationRepositoryFake.kt)][[2](../src/test/kotlin/fakes/UserNotificationFake.kt)]. Sometimes you need other solutions. 
 
-Unlike Mocks you don't really need a library. Just implement the interface you are faking, and put, update and fetch to/from the HashMap. 
+Unlike Mocks you don't really need a library. Just implement the interface you are faking, and put, update and fetch to/from the HashMap. :rocket:
 
 Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkward, and implementing SQL like searches in a DbRepoFake can be weird. But it is all worth it. 
 
@@ -17,17 +17,17 @@ Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkw
 The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at leas it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
 - Changes in data structures. 100 compile errors when a central class changes?
 - Changes in behaviour. 20 tests to fix because the data added in your real code doesn't match test setup anymore?
-- Temporary issues outside your control. Network, 3rd party downtime, test envs that are slow
-- Slow Speed. It's all in memory baby. <3
-- Flakyness. If fakes become flaky you have other issues to figure out. ;-)
+- Temporary issues outside your control. Network, 3rd party downtime, test envs that are slow :boom:
+- Speed. It's all in memory baby. :heart: :fire:
+- Flakyness. If fakes become flaky you have other issues to figure out. :wink:
 
 # Isn't this a lot of work?
 
 Yes, a little bit. But it reduces the long time overhead and maintenance of tests. And it increases the speed you can run tests at right away. Running stuff in memory is infinitely faster, even if the DB is on localhost.
 
-And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fine to use InteilliJs "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :-)
+And if you do TDD, you only implement the features (in the fakes) as you need them. It is perfectly fine to use InteilliJs "implement interface" function that leaves (exception throwing) TODOs for every method. Then you just fix the ones needed to get your test passing. Rinse and repeat. :smile:
 
-And once the method is implemented (with a HashMap) it is reusable across all your tests. #winning ;-)
+And once the method is implemented (with a HashMap) it is reusable across all your tests. :trophy:
 
 # What about the rest?
 
