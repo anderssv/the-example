@@ -6,7 +6,7 @@ import java.util.*
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,
-    val userNotificationClient: UserNotificationClient
+    private val userNotificationClient: UserNotificationClient
 ) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
