@@ -30,7 +30,7 @@ fun testDomainOrientedTest() {
 }
 ```
 
-They both pass, and everything is green. :white_check_mark:
+They both pass, and everything is green. There is just a tiny differnece, the usage of the service to chnage the state of the domain. :white_check_mark:
 
 Now consider the changed requirements: Approve needs to check whether you are still an active customer when approving the application.
 
