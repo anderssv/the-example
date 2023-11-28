@@ -1,6 +1,7 @@
 import application.Application
 import application.ApplicationService
 import application.ApplicationStatus
+import customer.CustomerRepositoryFake
 import fakes.ApplicationRepositoryFake
 import fakes.UserNotificationFake
 import fakes.valid
@@ -11,7 +12,8 @@ import org.junit.jupiter.api.Test
 class TestingThroughTheDomainTest {
     private val applicationRepo = ApplicationRepositoryFake()
     private val notificationRepo = UserNotificationFake()
-    private val appService = ApplicationService(applicationRepo, notificationRepo)
+    private val customerRepo = CustomerRepositoryFake()
+    private val appService = ApplicationService(applicationRepo, notificationRepo, customerRepo)
 
     @Test
     fun testDataOrientedTest() {
@@ -31,6 +33,17 @@ class TestingThroughTheDomainTest {
         appService.approveApplication(application.id)
 
         assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+    }
+
+    @Test
+    fun testAddActiveCustomerWhenNewApplication() {
+        val application = Application.valid()
+
+        appService.registerInitialApplication(application)
+        appService.approveApplication(application.id)
+
+        assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+        assertThat(customerRepo.getCustomer(application.name).name).isEqualTo(application.name)
     }
 
 }

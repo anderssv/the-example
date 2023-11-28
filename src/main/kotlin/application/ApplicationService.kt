@@ -1,15 +1,19 @@
 package application
 
+import customer.Customer
+import customer.CustomerRepository
 import notifications.UserNotificationClient
 import java.time.LocalDate
 import java.util.*
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,
-    private val userNotificationClient: UserNotificationClient
+    private val userNotificationClient: UserNotificationClient,
+    private val customerRepository: CustomerRepository
 ) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
+        customerRepository.addCustomer(Customer(application.name, true))
     }
 
     fun applicationsForName(name: String): List<Application> {
@@ -30,10 +34,10 @@ class ApplicationService(
     }
 
     fun approveApplication(applicationId: UUID) {
-        applicationRepo.updateApplication(
-            applicationRepo.getApplication(applicationId)
-                .copy(status = ApplicationStatus.APPROVED)
-        )
+        val application = applicationRepo.getApplication(applicationId)
+        if (!customerRepository.getCustomer(application.name).active) throw IllegalStateException("Customer not active")
+
+        applicationRepo.updateApplication(application.copy(status = ApplicationStatus.APPROVED))
     }
 
 }

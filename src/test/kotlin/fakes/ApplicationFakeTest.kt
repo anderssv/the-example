@@ -2,6 +2,7 @@ package fakes
 
 import application.Application
 import application.ApplicationService
+import customer.CustomerRepositoryFake
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,8 @@ class ApplicationFakeTest {
      */
     private val applicationRepo = ApplicationRepositoryFake()
     private val notificationRepo = UserNotificationFake()
-    private val appService = ApplicationService(applicationRepo, notificationRepo)
+    private val customerRepo = CustomerRepositoryFake()
+    private val appService = ApplicationService(applicationRepo, notificationRepo, customerRepo)
 
     @Test
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
