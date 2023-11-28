@@ -2,8 +2,12 @@ package application
 
 import notifications.UserNotificationClient
 import java.time.LocalDate
+import java.util.*
 
-class ApplicationService(private val applicationRepo: ApplicationRepository, val userNotificationClient: UserNotificationClient) {
+class ApplicationService(
+    private val applicationRepo: ApplicationRepository,
+    val userNotificationClient: UserNotificationClient
+) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
     }
@@ -23,6 +27,13 @@ class ApplicationService(private val applicationRepo: ApplicationRepository, val
 
     fun openApplicationsFor(name: String): List<Application> {
         return applicationRepo.getApplicationsForName(name).filter { it.status == ApplicationStatus.ACTIVE }
+    }
+
+    fun approveApplication(applicationId: UUID) {
+        applicationRepo.updateApplication(
+            applicationRepo.getApplication(applicationId)
+                .copy(status = ApplicationStatus.APPROVED)
+        )
     }
 
 }
