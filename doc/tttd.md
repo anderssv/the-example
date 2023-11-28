@@ -30,9 +30,9 @@ fun testDomainOrientedTest() {
 
 They both pass, and everything is green. :white_check_mark:
 
-Now consider the changed requirements: Approve check whether you are still an active customer when approving the application.
+Now consider the changed requirements: Approve needs to check whether you are still an active customer when approving the application.
 
-Data oriented will fail on null-pointer in `service.approve(...)`. Domain oriented will work because the `service.registerInitialApplication` registers the customer, and then moves on.
+The data oriented test will fail on null-pointer in `service.approve(...)`. The domain oriented test will work because the `service.registerInitialApplication` registers the customer, and then moves on.
 
 In addition to this the domain oriented approach will:
 - Evolve your domain as you write tests
