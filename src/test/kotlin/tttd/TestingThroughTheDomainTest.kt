@@ -45,5 +45,4 @@ class TestingThroughTheDomainTest {
         assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
         assertThat(customerRepo.getCustomer(application.name).name).isEqualTo(application.name)
     }
-
 }

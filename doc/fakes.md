@@ -14,7 +14,7 @@ Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkw
 
 # Why fakes?
 
-The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at leas it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
+The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at least it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
 - Changes in data structures. 100 compile errors when a central class changes?
 - Changes in behaviour. 20 tests to fix because the data added in your real code doesn't match test setup anymore?
 - Temporary issues outside your control. Network, 3rd party downtime, test envs that are slow :boom:
