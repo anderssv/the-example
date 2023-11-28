@@ -1,5 +1,7 @@
 package application
 
+import java.util.*
+
 interface ApplicationRepository {
     fun getApplicationsForName(name: String): List<Application>
     fun getAllApplications(): List<Application>
@@ -11,6 +13,7 @@ interface ApplicationRepository {
     fun getAllActiveApplications(): List<Application>
     fun addApplication(application: Application)
     fun updateApplication(application: Application)
+    fun getApplication(applicationId: UUID): Application
 
 }
 
@@ -35,6 +38,10 @@ class ApplicationRepositoryImpl: ApplicationRepository {
     }
 
     override fun updateApplication(application: Application) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getApplication(applicationId: UUID): Application {
         TODO("Not yet implemented")
     }
 }

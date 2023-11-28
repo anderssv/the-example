@@ -28,4 +28,8 @@ class ApplicationRepositoryFake : ApplicationRepository {
         db[application.id] = application
     }
 
+    override fun getApplication(applicationId: UUID): Application {
+        return db[applicationId]!!
+    }
+
 }
