@@ -1,8 +1,15 @@
 > Testing Through The Domain was kind of a joke because the name was a bit hard to pronounce. But it stuck for now. :smiley:
 
-This one is a bit harder to see, but I do think it raises the level for tests and maintenance in the long run.
+This one is a bit hard to see, but I know it raises the level for tests and maintenance in the long run.
 
-Consider two tests and their set-up with verifications:
+I tend to write 2-3 types of tests:
+- **IO tests** - No Fakes - Like testing HTTP calls to a third party provider. This makes sure the Client class performs as expected. Or Database repos.
+- **Variation tests** - Fakes - Focus in on a part of the system. Test the available variations. Example: In generating mail content it should have this section included if the recipient has X attribute.
+- **Outcome tests** - Fakes - This focuses on outcomes in interactions between components. Example: Was an email sent out with a rejected subject when the application was rejected?
+
+Try to avoid verifying data in the database, test whether the email was sent through the EmailClient instead of checking if the sent=true in the database. :smiley:
+
+Let me try and show you, consider two tests and their set-up with verifications:
 
 Data oriented setup:
 ```kotlin
