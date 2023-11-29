@@ -3,7 +3,7 @@ import application.ApplicationService
 import application.ApplicationStatus
 import customer.CustomerRepositoryFake
 import fakes.ApplicationRepositoryFake
-import fakes.UserNotificationFake
+import fakes.UserNotificationClientFake
 import fakes.valid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class TestingThroughTheDomainTest {
     private val applicationRepo = ApplicationRepositoryFake()
-    private val notificationRepo = UserNotificationFake()
+    private val notificationRepo = UserNotificationClientFake()
     private val customerRepo = CustomerRepositoryFake()
     private val appService = ApplicationService(applicationRepo, notificationRepo, customerRepo)
 

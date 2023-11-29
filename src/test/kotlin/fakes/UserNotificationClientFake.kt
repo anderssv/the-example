@@ -2,7 +2,7 @@ package fakes
 
 import notifications.UserNotificationClient
 
-class UserNotificationFake : UserNotificationClient {
+class UserNotificationClientFake : UserNotificationClient {
     private val notifications = mutableMapOf<String, MutableList<String>>()
 
     /**
