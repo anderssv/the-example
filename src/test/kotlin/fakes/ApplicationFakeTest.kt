@@ -17,22 +17,39 @@ import org.junit.jupiter.api.Test
  */
 @Suppress("LeakingThis")
 open class DependencyInjectionContext {
-    // Can be overridden in the subclass
-    open val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl()
-    open val userNotificationRepo: UserNotificationClient = UserNotificationClientImpl()
-    open val customerRepository: CustomerRepository = CustomerRepositoryImpl()
+    open class Repositories {
+        // Can be overridden in the subclass
+        open val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl()
+        open val customerRepository: CustomerRepository = CustomerRepositoryImpl()
+    }
+
+    open class Clients {
+        open val userNotificationClient: UserNotificationClient = UserNotificationClientImpl()
+    }
+
+    open val repositories = Repositories()
+    open val clients = Clients()
 
     // The main components using the IO stuff that can be faked
-    val applicationService = ApplicationService(applicationRepo, userNotificationRepo, customerRepository)
+    val applicationService =
+        ApplicationService(repositories.applicationRepo, clients.userNotificationClient, repositories.customerRepository)
 }
 
 /**
  * Overrides the relevant properties to make them Fakes
  */
 class DependencyInjectionTestContext : DependencyInjectionContext() {
-    override val applicationRepo = ApplicationRepositoryFake()
-    override val userNotificationRepo = UserNotificationClientFake()
-    override val customerRepository = CustomerRepositoryFake()
+    class Repositories : DependencyInjectionContext.Repositories() {
+        override val applicationRepo = ApplicationRepositoryFake()
+        override val customerRepository = CustomerRepositoryFake()
+    }
+
+    class Clients : DependencyInjectionContext.Clients() {
+        override val userNotificationClient = UserNotificationClientFake()
+    }
+
+    override val repositories = Repositories()
+    override val clients = Clients()
 }
 
 
@@ -79,7 +96,7 @@ class ApplicationFakeTest {
             applicationService.expireApplications()
 
             assertThat(applicationService.openApplicationsFor(application.name)).isEmpty()
-            userNotificationRepo.getNotificationForUser(application.name).also {
+            clients.userNotificationClient.getNotificationForUser(application.name).also {
                 // Notice how this is a specific method in the Fake. In the case of something
                 // like e-mail, there is no way of fetching the actual messages after the fact.
                 // So this method is used to verify the outcome, which should be that notifications
