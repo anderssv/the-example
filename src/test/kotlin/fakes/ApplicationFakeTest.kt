@@ -22,6 +22,7 @@ open class DependencyInjectionContext {
     open val userNotificationRepo: UserNotificationClient = UserNotificationClientImpl()
     open val customerRepository: CustomerRepository = CustomerRepositoryImpl()
 
+    // The main components using the IO stuff that can be faked
     val applicationService = ApplicationService(applicationRepo, userNotificationRepo, customerRepository)
 }
 
