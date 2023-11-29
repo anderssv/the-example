@@ -30,7 +30,7 @@ fun testDomainOrientedTest() {
 }
 ```
 
-They both pass, and everything is green. There is just a tiny differnece, the usage of the service to chnage the state of the domain. :white_check_mark:
+They both pass, and everything is green. There is just a tiny difference, the usage of the service to change the state of the domain. :white_check_mark:
 
 Now consider the changed requirements: Approve needs to check whether you are still an active customer when approving the application.
 
@@ -44,7 +44,7 @@ In addition to this the domain oriented approach will:
 
 When you have changes in data structures or logic how many places do you have to fix issues? TTTD will _reduce_ that. Object Mother helps, but this is the missing companion to that.
 
-This is a small example, but these are the kind of changes that will ripple through your system and tests and make re-factorings slower and more error prone. :smiley:
+This is a small example, but these are the kind of changes that will ripple through your system and tests and make re-factoring slower and more error prone. :smiley:
 
 It will also update all the data-structures that you don't really need (or know that you need) in your tests such that you are testing a much more consistent state in your domain all the time. 
 

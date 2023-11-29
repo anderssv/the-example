@@ -5,7 +5,7 @@ Part of [System Design](system-design.md)
 - Increase type safety, make sure you handle all outcomes
 - Simplify code "further down", as it only has to operate on known states with less nulls and more structure
 - Have a unified way of doing validation that makes sure error responses are the same across multiple endpoints
-- Validate at the edges of our application code, helping us have a lazer sharp focus on busniess logic
+- Validate at the edges of our application code, helping us have a laser sharp focus on business logic
 
 # The example
 
@@ -15,7 +15,7 @@ The example is a bit contrived, but I think it serves it purpose and challenges 
 
 Ever since I read Domain Driven Design I have realized that there are some untapped potential to how we write code. And especially in Object Oriented languages. It always felt clunky how we do parsing/validation/values and how our code has to take this into account, or assume everything is in order really.
 
-So when I started coding in Kotlin a few years back it felt really good to have nullability (null checks really) built into the language. It got rid of a bunch of clunky code and you could know what values are passed.
+So when I started coding in Kotlin a few years back it felt wonderful to have nullability (null checks really) built into the language. It got rid of a bunch of clunky code, and you could know what values are passed.
 
 But when accepting input from users or endpoints there are always some things that end up being nullable to enable better validation and parsing.
 
