@@ -4,6 +4,7 @@ A few notes on things I am trying to show in this code. You can find links to th
 - [Test Driven Development](doc/tdd.md)
   - [Test Fakes](doc/fakes.md)
   - [Test Setup](doc/test-setup.md)
+  - [Testing Through The Domain](doc/tttd.md)
 - [System Design](doc/system-design.md)
   - [Sum types](doc/sum-types.md)
 
