@@ -13,7 +13,7 @@ Try to avoid verifying data in the database,
 test whether the email was sent through the `EmailClient` instead of checking if the `sent=true` in the database.
 :smiley:
 
-Let me try and show you, consider two tests and their set-up with verifications:
+Let me illustrate; consider two tests and their set-up with verifications:
 
 Data oriented setup:
 ```kotlin
