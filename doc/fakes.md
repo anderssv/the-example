@@ -14,7 +14,7 @@ Sometimes you need other solutions.
 
 Unlike Mocks, you don't really need a library.
 Implement the interface you are faking, and put, update and fetch to/from the HashMap.
-:Rocket:
+:rocket:
 
 Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkward,
 and implementing SQL like searches in a DbRepoFake can feel weird.
