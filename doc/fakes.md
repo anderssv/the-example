@@ -9,7 +9,7 @@ called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
 # I make fakes like...
 It is quite simple really.
-Almost anything can be faked with a HashMap [[1](../src/test/kotlin/fakes/ApplicationRepositoryFake.kt)] [[2](../src/test/kotlin/fakes/UserNotificationFake.kt)].
+Almost anything can be faked with a HashMap [[1](../src/test/kotlin/fakes/ApplicationRepositoryFake.kt)] [[2](../src/test/kotlin/fakes/UserNotificationClientFake.kt)].
 Sometimes you need other solutions. 
 
 Unlike Mocks, you don't really need a library.
