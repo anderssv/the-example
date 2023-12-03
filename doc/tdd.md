@@ -14,7 +14,8 @@ To write good tests, they should be:
 - Fast
 
 There are a bunch of other attributes as well, but these are the things I tend to focus the most on.
-And these are the triangle of techniques that I use:
+
+And these are the main techniques that I use:
 
 - Easy wiring. Think like Spring context, but I prefer not to. :wink: Should also enable easy access to fakes for set-up. TODO
 - [Object Mother or similar patterns](test-setup.md) to centralise and re-use test data set-up. This makes it easier to find test data and write tests. It also reduces the exposure that each test has to the datastructures, and because of that it makes changes easier.
@@ -50,6 +51,16 @@ The good old days of measuring test coverage is over I hope, but I still measure
 
 [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html) gives a really nice overview of different considerations. But I find I am less methodical when deciding and use a lot of intuition.
 
+I tend to write two or three types of tests:
+- **IO tests** - No Fakes - Like testing HTTP calls to a third party provider. This makes sure the Client class performs as expected. Or Database repos.
+- **Variation tests** - Fakes - Focus in on a part of the system. Test the available variations. Example: In generating mail content it should have this section included if the recipient has X attribute.
+- **Outcome tests** - Fakes - This focuses on outcomes in interactions between components. Example: Was an email sent out with a rejected subject when the application was rejected?
+
+Try to avoid verifying data in the database,
+test whether the email was sent through the `EmailClient` instead of checking if the `sent=true` in the database.
+:smiley:
+
+# Switching between levels
 I usually start at (almost) "the top" of the feature I am trying to solve, and start typing. There are generally two things I look for then:
 - Is it easy to write the test? Why not? Is it worth fixing now? Probably...
 - When I make the first call to a service what underlying repos/adapters/clients do I need?
