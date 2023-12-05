@@ -2,9 +2,9 @@ Part of [TDD](tdd.md)
 
 Tests should be easy to set up and write.
 Luckily,
-some of the elements that makes tests easy to set up is also techniques that makes tests easier to maintain as well.
+some of the elements that make tests easy to set up is also techniques that make tests easier to maintain as well.
 
-When I write tests there are usually a few techniques that I use.
+When I write tests, there are usually a few techniques that I use.
 Some of them require a bit of investment at first,
 but when you get to something like test five and beyond, it really starts to pay off.
 
@@ -13,10 +13,10 @@ The main techniques are:
 - [Test Doubles, usually Fakes](fakes.md) to ease setup and also isolate individual tests from irrelevant changes in the system.
 - [Testing Through The Domain](tttd.md) to make writing tests more aligned with the domain, more "natural" and easier to maintain.
 
-# The main parts of a set up
+# The main parts of a set-up
 
 There is usually two main things that is set up:
-1. System - Think things like configuration and dependency injection. Might include DB connections and pools, or you should probably use [Fakes](fakes.md) as you default.
+1. System - Think things like configuration and dependency injection. It Might include DB connections and pools, or you should probably use [Fakes](fakes.md) as you default.
 2. State - Think rows in a database and/or storage, and any external service state in [test doubles](https://martinfowler.com/bliki/TestDouble.html).
 
 Number 1 can be solved through things like Spring, or as I prefer: [Manual Dependency Injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403).

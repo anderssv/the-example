@@ -44,18 +44,24 @@ flowchart LR
     TTTD --> ClarityTests
 ```
 
+It is not always easy to separate these levels, and they are kind of inter-connected and feed into each other.
+
 # Test everything?
 
-The good old days of measuring test coverage is over I hope, but I still measure it though. It is nice to see if it is trending upwards and downwards. And the tools that measure coverage can show _what_ is tested or not. That is important information in finding areas that *should* improve. :)
+The good old days of measuring test coverage is over I hope, but I still measure it though.
+It is nice to see if it is trending upwards or downwards.
+The tools that measure coverage can show _what_ is tested or not.
+That is important information in finding areas that *should* improve.
+:)
 
-[How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html) gives a really nice overview of different considerations. But I find I am less methodical when deciding and use a lot of intuition.
+[How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html) gives a really nice overview of different considerations. But I find I am less methodical when deciding and use my intuition.
 
 I tend to write two or three types of tests:
-- **IO tests** - No Fakes - Like testing HTTP calls to a third party provider. This makes sure the Client class performs as expected. Or Database repos.
-- **Variation tests** - Fakes - Focus in on a part of the system. Test the available variations. Example: In generating mail content it should have this section included if the recipient has X attribute.
-- **Outcome tests** - Fakes - This focuses on outcomes in interactions between components. Example: Was an email sent out with a rejected subject when the application was rejected?
+- **IO tests** — No Fakes — Like testing HTTP calls to a third party provider. This makes sure the Client class performs as expected. Or Database repos.
+- **Variation tests** — Fakes — Focus in on a part of the system. Test the available variations. Example: In generating mail content it should have this section included if the recipient has X attribute.
+- **Outcome tests** — Fakes — This focuses on outcomes in interactions between components. Example: Was an email sent out with a rejected subject when the application was rejected?
 
-Try to avoid verifying data in the database,
+Avoid verifying data in the database as much as possible,
 test whether the email was sent through the `EmailClient` instead of checking if the `sent=true` in the database.
 :smiley:
 
