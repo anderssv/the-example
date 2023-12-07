@@ -67,3 +67,4 @@ Also see [TDD](tdd.md) for some relevant considerations and articles about what 
 - [Test Doubles — Fakes, Mocks and Stubs](https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da)
 - [Test Doubles from the "Software Engineering at Google" book](https://abseil.io/resources/swe-book/html/ch13.html)
 - [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
+- [Prefer Fakes over Mocks](https://tyrrrz.me/blog/fakes-over-mocks)
