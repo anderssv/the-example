@@ -58,6 +58,6 @@ In addition to avoiding failures like this, the domain-oriented approach will:
 
 When you have changes in data structures or logic, how many places do you have to fix issues? TTTD will _reduce_ that. [Object Mother](https://martinfowler.com/bliki/ObjectMother.html) helps, but this is the missing companion to that.
 
-This is a small example, but these are the kind of changes that will ripple through your system and tests and make re-factoring slower and more error-prone. :smiley: It will also update all the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 
+This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone :smiley: By employing TTTD, it will update the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 
 
 Especially in Kotlin, this makes it much easier to have non-nullable fields with real values all over your domain. :rocket:
