@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 /**
  * This test shows concepts for Testing Through The Domain,
  * have a look at the theoretical description @see <a href="../../../../doc/tttd.md">of this here</a>
+ * [Here?](../../../../doc/tttd.md)
  */
 class TestingThroughTheDomainTest {
     private val applicationRepo = ApplicationRepositoryFake()
