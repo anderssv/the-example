@@ -8,7 +8,8 @@ interface ApplicationRepository {
 
     /**
      * Whether you want separate methods for each filter or do some andvanced filtering
-     * depends a bit on your data volumes and DB design. YMMV. :)
+     * depends a bit on your data volumes and DB design.
+     * YMMV.
      */
     fun getAllActiveApplications(): List<Application>
     fun addApplication(application: Application)

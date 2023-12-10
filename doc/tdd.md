@@ -1,6 +1,9 @@
 > This is the basis for some of the code examples in this repo. To jump straight into the test related example go to: [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
-Automated testing is always important to be able to go to production reliably. I find that I prefer to do TDD, and I think more people should too. But there seems to be some hurdles to get over for most people, and I think I know some decent ways to do just that. :)
+Automated testing is always important to be able to go to production reliably.
+I find that I prefer to do TDD, and I think more people should too.
+But there seems to be some hurdles to get over for most people, and I think I know some decent ways to do just that.
+:smile:
 
 Writing tests first has to be predictable and easy. I find that a certain combination of techniques gets me very close to that.
 
@@ -44,7 +47,7 @@ flowchart LR
     TTTD --> ClarityTests
 ```
 
-It is not always easy to separate these levels, and they are kind of inter-connected and feed into each other.
+It is not always easy to separate these levels, and they are kind of interconnected and feed into each other.
 
 # Test everything?
 
@@ -52,7 +55,7 @@ The good old days of measuring test coverage is over I hope, but I still measure
 It is nice to see if it is trending upwards or downwards.
 The tools that measure coverage can show _what_ is tested or not.
 That is important information in finding areas that *should* improve.
-:)
+:smile:
 
 [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html) gives a really nice overview of different considerations. But I find I am less methodical when deciding and use my intuition.
 
@@ -63,7 +66,7 @@ I tend to write two or three types of tests:
 
 Avoid verifying data in the database as much as possible,
 test whether the email was sent through the `EmailClient` instead of checking if the `sent=true` in the database.
-:smiley:
+:smile:
 
 # Switching between levels
 I usually start at (almost) "the top" of the feature I am trying to solve, and start typing. There are generally two things I look for then:

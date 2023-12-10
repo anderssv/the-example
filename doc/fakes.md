@@ -44,7 +44,7 @@ Once the method is implemented (with a HashMap), it is reusable across all your 
 
 # What about the rest?
 
-It all has to be tested. :smiley: By using fakes, I find that I do:
+It all has to be tested. :smile: By using fakes, I find that I do:
 
 - Dedicated repository tests to check input/output. Without Fakes.
 - Dedicated incoming tests for checking ok+error cases in APIs and HTTP endpoints, etc. With fakes.
@@ -53,7 +53,7 @@ It all has to be tested. :smiley: By using fakes, I find that I do:
 These aren't always exclusive.
 I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB).
 They run blazing fast.
-:smiley:
+:smile:
 
 The clue here is
 to being able

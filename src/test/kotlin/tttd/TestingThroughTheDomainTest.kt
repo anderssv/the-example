@@ -1,3 +1,5 @@
+package tttd
+
 import application.Application
 import application.ApplicationService
 import application.ApplicationStatus
@@ -8,7 +10,10 @@ import fakes.valid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
+/**
+ * This test shows concepts for Testing Through The Domain,
+ * have a look at the theoretical description @see <a href="../../../../doc/tttd.md">of this here</a>
+ */
 class TestingThroughTheDomainTest {
     private val applicationRepo = ApplicationRepositoryFake()
     private val notificationRepo = UserNotificationClientFake()
@@ -18,8 +23,9 @@ class TestingThroughTheDomainTest {
     /**
      * This test sets up the _data_ needed to run the test, and then verifies the result.
      *
-     * This kind of test is more brittle when the system changes, and is currently failing
-     * because storage of customers was introduced.
+     * It is currently failing because new requirements for storage of customers were introduced after writing this test.
+     *
+     * These kinds of tests are more brittle when the system changes.
      */
     @Test
     fun testDataOrientedTest() {
@@ -52,9 +58,8 @@ class TestingThroughTheDomainTest {
     }
 
     /**
-     * This is actually a bad test, but was used to introduce
-     * customer storage, as well as making sure the two previous
-     * ones did not have to change to show how they would break.
+     * This is actually a bad test, but was used to introduce customer storage.
+     * And keep the two previous ones unchanged to prove the point that the data-oriented one would change.
      */
     @Test
     fun testAddActiveCustomerWhenNewApplication() {
