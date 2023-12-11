@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 /**
  * This test shows concepts for Testing Through The Domain,
- * have a look at the theoretical description @see <a href="../../../../doc/tttd.md">of this here</a>
+ * have a look at the theoretical description in doc/tttd.md in this repo.
  */
 class TestingThroughTheDomainTest {
     private val applicationRepo = ApplicationRepositoryFake()
