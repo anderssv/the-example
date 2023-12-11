@@ -30,9 +30,12 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     open val clients = Clients()
 
     // The main components using the IO stuff that can be faked
-    val applicationService = ApplicationService(
-        repositories.applicationRepo,
-        clients.userNotificationClient,
-        repositories.customerRepository
-    )
+    // Using lazy here to get the overridden values from the subclass that overrides clients and repos
+    val applicationService by lazy {
+        ApplicationService(
+            repositories.applicationRepo,
+            clients.userNotificationClient,
+            repositories.customerRepository
+        )
+    }
 }
