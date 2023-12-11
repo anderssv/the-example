@@ -50,7 +50,7 @@ Now consider the changed requirements: __Approval needs to check whether you are
 
 > 🧨 The data-oriented test will fail on null-pointer in `service.approve(...)`. 
 
-> ✅ The domain-oriented test will work because the `service.registerInitialApplication` registers the customer, and then moves on.
+> ✅ The domain-oriented test will work because the `service.registerInitialApplication(...)` registers the customer, and then moves on.
 
 You can have a look here to see the different tests (including the new one after the new requirement): [TestingThroughTheDomainTest.kt](../src/test/kotlin/tttd/TestingThroughTheDomainTest.kt)
 
@@ -62,6 +62,8 @@ In addition to avoiding failures like this, the domain-oriented approach will:
 
 When you have changes in data structures or logic, how many places do you have to fix issues? TTTD will _reduce_ that. [Object Mother](https://martinfowler.com/bliki/ObjectMother.html) helps, but this is the missing companion to that.
 
-This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone 😄 By employing TTTD, it will update the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 
+This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone 😄 
 
-Especially in Kotlin, this makes it much easier to have non-nullable fields with real values all over your domain. :rocket:
+By employing TTTD, it will update the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 
+
+Especially in Kotlin, this makes it much easier to have non-nullable fields with real values all over your domain. 🚀
