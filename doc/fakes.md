@@ -27,9 +27,9 @@ But it is all worth it.
 The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at least it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
 - Changes in data structures. Hundreds of compiler errors when a central class changes?
 - Changes in behavior. Twenty tests to fix because the data added in your real code doesn't match test setup anymore?
-- Temporary issues outside your control. Network, third party downtime, test envs that are slow :boom:
-- Speed. It's all in memory baby. :heart: :fire:
-- Flakiness. If Fakes are flaky, you have other issues to figure out. :wink:
+- Temporary issues outside your control. Network, third party downtime, test envs that are slow 💥
+- Speed. It's all in memory baby. ♥️ 🔥
+- Flakiness. If Fakes are flaky, you have other issues to figure out. 😉
 
 # Isn't this a lot of work?
 
