@@ -8,7 +8,7 @@ Frameworks often seem appealing, but their automated nature can obscure vital fe
 This feedback is of immense value in enhancing your system structure.
 Remember, a framework isn't always necessary for these operations.
 
-> :white_check_mark: You can see dependency injection in [ApplicationContext.kt](../src/main/kotlin/application/ApplicationContext.kt)
+> ✅ You can see dependency injection in [ApplicationContext.kt](../src/main/kotlin/application/ApplicationContext.kt)
 and how to set up an ApplicationTestContext in [TestingThroughTheDomain.kt](../src/test/kotlin/tttd/TestingThroughTheDomainTest.kt).
 
 

@@ -7,7 +7,7 @@ This can be done in many ways,
 but most of them are described in [this classic article by Martin Fowler
 called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
-> :white_check_mark: You can find the example code in [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> ✅ You can find the example code in [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
 # I make fakes like...
 It is quite simple really.
@@ -40,13 +40,13 @@ It is perfectly fine to use IntelliJs "implement interface"
 function that leaves (exception throwing) TODOs for every method.
 Then you fix the ones needed to get your test passing.
 Rinse and repeat.
-:smile:
+😄
 
 Once the method is implemented (with a HashMap), it is reusable across all your tests. :trophy:
 
 # What about the rest?
 
-It all has to be tested. :smile: By using fakes, I find that I do:
+It all has to be tested. 😄 By using fakes, I find that I do:
 
 - Dedicated repository tests to check input/output. Without Fakes.
 - Dedicated incoming tests for checking ok+error cases in APIs and HTTP endpoints, etc. With fakes.
@@ -55,7 +55,7 @@ It all has to be tested. :smile: By using fakes, I find that I do:
 These aren't always exclusive.
 I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB).
 They run blazing fast.
-:smile:
+😄
 
 The clue here is
 to being able
