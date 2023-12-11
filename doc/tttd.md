@@ -2,7 +2,7 @@ Part of [TDD](tdd.md)
 
 ---
 
-> :white_check_mark: Testing Through The Domain was kind of a joke name because it was a bit hard to pronounce. It stuck for now. :smile:
+> Testing Through The Domain was kind of a joke name because it was a bit hard to pronounce. It stuck for now. :smile:
 
 This one is a bit hard to see, but I know it raises the level for tests and maintenance in the long run.
 It reduces irrelevant failures in tests and makes re-factoring easier.
