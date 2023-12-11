@@ -1,5 +1,7 @@
 Part of [TDD](tdd.md)
 
+---
+
 Tests should be easy to set up and write.
 Luckily,
 some of the elements that make tests easy to set up is also techniques that make tests easier to maintain as well.

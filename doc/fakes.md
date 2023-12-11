@@ -1,11 +1,13 @@
 Part of [TDD](tdd.md)
 
+---
+
 When writing tests, it is often important to isolate the tests.
 This can be done in many ways,
 but most of them are described in [this classic article by Martin Fowler
 called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
-> You can find the example code here: [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> :white_check_mark: You can find the example code here: [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
 # I make fakes like...
 It is quite simple really.

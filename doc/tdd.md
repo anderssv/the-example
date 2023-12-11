@@ -1,4 +1,4 @@
-> This is the basis for some of the code examples in this repo. To jump straight into the test related example go to: [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> :white_check_mark: This is the basis for some of the code examples in this repo. To jump straight into the test related example go to: [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
 Automated testing is always important to be able to go to production reliably.
 I find that I prefer to do TDD, and I think more people should too.

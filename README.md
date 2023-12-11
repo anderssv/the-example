@@ -6,6 +6,7 @@ A few notes on things I am trying to show in this code. You can find links to th
   - [Test Setup](doc/test-setup.md)
   - [Testing Through The Domain](doc/tttd.md)
 - [System Design](doc/system-design.md)
+  - [Manual Dependency Injection](manual-dependency-injection.md)
   - [Sum types](doc/sum-types.md)
 
 Reach out:

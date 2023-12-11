@@ -1,50 +1,21 @@
 package fakes
 
+import application.ApplicationContext
 import application.Application
-import application.ApplicationRepository
-import application.ApplicationRepositoryImpl
-import application.ApplicationService
-import customer.CustomerRepository
 import customer.CustomerRepositoryFake
-import customer.CustomerRepositoryImpl
-import notifications.UserNotificationClient
-import notifications.UserNotificationClientImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 /**
- * This represents the main DI context and should not be on the test scope. Leaving here for now.
- */
-@Suppress("LeakingThis")
-open class DependencyInjectionContext {
-    open class Repositories {
-        // Can be overridden in the subclass
-        open val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl()
-        open val customerRepository: CustomerRepository = CustomerRepositoryImpl()
-    }
-
-    open class Clients {
-        open val userNotificationClient: UserNotificationClient = UserNotificationClientImpl()
-    }
-
-    open val repositories = Repositories()
-    open val clients = Clients()
-
-    // The main components using the IO stuff that can be faked
-    val applicationService =
-        ApplicationService(repositories.applicationRepo, clients.userNotificationClient, repositories.customerRepository)
-}
-
-/**
  * Overrides the relevant properties to make them Fakes
  */
-class DependencyInjectionTestContext : DependencyInjectionContext() {
-    class Repositories : DependencyInjectionContext.Repositories() {
+class ApplicationTestContext : ApplicationContext() {
+    class Repositories : ApplicationContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
         override val customerRepository = CustomerRepositoryFake()
     }
 
-    class Clients : DependencyInjectionContext.Clients() {
+    class Clients : ApplicationContext.Clients() {
         override val userNotificationClient = UserNotificationClientFake()
     }
 
@@ -54,7 +25,7 @@ class DependencyInjectionTestContext : DependencyInjectionContext() {
 
 
 class ApplicationFakeTest {
-    private val testContext = DependencyInjectionTestContext()
+    private val testContext = ApplicationTestContext()
 
     @Test
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
