@@ -8,8 +8,8 @@ import java.util.*
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,
-    private val userNotificationClient: UserNotificationClient,
-    private val customerRepository: CustomerRepository
+    private val customerRepository: CustomerRepository,
+    private val userNotificationClient: UserNotificationClient
 ) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
