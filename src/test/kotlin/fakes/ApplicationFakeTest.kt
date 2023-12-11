@@ -1,31 +1,12 @@
 package fakes
 
-import application.ApplicationContext
 import application.Application
-import customer.CustomerRepositoryFake
+import system.SystemTestContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-/**
- * Overrides the relevant properties to make them Fakes
- */
-class ApplicationTestContext : ApplicationContext() {
-    class Repositories : ApplicationContext.Repositories() {
-        override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRepositoryFake()
-    }
-
-    class Clients : ApplicationContext.Clients() {
-        override val userNotificationClient = UserNotificationClientFake()
-    }
-
-    override val repositories = Repositories()
-    override val clients = Clients()
-}
-
-
 class ApplicationFakeTest {
-    private val testContext = ApplicationTestContext()
+    private val testContext = SystemTestContext()
 
     @Test
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {

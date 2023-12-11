@@ -8,9 +8,8 @@ Frameworks often seem appealing, but their automated nature can obscure vital fe
 This feedback is of immense value in enhancing your system structure.
 Remember, a framework isn't always necessary for these operations.
 
-> ✅ You can see dependency injection in [ApplicationContext.kt](../src/main/kotlin/application/ApplicationContext.kt)
-and how to set up an ApplicationTestContext in [TestingThroughTheDomain.kt](../src/test/kotlin/tttd/TestingThroughTheDomainTest.kt).
-
+> ✅ You can see dependency injection in [SystemContext.kt](../src/main/kotlin/system/SystemContext.kt)
+and how to set up a separate context for testing in [SystemTestContext](../src/test/kotlin/system/SystemTestContext.kt).
 
 So I usually do manual dependency injection. Because:
 - I spend less time on Google figuring out which annotation or XML/JSON/YAML element to specify.

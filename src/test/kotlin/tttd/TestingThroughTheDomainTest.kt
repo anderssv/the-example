@@ -1,11 +1,8 @@
 package tttd
 
 import application.Application
-import application.ApplicationService
 import application.ApplicationStatus
-import customer.CustomerRepositoryFake
-import fakes.ApplicationRepositoryFake
-import fakes.UserNotificationClientFake
+import system.SystemTestContext
 import fakes.valid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,10 +12,7 @@ import org.junit.jupiter.api.Test
  * have a look at the theoretical description in doc/tttd.md in this repo.
  */
 class TestingThroughTheDomainTest {
-    private val applicationRepo = ApplicationRepositoryFake()
-    private val notificationRepo = UserNotificationClientFake()
-    private val customerRepo = CustomerRepositoryFake()
-    private val appService = ApplicationService(applicationRepo, notificationRepo, customerRepo)
+    private val testContext = SystemTestContext()
 
     /**
      * This test sets up the _data_ needed to run the test, and then verifies the result.
@@ -29,14 +23,16 @@ class TestingThroughTheDomainTest {
      */
     @Test
     fun testDataOrientedTest() {
-        val application = Application.valid()
+        with(testContext) {
+            val application = Application.valid()
 
-        // Data is set up, store directly in DB. Ignoring anything else the
-        // system does to reach the state.
-        applicationRepo.addApplication(application)
-        appService.approveApplication(application.id)
+            // Data is set up, store directly in DB. Ignoring anything else the
+            // system does to reach the state.
+            repositories.applicationRepo.addApplication(application)
+            applicationService.approveApplication(application.id)
 
-        assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+        }
     }
 
     /**
@@ -47,14 +43,16 @@ class TestingThroughTheDomainTest {
      */
     @Test
     fun testDomainOrientedTest() {
-        val application = Application.valid()
+        with(testContext) {
+            val application = Application.valid()
 
-        // Start the process of registering application, thus manipulating through the system and
-        // getting everything in a consistent state
-        appService.registerInitialApplication(application)
-        appService.approveApplication(application.id)
+            // Start the process of registering application, thus manipulating through the system and
+            // getting everything in a consistent state
+            applicationService.registerInitialApplication(application)
+            applicationService.approveApplication(application.id)
 
-        assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+        }
     }
 
     /**
@@ -63,12 +61,14 @@ class TestingThroughTheDomainTest {
      */
     @Test
     fun testAddActiveCustomerWhenNewApplication() {
-        val application = Application.valid()
+        with(testContext) {
+            val application = Application.valid()
 
-        appService.registerInitialApplication(application)
-        appService.approveApplication(application.id)
+            applicationService.registerInitialApplication(application)
+            applicationService.approveApplication(application.id)
 
-        assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
-        assertThat(customerRepo.getCustomer(application.name).name).isEqualTo(application.name)
+            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+            assertThat(repositories.customerRepository.getCustomer(application.name).name).isEqualTo(application.name)
+        }
     }
 }
