@@ -19,4 +19,7 @@ class SystemTestContext : SystemContext() {
 
     override val repositories = Repositories()
     override val clients = Clients()
+
+    // Notice how only the things that are fakes are overridden.
+    // ApplicationService is inherited (and wired) from the parent.
 }
