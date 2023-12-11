@@ -42,7 +42,7 @@ fun testDomainOrientedTest() {
 }
 ```
 
-They both pass, and everything is green. There is just a tiny difference, the usage of the service to change the state of the domain. ✅
+They both pass, and everything is green. __There is just a tiny difference; the usage of the service to change the state of the domain__. ✅
 
 ### New requirements
 
