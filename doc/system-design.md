@@ -6,5 +6,6 @@ Distilled:
 - Parse at the edges, operate on strongly typed objects after that
 - Validate at the edges, have as few variations as possible "inside" the onion
 
-- See [Sum Types](sum-types.md) for a test of how to make Jackson/JSON-parsing validate and "tighten" the variance as early as possible.
+Sections:
 - [Manual Dependency Injection](manual-dependency-injection.md)
+- [Sum Types](sum-types.md) desciber how to make Jackson/JSON-parsing validate and "tighten" the variance as early as possible.
