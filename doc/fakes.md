@@ -42,7 +42,7 @@ Then you fix the ones needed to get your test passing.
 Rinse and repeat.
 😄
 
-Once the method is implemented (with a HashMap), it is reusable across all your tests. :trophy:
+Once the method is implemented (with a HashMap), it is reusable across all your tests. 🏆
 
 # What about the rest?
 
