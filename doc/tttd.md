@@ -48,7 +48,9 @@ They both pass, and everything is green. There is just a tiny difference, the us
 
 Now consider the changed requirements: __Approval needs to check whether you are still an active customer when approving the application.__ 
 
-> The data-oriented test will fail on null-pointer in `service.approve(...)`. The domain-oriented test will work because the `service.registerInitialApplication` registers the customer, and then moves on.
+> 🧨 The data-oriented test will fail on null-pointer in `service.approve(...)`. 
+
+> ✅ The domain-oriented test will work because the `service.registerInitialApplication` registers the customer, and then moves on.
 
 You can have a look here to see the different tests (including the new one after the new requirement): [TestingThroughTheDomainTest.kt](../src/test/kotlin/tttd/TestingThroughTheDomainTest.kt)
 
