@@ -3,17 +3,28 @@ Part of [TDD](tdd.md)
 ---
 
 Tests should be easy to set up and write.
+And implementing the actual features should be the focus.
+So by using some techniques, it is possible to ease writing and maintenance.
 Luckily,
-some of the elements that make tests easy to set up is also techniques that make tests easier to maintain as well.
+some of the elements that make tests easy to set up are also techniques that make tests easier to maintain.
 
-When I write tests, there are usually a few techniques that I use.
-Some of them require a bit of investment at first,
-but when you get to something like test five and beyond, it really starts to pay off.
+Test data set up has to be:
+- Fast to use. Writing new tests should be fast and let you focus on making the features you need.
+- Resilient to unrelated changes. When the system changes, tests that do not test relevant features should not be affected. If all tests set up data independently, all tests will have to be updated when prerequisites change.
 
-The main techniques are:
+The most important techniques I use are:
 - [Object Mother or similar patterns](https://martinfowler.com/bliki/ObjectMother.html) to set up test data in a way that is quick, but also isolates the individual tests against irrelevant changes in the domain and system. This is the main focus of this part.
 - [Test Doubles, usually Fakes](fakes.md) to ease setup and also isolate individual tests from irrelevant changes in the system.
 - [Testing Through The Domain](tttd.md) to make writing tests more aligned with the domain, more "natural" and easier to maintain.
+
+# Object mother and more in Kotlin
+
+I think Kotlin has some really nice features that helps in this regard.
+When it comes to set up test data it is important:
+- It has a logical location. If not, people will duplicate set up in many places.
+- Standardized, but flexible. Easy to get the standard, modify easily for the common cases, and simple to isolate for corner cases.
+
+
 
 # The main parts of a set-up
 
