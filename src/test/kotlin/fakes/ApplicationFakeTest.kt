@@ -48,15 +48,14 @@ class ApplicationFakeTest {
             applicationService.expireApplications()
 
             assertThat(applicationService.openApplicationsFor(application.name)).isEmpty()
-            // Notice how this method is a Fake specific method.
-            // Try to focus on verifying the system results, but sometimes you need to validate
-            // the interactions as well.
-            // Then we can define specific methods to verify that information has been "sent".
             clients.userNotificationClient.getNotificationForUser(application.name).also {
                 // Notice how this is a specific method in the Fake. In the case of something
                 // like e-mail, there is no way of fetching the actual messages after the fact.
                 // So this method is used to verify the outcome, which should be that notifications
                 // are sent to the user.
+                //
+                // Try to focus on verifying the system results, but sometimes you need to validate
+                // the interactions as well.
                 assertThat(it).isNotEmpty
                 assertThat(it).contains("Your application ${application.id} has expired")
             }
