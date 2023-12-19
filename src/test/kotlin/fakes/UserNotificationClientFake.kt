@@ -7,6 +7,8 @@ class UserNotificationClientFake : UserNotificationClient {
 
     /**
      * Only in the Fake
+     *
+     * Lets us verify that the user was indeed notified given a sequence of events in the system
      */
     fun getNotificationForUser(name: String): List<String> {
         return notifications.getOrDefault(name, emptyList())
