@@ -19,9 +19,9 @@ The most important techniques I use are:
 
 # Object mother and more in Kotlin
 
-I think Kotlin has some really nice features that helps in this regard.
-When it comes to set up test data it is important:
-- It has a logical location. If not, people will duplicate set up in many places.
+I think Kotlin has some really nice features that help in this regard.
+When it comes to set up test data, it is important:
+- It has a logical location. If not, people will duplicate a set up in many places.
 - Standardized, but flexible. Easy to get the standard, modify easily for the common cases, and simple to isolate for corner cases.
 
 
