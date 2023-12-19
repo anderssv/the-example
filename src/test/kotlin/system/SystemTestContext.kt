@@ -12,6 +12,8 @@ import fakes.UserNotificationClientFake
  *
  * See here for the super class that this test context inherits/overrides:
  * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
+ * 
+ * To see usage, you can see here: https://github.com/anderssv/the-example/blob/main/src/test/kotlin/tttd/TestingThroughTheDomainTest.kt#L26
  */
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
