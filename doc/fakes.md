@@ -24,12 +24,47 @@ But it is all worth it.
 
 # Why fakes?
 
-The different test doubles are all useful, but in general I tend to start with Fakes first. For everything. Even the local database. It's not without its downsides, but at least it is fast. I find Fakes to strike the best balance and be less vulnerable to the following things:
-- Changes in data structures. Hundreds of compiler errors when a central class changes?
-- Changes in behavior. Twenty tests to fix because the data added in your real code doesn't match test setup anymore?
-- Temporary issues outside your control. Network, third party downtime, test envs that are slow 💥
-- Speed. It's all in memory baby. ♥️ 🔥
-- Flakiness. If Fakes are flaky, you have other issues to figure out. 😉
+The different test doubles are all useful, but in general I tend to start with Fakes first.
+For everything.
+Even the local database.
+It's not without its downsides, but at least it is fast.
+I find Fakes to strike the best balance and be less vulnerable to changes that should not affect them:
+- They are instantly re-usable across tests as they mimic the integration/component they represent. ⚙️
+- Changes in data structures are easier as there are fewer tests that set up things in different ways. Hundreds of compiler errors when a central class changes are no longer something that happens.
+- Changes in behavior fail fewer tests that should not be affected by the change. Twenty tests to fix because the data added in your real code doesn't match test setup anymore? It's gone. 😎
+- No temporary issues outside your control. Network, third party downtime, test envs that are slow. 💥
+- Blazing Speed. It's all in memory baby. ♥️ 🔥
+- No Flakiness. If Fakes are flaky, you have other issues to figure out. 😉
+
+# Verifying interactions and failures
+
+When you write tests,
+and you use Fakes, you might find that you are missing the good old verifications of your beloved Mock framework.
+And there are cases where you need those,
+but the short answer is that you should verify system state as a _result_ of interactions.
+
+Let us say you are registering Applications,
+and the registering process requires some updated info from an external system let's call it NationalCompanyRegistry.
+
+You should:
+- Add a specific company to the NationalCompanyRegistryFake.
+- Verify that after system processing the Application is registered with information _from_ the registry.
+
+If you really need to verify that the Fake received some information or was called, you can create custom methods
+(only available in the Fake, not the interface) to verify those.
+You can se an example of such a method here:
+[https://github.com/anderssv/the-example/blob/main/src/test/kotlin/fakes/UserNotificationClientFake.kt#L13](https://github.com/anderssv/the-example/blob/main/src/test/kotlin/fakes/UserNotificationClientFake.kt#L13)
+
+## Testing errors
+
+Sometimes you will also need to test error situations.
+I usually do this by creating a custom method and map in the Fake to register an error.
+
+This way the test sets up the expectations, like ```nationalCompanyRegistryFake.failOnOrgNumber("...")```.
+
+Some (very few times), I need to reliably test something like a 500-error code.
+Then even I use mocks.
+But I can honestly say that this has been max 5 times the last 5 years.
 
 # Isn't this a lot of work?
 
@@ -53,16 +88,16 @@ It all has to be tested. 😄 By using fakes, I find that I do:
 - Domain oriented tests. With fakes.
 
 These aren't always exclusive.
-I actually run most edge tests with a "full system", except for Fakes on any external dependencies (including DB).
+I actually run most-edge tests with a "full system", except for Fakes on any external dependencies (including DB).
 They run blazing fast.
 😄
 
 The clue here is
 to being able
 to express and test all the unique combinations the system has to cater for in the domain-oriented tests with fakes,
-and then have basic sanity checks for the "outer edges".
+and then have basic sanity checks for the "outer edges."
 
-Also see [TDD](tdd.md) for some relevant considerations and articles about what to test when.
+Also see the [TDD](tdd.md) page for some relevant considerations and articles about what to test when.
 
 # Related reading
 - [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)

@@ -51,7 +51,7 @@ It is not always easy to separate these levels, and they are kind of interconnec
 
 # Test everything?
 
-The good old days of measuring test coverage is over I hope, but I still measure it though.
+The good old days of measuring test coverage are over, I hope, but I still measure it.
 It is nice to see if it is trending upwards or downwards.
 The tools that measure coverage can show _what_ is tested or not.
 That is important information in finding areas that *should* improve.
@@ -60,7 +60,7 @@ That is important information in finding areas that *should* improve.
 [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html) gives a really nice overview of different considerations. But I find I am less methodical when deciding and use my intuition.
 
 I tend to write two or three types of tests:
-- **IO tests** — No Fakes — Like testing HTTP calls to a third party provider. This makes sure the Client class performs as expected. Or Database repos.
+- **IO tests** — No Fakes — Like testing HTTP calls to a third party provider. Or testing the SQL in a DB Repo. This makes sure the Client/Repository class performs as expected.
 - **Variation tests** — Fakes — Focus in on a part of the system. Test the available variations. Example: In generating mail content it should have this section included if the recipient has X attribute.
 - **Outcome tests** — Fakes — This focuses on outcomes in interactions between components. Example: Was an email sent out with a rejected subject when the application was rejected?
 
@@ -73,27 +73,11 @@ I usually start at (almost) "the top" of the feature I am trying to solve, and s
 - Is it easy to write the test? Why not? Is it worth fixing now? Probably...
 - When I make the first call to a service what underlying repos/adapters/clients do I need?
 
-The last point often makes me switch to a different mode: Prepare the "bottom" for what I need to fix the entire feature. Then I might switch to dedicated tests for something like "find all expired applications in the database", before I return up top again. This cycle will be repeated multiple times while developing a feature.
-
-```mermaid
-stateDiagram-v2
-    [*] --> SetUp
-    SetUp --> FixSetUp: Hard?
-    SetUp --> HighLevelTest
-    FixSetUp --> HighLevelTest: Make set up great again!
-    HighLevelTest --> AddToService
-    AddToService --> LowLevelTest: Oh, I need this thing
-    state LowLevelTest {
-      [*] --> WriteLowLevelTest
-      WriteLowLevelTest --> AddToClient
-      AddToClient --> AssertLowLevel
-      AssertLowLevel --> [*]
-    }
-    LowLevelTest --> HighLevelTest: That was easy!
-    AddToService --> AssertFeature: Don't forget to make<br/>assertions great too!
-    AssertFeature --> [*]
-
-```
+The last point often makes me switch to a different mode:
+Prepare the "bottom" for what I need to fix the entire feature.
+Then I might switch to dedicated tests for something like "find all expired applications in the database,"
+before I return up top again.
+This cycle will be repeated multiple times while developing a feature.
 
 # Related reading
 - [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html)
