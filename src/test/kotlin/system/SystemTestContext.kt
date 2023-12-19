@@ -6,7 +6,11 @@ import fakes.UserNotificationClientFake
 
 /**
  * Overrides the relevant properties to make them Fakes
- * See here for the super class that this test context inherits/overrides: 
+ *
+ * Notice that this Context only overrides the Repos/Clients with fakes.
+ * The actual injection of Services (that I usually don't fake) is done in the superclass via the lazy construct.
+ *
+ * See here for the super class that this test context inherits/overrides:
  * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
  */
 class SystemTestContext : SystemContext() {
@@ -22,6 +26,4 @@ class SystemTestContext : SystemContext() {
     override val repositories = Repositories()
     override val clients = Clients()
 
-    // Notice how only the things that are fakes are overridden.
-    // ApplicationService is inherited (and wired) from the parent.
 }

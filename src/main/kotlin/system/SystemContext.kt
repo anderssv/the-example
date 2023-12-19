@@ -14,6 +14,9 @@ import notifications.UserNotificationClientImpl
  * Using lazy for the implementations here as we don't want them to load if overridden.
  * This can be important for third party integrations and DBs.
  * If you know a better way, please let me know.
+ *
+ * See here for a subclass that overrides the relevant parts with fakes:
+ * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/system/SystemTestContext.kt
  */
 @Suppress("LeakingThis")
 open class SystemContext { // You can pass things like config and DB in here, YMMV
