@@ -6,6 +6,8 @@ import fakes.UserNotificationClientFake
 
 /**
  * Overrides the relevant properties to make them Fakes
+ * See here for the super class that this test context inherits/overrides: 
+ * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
  */
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
