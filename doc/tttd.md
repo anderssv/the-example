@@ -35,7 +35,7 @@ Domain oriented setup:
 fun testDomainOrientedTest() {
     val application = Application.valid()
 
-    appService.registerInitialApplication(application)
+    appService.registerInitialApplication(application) // Using a service to mutate system state instead of setting it with a repo
     appService.approveApplication(application.id)
 
     assertThat(applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
