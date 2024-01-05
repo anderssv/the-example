@@ -62,6 +62,12 @@ In addition to avoiding failures like this, the domain-oriented approach will:
 
 When you have changes in data structures or logic, how many places do you have to fix issues? TTTD will _reduce_ that. [Object Mother](https://martinfowler.com/bliki/ObjectMother.html) helps, but this is the missing companion to that.
 
+If you manage
+to evolve your domain,
+to make it easy to set up and manipulate state through tests, the readability of your code will improve greatly.
+Be focused and keep at it.
+This is a big contrast to writing tests after where you just make the tests fit your existing code.
+
 This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone 😄 
 
 By employing TTTD, it will update the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 

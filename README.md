@@ -1,5 +1,7 @@
 Hi. This is a small collection of code I hope shows some good concepts. Please let me know what you think. 😄
 
+This repo is updated continuously, so be sure to star and watch it for updates.
+
 A few notes on things I am trying to show in this code. You can find links to the specific examples on each page (if there are any):
 - [Test Driven Development](doc/tdd.md)
   - [Test Fakes](doc/fakes.md)
