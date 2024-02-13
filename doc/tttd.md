@@ -4,14 +4,14 @@ Part of [TDD](tdd.md)
 
 > ✅ Testing Through The Domain was kind of a joke name because it was a bit hard to pronounce. It stuck for now. 😄
 
-This one is a bit hard to see, but I know it raises the level for tests and maintenance in the long run.
+The details of this are a bit subtle, but I know it raises the level for tests and maintenance in the long run.
 It reduces irrelevant failures in tests and makes re-factoring easier.
 To try and explain the concept, I categorize tests into two categories:
 
-- Data oriented tests—Sets up the expected data and verifies the state in storage is correct afterward.
-- Domain oriented tests—Sets up input data, modifies through steps in the system and verifies that the system responds correctly at the end.
+- Data oriented tests — Sets up the expected data and verifies the state in storage is correct afterward.
+- Domain oriented tests — Sets up input data, modifies through steps in the system and verifies that the system responds correctly at the end.
 
-You can see [TDD](tdd.md) for a description om some other test categories and levels.
+You can see [TDD](tdd.md) for a description om some different test levels.
 
 ## An example
 Consider two tests and their set-up with verifications:
@@ -68,8 +68,12 @@ to make it easy to set up and manipulate state through tests, the readability of
 Be focused and keep at it.
 This is a big contrast to writing tests after where you just make the tests fit your existing code.
 
-This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone 😄 
+This is a small example, but these are the kind of changes that will usually ripple through your system and tests and make re-factoring slower and more error-prone. 😄 
 
-By employing TTTD, it will update the data-structures that you don't really need (or know that you need) in your tests such that you are testing a consistent state in your domain all the time. 
+By applying TTTD,
+changes will update the data-structures that you don't really need (or know that you need)
+in your tests such that you are testing a consistent state in your domain all the time. 
 
-Especially in Kotlin, this makes it much easier to have non-nullable fields with real values all over your domain. 🚀
+Especially for Kotlin, this makes it much easier to have non-nullable fields with real values all over your domain. 🚀 😊
+
+Let me [know what you think](../README.md).
