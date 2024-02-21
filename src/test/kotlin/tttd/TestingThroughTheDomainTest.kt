@@ -3,7 +3,7 @@ package tttd
 import application.Application
 import application.ApplicationStatus
 import system.SystemTestContext
-import fakes.valid
+import application.valid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

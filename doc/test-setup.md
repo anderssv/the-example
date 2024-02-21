@@ -9,7 +9,7 @@ Luckily,
 the elements that make tests easy to set up are also techniques that make tests easier to maintain.
 
 Test data set up has to be:
-- Fast to use. Writing new tests should be fast and let you focus on the features you need.
+- Intuitive to use. You shouldn't need to think a lot about the set up. The feature should be the hard part.
 - Resilient to unrelated changes. When the system changes, tests that do not test relevant features should not be affected. If all tests set up data independently, all tests will have to be updated when the domain changes.
 
 The most important techniques I use are:
@@ -25,17 +25,21 @@ When it comes to set up test data, it is important that:
 - It has a logical location. If not, people will duplicate a set up in many places.
 - It is standardized, but flexible. Easy to get the defaults, modify easily for the common cases, and simple to modify for corner cases.
 
-# The main parts of a set-up
+# Setting up both the data and the system
 
-There is usually two main things that is set up:
-1. System - Think things like configuration and dependency injection. It Might include DB connections and pools, or you should probably use [Fakes](fakes.md) as you default.
-2. State - Think rows in a database and/or storage, and any external service state in [test doubles](https://martinfowler.com/bliki/TestDouble.html).
+Getting the right test data set up is just half the job.
+You also need to set the system to use those data.
+I usually think the system setup to have two parts:
+1. System - Things like configuration and dependency injection. It Might include DB connections and pools, or you should probably use [Fakes](fakes.md) as you default.
+2. State - Like rows in a database and/or storage, and any external service state in [test doubles](https://martinfowler.com/bliki/TestDouble.html).
 
 Number 1 can be solved through things like Spring, or as I prefer: [Manual Dependency Injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403).
 
-Number two can be solved with variations of Object Mother and [fakes](fakes.md).
+Number two can be solved with variations of Object Mother, [Testing Through The Domain](tttd.md) and [fakes](fakes.md).
 
-# Examples
+# Example
+
+This is parts of the code in this repository. Follow the links to browse around the full classes and setup.
 
 ## Setting up test data
 
@@ -52,6 +56,7 @@ fun Application.Companion.valid(addToMonth: Long = 0) = Application(
     status = ApplicationStatus.ACTIVE
 )
 ```
+See [TestExtensinsions.kt](../src/test/kotlin/application/TestExtensions.kt) for the source.
 
 Then, whenever you need an application in your tests, you write:
 
@@ -59,10 +64,10 @@ Then, whenever you need an application in your tests, you write:
 val application = Application.valid()
 ```
 
-You usually know which class you need, and you can see from the auto-complete which methods are available.
+You usually know which class you need, and through auto-complete you see which methods are available.
 
 There can be variations of this:
-- The ```valid()``` method has parameters that make it easy to set up common variations. This is usually used for more complex setup that would be nesting a bit deep in the hierarchy. ```PaymentBasket.valid(numberOfTransactions = 4)``` is one example.
+- The ```valid()``` method has parameters that make it easy to set up common variations. I usually use this for more complex setup that would be nesting a bit deep in the hierarchy. ```PaymentBasket.valid(numberOfTransactions = 4)``` is one example.
 - You could have something like ```invalid()``` if that is a common case you need to test.
 - You don't have to complicate these methods, as in Kotlin you can do this: ```Application.valid().copy(birthDate = LocalDate.of(1970, 2, 23)) ```. This helps clarify what the test really is about as you read it in the actual test.
 

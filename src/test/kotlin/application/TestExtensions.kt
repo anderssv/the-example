@@ -1,4 +1,4 @@
-package fakes
+package application
 
 import application.Application
 import application.ApplicationStatus
