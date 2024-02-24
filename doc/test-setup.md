@@ -8,46 +8,55 @@ By using certain techniques, it is possible to make writing and maintenance easi
 Luckily,
 the elements that make tests easy to write are also techniques that make tests easier to maintain over time.
 
-Test set up has to be:
-- Intuitive. You should not need to think hard about the set-up. The feature should be the hard part.
-- Resilient to unrelated changes. When the system changes, tests that do not test relevant features should not have to change. If all tests set up data independently, all tests will have to be updated when the domain changes.
+# Quick, and maintainable
 
-The most important techniques I use are:
-- [Object Mother or similar patterns](https://martinfowler.com/bliki/ObjectMother.html) to set up test data in a way that is quick, but also isolates the individual tests against irrelevant changes in the domain and system. This is the main focus of this part.
-- [Test Doubles, usually Fakes](fakes.md) to ease setup and also isolate individual tests from irrelevant changes in the system.
-- [Testing Through The Domain](tttd.md) to make writing tests more aligned with the domain, more "natural" and easier to maintain.
+When I write tests, I try to make the set-up:
 
-A more indepth description of each can be in the links.
-This article will mainly focus on the context and test data set-up.
+- Intuitive. You should not need to think very hard about the set-up. The feature should be what you focus on.
+- Resilient to unrelated changes.
+  When the system changes, tests that do not test relevant features should not have to
+  change.
+  If all tests set up its data independently, all tests will have to be updated when the domain changes.
+- In a logical location. If not, people will duplicate a set-up in many places.
+- Standardized, but flexible.
+  Quick to get the defaults, modify easily for the common cases, and simple to modify for
+  corner cases.
 
-# Object mother and more in Kotlin
+In Kotlin, I think [extension functions](https://kotlinlang.org/docs/extensions.html)
+and [data classes (with copy methods)](https://kotlinlang.org/docs/data-classes.html) are perfect
+for achieving some of this.
 
-I think Kotlin has some really nice features that help in this regard.
+The example in this repo is a distillation of the techniques I use the most.
+Go to [TDD](tdd.md)
+to see the full context and description of patterns like [Fakes for Test Doubles](fakes.md)
+and [Testing Through The Domain](tttd.md).
 
-When it comes to test set-up, it is important that:
-- It has a logical location. If not, people will duplicate a set-up in many places.
-- It is standardized, but flexible. Easy to get the defaults, modify easily for the common cases, and simple to modify for corner cases.
+The below examples will mainly focus on the context and test data set-up.
 
 # Setting up both the data and the system
 
 Getting the right test data set-up is just half the job.
 You also need to set the system to use those data.
 
-I usually think the set-up have two parts:
-1. System—Things like configuration and dependency injection. It Might include DB connections and pools, or you should probably use [Fakes](fakes.md) as you default.
-2. State—Like rows in a database and/or storage, and any external service state in [test doubles](https://martinfowler.com/bliki/TestDouble.html).
+The set-up has two parts:
 
-Number 1 can be solved through things like Spring, or as I prefer: [Manual Dependency Injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403).
+1. System—Things like configuration and dependency injection.
+   It Might include DB connections and pools, or you should
+   probably use [Fakes](fakes.md) as you default (yes, even for most DB Repositories).
+2. State—Like rows in a database and/or storage, and any external service state
+   in [test doubles](https://martinfowler.com/bliki/TestDouble.html).
+
+Number 1 can be solved through things like Spring, or as I
+prefer: [Manual Dependency Injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403).
 
 Number two can be solved with variations of Object Mother, [Testing Through The Domain](tttd.md) and [fakes](fakes.md).
 
-# Example
-
-This is only part of the code in the GitHub repository. Follow the links to browse around the full classes and setup.
-
 ## Setting up test data
 
-To make test data easy to find, I like to use extension methods in Kotlin.
+[Object Mother or similar patterns](https://martinfowler.com/bliki/ObjectMother.html) are ways to re-use and maintain
+test data set-up.
+Like I mentioned,
+Kotlin has some really nice features that help in this regard with extension functions and data classes.
 
 This is an extension method (only in test scope) that is available for an Application:
 
@@ -60,35 +69,47 @@ fun Application.Companion.valid(addToMonth: Long = 0) = Application(
     status = ApplicationStatus.ACTIVE
 )
 ```
+
 See [TestExtensions.kt](../src/test/kotlin/application/TestExtensions.kt) for the source.
 
-Then, whenever you need an application in your tests, you write:
+You can see it has "sensible" defaults that can be used in most places,
+and a parameter for a simpler manipulation of the application date.
+
+Then, whenever you need an application set up with data in your tests, you write:
 
 ```kotlin
 val application = Application.valid()
 ```
 
+Putting it as an extension method on the class makes it really easy to find.
 You usually know which class you need, and through auto-complete you see which methods are available.
 
 There can be variations of this:
-- The ```valid()``` method has parameters that make it easy to set up common variations. I usually use this for more complex setup that would be nesting a bit deep in the hierarchy. ```PaymentBasket.valid(numberOfTransactions = 4)``` is one example.
-- You could have something like ```invalid()``` if that is a common case you need to test.
-- You don't have to complicate these methods, as in Kotlin you can do this: ```Application.valid().copy(birthDate = LocalDate.of(1970, 2, 23)) ```. This helps clarify what the test really is about as you read it in the actual test.
 
-Another technique you can consider looking into is creating a test DSL ([Kotlin is great for DSLs](https://kotlinlang.org/docs/type-safe-builders.html#how-it-works)).
-But this can get really complex, really fast.
-So I only do it if I have core logic that is complex and needs really through testing.
-I often find myself grasping for this tool when I have to deal with time variations.
+- The ```valid()``` method has parameters that make it easy to set up common variations.
+  I usually use this for more
+  complex setup that would be nesting a bit deep in the hierarchy. ```PaymentBasket.valid(numberOfTransactions = 4)```
+  is one example.
+  This of course also uses ```Transaction.valid()``` inside it.
+- You could have something like ```invalid()``` if that is a common case you need to test.
+- You don't have to complicate these methods for every variation your need.
+  In Kotlin, you can do
+  this: ```Application.valid().copy(birthDate = LocalDate.of(1970, 2, 23)) ```.
+  This helps clarify what the test really
+  is about, as you read it in the actual test.
 
 ## Setting up the system
+
 Setting up a dependency-injected test context should be as easy as:
 
 ```kotlin
 private val testContext = SystemTestContext()
 ```
+
 There are always some DB dependencies etc. to set up too, but that will have to wait for a later post.
 
 The SystemTestContext then looks like this:
+
 ```kotlin
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
@@ -119,14 +140,25 @@ with(testContext) {
     // ...
 }
 ```
+
 Both ```repositories.applicationRepo``` and ```applicationService``` are objects from the ApplicationTestContext.
 The ApplicationTestContext is then used in many of the tests, making everything available with very little setup.
 
-The ```with()``` function is one of the [scope functions in Kotlin](https://kotlinlang.org/docs/scope-functions.html#functions)
+The ```with()``` function is one of
+the [scope functions in Kotlin](https://kotlinlang.org/docs/scope-functions.html#functions)
 that makes this kind of code nice.
 But you can survive fine without.
 😊
 
+# Other techniques to consider
+
+Another technique you can consider looking into is creating a test
+DSL ([Kotlin is great for DSLs](https://kotlinlang.org/docs/type-safe-builders.html#how-it-works)).
+But this can get really complex, really fast.
+So I only do it if I have core logic that is complex and needs really through testing.
+I often find myself grasping for this tool when I have to deal with time variations.
+
 # Related reading
+
 - [Easy and maintainable test data—The Kotlin way](https://anderssv.medium.com/easy-and-maintainable-test-data-the-kotlin-way-9ecbbf53d822)
 - [Manual Dependency Injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403)
