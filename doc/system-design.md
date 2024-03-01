@@ -1,3 +1,5 @@
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
+
 # System Design
 
 Mainly inspired by [Onion Architecture](https://medium.com/@alessandro.traversi/understanding-onion-architecture-an-example-folder-structure-9c62208cc97d#:~:text=Onion%20Architecture%20is%20a%20software,easier%20to%20evolve%20over%20time.).

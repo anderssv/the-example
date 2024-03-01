@@ -2,10 +2,13 @@ Part of [TDD](tdd.md)
 
 ---
 
-> ✅ Testing Through The Domain was kind of a joke name because it was a bit hard to pronounce. It stuck for now. 😄
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
 
 The details of this are a bit subtle, but I know it raises the level for tests and maintenance in the long run.
 It reduces irrelevant failures in tests and makes re-factoring easier.
+
+> ✅ Testing Through The Domain was kind of a joke name because it was a bit hard to pronounce. It stuck for now. 😄
+
 To try and explain the concept, I categorize tests into two categories:
 
 - Data oriented tests — Sets up the expected data and verifies the state in storage is correct afterward.

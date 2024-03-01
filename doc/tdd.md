@@ -1,9 +1,11 @@
-> ✅ This is the basis for some of the code examples in this repo. To jump straight into the test related example go to [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
 
 Automated testing is always important to be able to go to production reliably.
 I find that I prefer to do TDD, and I think more people should too.
 But there seems to be some hurdles to get over for most people, and I think I know some decent ways to do just that.
 😄
+
+> ✅ This is the basis for some of the code examples in this repo. To jump straight into the test related example go to [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
 Writing tests first has to be **predictable and easy**. I find that a certain combination of techniques gets me very close to that.
 

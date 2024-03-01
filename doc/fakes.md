@@ -2,6 +2,8 @@ Part of [TDD](tdd.md)
 
 ---
 
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work. 
+
 When writing tests, it is often important to isolate the tests.
 This can be done in many ways,
 but most of them are described in [this classic article by Martin Fowler

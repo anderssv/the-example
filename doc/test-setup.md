@@ -2,6 +2,8 @@ Part of [TDD](tdd.md)
 
 ---
 
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
+
 Tests should be easy to set up and write.
 So you can focus on implementing the actual features.
 By using certain techniques, it is possible to make writing and maintenance easier.

@@ -2,6 +2,9 @@ Part of [System Design](system-design.md) and [TDD](tdd.md).
 
 ---
 
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
+
+
 Dependency Injection plays a key role in systems development, especially with automated testing and TDD.
 It is all about molding an effective dependency graph for your application and tests.
 Frameworks often seem appealing, but their automated nature can obscure vital feedback from your code.
