@@ -8,10 +8,12 @@ But there seems to be some hurdles to get over for most people, and I think the 
 easier.
 😄
 
-> ✅ This is the basis for some of the code examples in this repo. To jump straight into the test related example go
-> to [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> ✅ This is the basis for some of the code examples in this repo.
+> To jump straight into the related example,
+> go to [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
 
-Writing tests first has to be **predictable and easy**. These techniques gets me very
+Writing tests first has to be **predictable and easy**.
+These techniques get me very
 close to that.
 
 Good tests should be:
@@ -106,7 +108,7 @@ Prepare the "bottom" for what I need to fix the entire feature. Maybe write an I
 Then I might switch to dedicated tests for something like "find all expired applications in the database,"
 before I return up top again.
 This cycle will be repeated multiple times while developing a feature.
-I switch often to make sure I am not implementing features I _think_ I will need.
+I often switch to make sure I am not implementing features I _think_ I will need.
 
 # Related reading
 
