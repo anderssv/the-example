@@ -44,21 +44,24 @@ And these are the main techniques that I use:
 ```mermaid
 flowchart LR
     TTTD[Testing Through<br/>the Domain]
-    ReusableTestSetup[Reusable set up across tests]
+    TestSetup[Test Setup<br/>System and Data]
+    ReusableTestSetup[Reusable system set up<br/> across tests]
     SequenceIsolation[Hides internal sequence of<br/> interactions from the test]
     ReusableTestData[Reusable test data set up<br/>across tests]
-    ReducedCouplingData[Reduces coupling between test <br/>and data models]
+    ReducedCouplingData[Reduces coupling between the test <br/>and data models]
     ReducedCouplingBehaviour[Reduces coupling between tests<br/>and system behavior]
     ClarityDomain[Clearer domain because it is repeatedly<br/>expressed in tests]
     ClarityTests[Clearer tests as they<br/>reflect domain operations]
     
     TDD --> Fakes
-    TDD --> ObjectMother
+    TDD --> TestSetup
     TDD --> TTTD
-    Fakes --> ReusableTestSetup
     Fakes --> SequenceIsolation
-    ObjectMother --> ReusableTestData
-    ObjectMother --> ReducedCouplingData
+    Fakes --> ReusableTestSetup
+    Fakes --> ReducedCouplingBehaviour
+    TestSetup --> ReusableTestData
+    TestSetup --> ReducedCouplingData
+    TestSetup --> ReusableTestSetup
     TTTD --> ReducedCouplingBehaviour
     TTTD --> ClarityDomain
     TTTD --> ClarityTests
