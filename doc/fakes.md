@@ -9,11 +9,11 @@ This can be done in many ways,
 but most of them are described in [this classic article by Martin Fowler
 called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
-> ✅ You can find the example code in [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> ✅ You can find the example code in [ApplicationFakeTest.kt](../src/test/kotlin/application/ApplicationFakeTest.kt)
 
 # I make fakes like...
 It is quite simple really.
-Almost anything can be faked with a HashMap [[1](../src/test/kotlin/fakes/ApplicationRepositoryFake.kt)] [[2](../src/test/kotlin/fakes/UserNotificationClientFake.kt)].
+Almost anything can be faked with a HashMap [[1](../src/test/kotlin/application/ApplicationRepositoryFake.kt)] [[2](../src/test/kotlin/notifications/UserNotificationClientFake.kt)].
 Sometimes you need other solutions. 
 
 Unlike Mocks, you don't really need a library.
@@ -54,7 +54,7 @@ You should:
 If you really need to verify that the Fake received some information or was called, you can create custom methods
 (only available in the Fake, not the interface) to verify those.
 You can se an example of such a method here:
-[https://github.com/anderssv/the-example/blob/main/src/test/kotlin/fakes/UserNotificationClientFake.kt#L13](https://github.com/anderssv/the-example/blob/main/src/test/kotlin/fakes/UserNotificationClientFake.kt#L13)
+[https://github.com/anderssv/the-example/blob/main/src/test/kotlin/notifications/UserNotificationClientFake.kt#L13](https://github.com/anderssv/the-example/blob/main/src/test/kotlin/notifications/UserNotificationClientFake.kt#L13)
 
 ## Testing errors
 

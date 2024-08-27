@@ -10,7 +10,7 @@ easier.
 
 > ✅ This is the basis for some of the code examples in this repo.
 > To jump straight into the related example,
-> go to [ApplicationFakeTest.kt](../src/test/kotlin/fakes/ApplicationFakeTest.kt)
+> go to [ApplicationFakeTest.kt](../src/test/kotlin/application/ApplicationFakeTest.kt)
 
 Writing tests first has to be **predictable and easy**.
 These techniques get me very

@@ -16,7 +16,7 @@ Part of [System Design](system-design.md)
 The example is a bit contrived,
 but I think it serves its purpose and challenges the type system enough to see how the concepts play out.
 
-Go here to see the example: [ParsingTest.kt](../src/test/kotlin/sum_types/ParsingTest.kt)
+Go here to see the example: [ParsingTest.kt](../src/test/kotlin/user/registration/ParsingTest.kt)
 
 # The story
 

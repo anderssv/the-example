@@ -1,8 +1,8 @@
 package system
 
 import customer.CustomerRepositoryFake
-import fakes.ApplicationRepositoryFake
-import fakes.UserNotificationClientFake
+import application.ApplicationRepositoryFake
+import notifications.UserNotificationClientFake
 
 /**
  * Overrides the relevant properties to make them Fakes
@@ -25,7 +25,7 @@ class SystemTestContext : SystemContext() {
         override val userNotificationClient = UserNotificationClientFake()
     }
 
-    override val repositories = Repositories()
-    override val clients = Clients()
-
+    // Override the contexts with Fakes
+    override val repositories = SystemTestContext.Repositories()
+    override val clients = SystemTestContext.Clients()
 }

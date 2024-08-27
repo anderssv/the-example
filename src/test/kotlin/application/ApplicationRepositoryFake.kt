@@ -1,8 +1,5 @@
-package fakes
+package application
 
-import application.Application
-import application.ApplicationRepository
-import application.ApplicationStatus
 import java.util.*
 
 class ApplicationRepositoryFake : ApplicationRepository {

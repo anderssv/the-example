@@ -9,13 +9,13 @@ import notifications.UserNotificationClient
 import notifications.UserNotificationClientImpl
 
 /**
- * This represents the main DI context and should not be on the test scope. Leaving here for now.
+ * This represents the main DI context.
  *
  * Using lazy for the implementations here as we don't want them to load if overridden.
  * This can be important for third party integrations and DBs.
  * If you know a better way, please let me know.
  *
- * See here for a subclass that overrides the relevant parts with fakes:
+ * See here for a subclass that overrides the relevant parts with fakes (in the test scope):
  * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/system/SystemTestContext.kt
  */
 @Suppress("LeakingThis")

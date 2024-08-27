@@ -55,7 +55,7 @@ Now consider the changed requirements: __Approval needs to check whether you are
 
 > ✅ The domain-oriented test will work because the `service.registerInitialApplication(...)` registers the customer, and then moves on.
 
-You can have a look here to see the different tests (including the new one after the new requirement): [TestingThroughTheDomainTest.kt](../src/test/kotlin/tttd/TestingThroughTheDomainTest.kt)
+You can have a look here to see the different tests (including the new one after the new requirement): [TestingThroughTheDomainTest.kt](../src/test/kotlin/application/TestingThroughTheDomainTest.kt)
 
 ### The benefits
 

@@ -1,9 +1,6 @@
-package tttd
+package application
 
-import application.Application
-import application.ApplicationStatus
 import system.SystemTestContext
-import application.valid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
