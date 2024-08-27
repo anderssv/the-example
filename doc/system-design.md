@@ -1,4 +1,4 @@
-> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no/contact.html) to see more about my work.
 
 # System Design
 

@@ -2,7 +2,7 @@ Part of [TDD](tdd.md)
 
 ---
 
-> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work.
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no/contact.html) to see more about my work.
 
 The details of this are a bit subtle, but I know it raises the level for tests and maintenance in the long run.
 It reduces irrelevant failures in tests and makes re-factoring easier.

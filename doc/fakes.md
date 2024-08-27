@@ -2,21 +2,21 @@ Part of [TDD](tdd.md)
 
 ---
 
-> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no) to see more about my work. 
+> I am an independent consultant, and would love to help your team get better at continuous delivery. Reach out at [anders.sveen@mikill.no](mailto:anders.sveen@mikill.no) or go to [https://www.mikill.no](https://www.mikill.no/contact.html) to see more about my work. 
 
-When writing tests, it is often important to isolate the tests.
+When you write tests, it is often important to isolate the tests.
 This can be done in many ways,
 but most of them are described in [this classic article by Martin Fowler
 called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
-> ✅ You can find the example code in [ApplicationFakeTest.kt](../src/test/kotlin/application/ApplicationFakeTest.kt)
+> ✅ You can find the full test with fake example code in [ApplicationFakeTest.kt](../src/test/kotlin/application/ApplicationFakeTest.kt)
 
 # I make fakes like...
 It is quite simple really.
 Almost anything can be faked with a HashMap [[1](../src/test/kotlin/application/ApplicationRepositoryFake.kt)] [[2](../src/test/kotlin/notifications/UserNotificationClientFake.kt)].
 Sometimes you need other solutions. 
 
-Unlike Mocks, you don't really need a library.
+Unlike Mocks, you don't need a library.
 Implement the interface you are faking, and put, update and fetch to/from the HashMap. 🚀
 
 Sometimes the choice of "primary key" (the key in the hashmap) can be a bit awkward,
