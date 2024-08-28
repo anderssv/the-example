@@ -1,8 +1,9 @@
 package application
 
-import system.SystemTestContext
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import system.SystemTestContext
 
 /**
  * This test shows concepts for Testing Through The Domain,
@@ -19,6 +20,7 @@ class TestingThroughTheDomainTest {
      * These kinds of tests are more brittle when the system changes.
      */
     @Test
+    @Disabled("This test is disabled because relies on the internals of the system through data. It is an example of what breaks when you don't use TTTD.")
     fun testDataOrientedTest() {
         with(testContext) {
             val application = Application.valid()
