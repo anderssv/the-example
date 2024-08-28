@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import kotlin.text.RegexOption.IGNORE_CASE
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.0.20"
     id("com.github.ben-manes.versions") version "0.49.0"
 }
 
@@ -13,6 +13,8 @@ repositories {
     mavenCentral()
 }
 
+
+
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
@@ -21,6 +23,7 @@ dependencies {
 }
 
 tasks {
+
     named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
         rejectVersionIf {
             candidate.version.contains("-M\\d".toRegex()) ||
@@ -36,6 +39,17 @@ tasks {
 
     test {
         useJUnitPlatform()
+    }
+
+    compileJava {
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
+    }
+
+    compileKotlin {
+        compilerOptions {
+            this.jvmTarget = JvmTarget.JVM_21
+        }
     }
 }
 
