@@ -13,7 +13,7 @@ class TestingThroughTheDomainTest {
     private val testContext = SystemTestContext()
 
     /**
-     * This test sets up the _data_ needed to run the test, and then verifies the result.
+     * This test sets up the _data_ needed to run the test and then verifies the result.
      *
      * It is currently failing because new requirements for storage of customers were introduced after writing this test.
      *
@@ -37,7 +37,7 @@ class TestingThroughTheDomainTest {
     /**
      * This test sets up the _system_ in the correct state.
      *
-     * It is less brittle when the system changes, and did not break when the storage
+     * It is less brittle when the system changes and did not break when the storage
      * of customers was introduced.
      */
     @Test
@@ -55,8 +55,8 @@ class TestingThroughTheDomainTest {
     }
 
     /**
-     * This is actually a bad test, but was used to introduce customer storage.
-     * And keep the two previous ones unchanged to prove the point that the data-oriented one would change.
+     * This is actually a bad test but was used to introduce customer storage.
+     * I kept the two previous ones unchanged to prove the point that the data-oriented one would break.
      */
     @Test
     fun testAddActiveCustomerWhenNewApplication() {
