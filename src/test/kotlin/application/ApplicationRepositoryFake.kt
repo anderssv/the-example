@@ -13,12 +13,8 @@ class ApplicationRepositoryFake : ApplicationRepository {
         return db.values.filter { it.name == name }
     }
 
-    override fun getAllApplications(): List<Application> {
-        return db.values.toList()
-    }
-
-    override fun getAllActiveApplications(): List<Application> {
-        return db.values.filter { it.status == ApplicationStatus.ACTIVE }
+    override fun getAllApplications(statuses: List<ApplicationStatus>): List<Application> {
+        return db.values.filter { it.status in statuses }.toList()
     }
 
     override fun updateApplication(application: Application) {

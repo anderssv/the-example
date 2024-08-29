@@ -4,24 +4,16 @@ import java.util.*
 
 interface ApplicationRepository {
     fun getApplicationsForName(name: String): List<Application>
-    fun getAllApplications(): List<Application>
-
-    /**
-     * Whether you want separate methods for each filter or do some andvanced filtering
-     * depends a bit on your data volumes and DB design.
-     * YMMV.
-     */
-    fun getAllActiveApplications(): List<Application>
+    fun getAllApplications(statuses: List<ApplicationStatus>): List<Application>
     fun addApplication(application: Application)
     fun updateApplication(application: Application)
     fun getApplication(applicationId: UUID): Application
-
 }
 
 /**
  * This is normally your implemented JDBC/something repo
  */
-class ApplicationRepositoryImpl: ApplicationRepository {
+class ApplicationRepositoryImpl : ApplicationRepository {
     override fun addApplication(application: Application) {
         TODO("Not yet implemented")
     }
@@ -30,11 +22,7 @@ class ApplicationRepositoryImpl: ApplicationRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getAllApplications(): List<Application> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAllActiveApplications(): List<Application> {
+    override fun getAllApplications(statuses: List<ApplicationStatus>): List<Application> {
         TODO("Not yet implemented")
     }
 

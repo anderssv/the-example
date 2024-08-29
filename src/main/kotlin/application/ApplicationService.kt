@@ -21,7 +21,7 @@ class ApplicationService(
     }
 
     fun expireApplications() {
-        applicationRepo.getAllActiveApplications()
+        applicationRepo.getAllApplications(listOf(ApplicationStatus.ACTIVE))
             .filter { it.applicationDate.isBefore(LocalDate.now().minusMonths(2)) }
             .forEach {
                 applicationRepo.updateApplication(it.copy(status = ApplicationStatus.EXPIRED))
@@ -29,7 +29,7 @@ class ApplicationService(
             }
     }
 
-    fun openApplicationsFor(name: String): List<Application> {
+    fun activeApplicationFor(name: String): List<Application> {
         return applicationRepo.getApplicationsForName(name).filter { it.status == ApplicationStatus.ACTIVE }
     }
 

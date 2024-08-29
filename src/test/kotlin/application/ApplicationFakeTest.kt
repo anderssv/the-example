@@ -30,7 +30,7 @@ class ApplicationFakeTest {
             applicationService.expireApplications()
 
             // Assertions
-            applicationService.openApplicationsFor(applications.first().name).let {
+            applicationService.activeApplicationFor(applications.first().name).let {
                 assertThat(it).doesNotContain(applications.first())
                 // Spot the bug ;)
                 //assertThat(it).contains(applications.last())
@@ -46,7 +46,7 @@ class ApplicationFakeTest {
 
             applicationService.expireApplications()
 
-            assertThat(applicationService.openApplicationsFor(application.name)).isEmpty()
+            assertThat(applicationService.activeApplicationFor(application.name)).isEmpty()
             clients.userNotificationClient.getNotificationForUser(application.name).also {
                 // Notice how this is a specific method in the Fake. In the case of something
                 // like e-mail, there is no way of fetching the actual messages after the fact.
