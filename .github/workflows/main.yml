@@ -1,0 +1,35 @@
+name: main
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+      - '**/*.kt'
+      - '**/*.kts'
+      - '.github/workflows/main.yml'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+          
+      - name: Build and test
+        run: ./gradlew clean test
+      
+      - name: Markdown Link Check
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          folder-path: '.'
+          file-extension: '.md'
