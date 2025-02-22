@@ -68,10 +68,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-markdown-${{ github.ref }}
       cancel-in-progress: true
-      
-    # Only run this job if markdown files were changed
-    if: "contains(join(github.event.commits.*.modified, ' '), '.md') || contains(join(github.event.commits.*.added, ' '), '.md')"
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
