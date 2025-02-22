@@ -11,12 +11,12 @@ on:
       - 'gradle.properties'
 
 jobs:
-  verify:
+  build:
     runs-on: ubuntu-latest
     
     # Add concurrency to cancel old runs
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-build-${{ github.ref }}
       cancel-in-progress: true
     
     steps:
@@ -60,6 +60,22 @@ jobs:
         env:
           # Optimize Gradle performance
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4 -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+
+  markdown:
+    runs-on: ubuntu-latest
+    
+    # Add concurrency to cancel old runs
+    concurrency:
+      group: ${{ github.workflow }}-markdown-${{ github.ref }}
+      cancel-in-progress: true
+      
+    # Only run this job if markdown files were changed
+    if: "contains(join(github.event.commits.*.modified, ' '), '.md') || contains(join(github.event.commits.*.added, ' '), '.md')"
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
       - name: Markdown Link Check
         uses: gaurav-nelson/github-action-markdown-link-check@v1
