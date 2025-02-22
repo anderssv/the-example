@@ -209,7 +209,7 @@ workshops or coaching.
 # Related reading
 
 - [Martin Fowler: Test Doubles](https://martinfowler.com/bliki/TestDouble.html)
-- [Test Doubles — Fakes, Mocks and Stubs](https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da)
+- [Test Doubles — Fakes, Mocks and Stubs](https://web.archive.org/web/20181227075532/https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da#expand)
 - [Test Doubles from the "Software Engineering at Google" book](https://abseil.io/resources/swe-book/html/ch13.html)
 - [Mocks are bad... A quick summary](https://anderssv.medium.com/mocks-are-bad-a-quick-summary-7c70d9d3226c)
 - [Prefer Fakes over Mocks](https://tyrrrz.me/blog/fakes-over-mocks)
