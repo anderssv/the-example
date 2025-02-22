@@ -3,6 +3,7 @@ package system
 import customer.CustomerRepositoryFake
 import application.ApplicationRepositoryFake
 import notifications.UserNotificationClientFake
+import java.time.LocalDate
 
 /**
  * Overrides the relevant properties to make them Fakes
@@ -26,6 +27,7 @@ class SystemTestContext : SystemContext() {
     }
 
     // Override the contexts with Fakes
-    override val repositories = SystemTestContext.Repositories()
-    override val clients = SystemTestContext.Clients()
+    override val repositories = Repositories()
+    override val clients = Clients()
+    override val clock = TestClock.now()
 }

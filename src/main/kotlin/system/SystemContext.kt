@@ -7,6 +7,7 @@ import customer.CustomerRepository
 import customer.CustomerRepositoryImpl
 import notifications.UserNotificationClient
 import notifications.UserNotificationClientImpl
+import java.time.Clock
 
 /**
  * This represents the main DI context.
@@ -35,6 +36,7 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     // Open because they will be overridden with Fakes
     open val repositories = Repositories()
     open val clients = Clients()
+    open val clock: Clock = Clock.systemDefaultZone()
 
     // The main components using the IO stuff that can be faked
     // Using lazy here to get the overridden values from the subclass that overrides clients and repos
@@ -42,7 +44,8 @@ open class SystemContext { // You can pass things like config and DB in here, YM
         ApplicationService(
             repositories.applicationRepo,
             repositories.customerRepository,
-            clients.userNotificationClient
+            clients.userNotificationClient,
+            clock
         )
     }
 }

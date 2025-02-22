@@ -3,13 +3,15 @@ package application
 import customer.Customer
 import customer.CustomerRepository
 import notifications.UserNotificationClient
+import java.time.Clock
 import java.time.LocalDate
 import java.util.*
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,
     private val customerRepository: CustomerRepository,
-    private val userNotificationClient: UserNotificationClient
+    private val userNotificationClient: UserNotificationClient,
+    private val clock: Clock
 ) {
     fun registerInitialApplication(application: Application) {
         applicationRepo.addApplication(application)
@@ -21,8 +23,9 @@ class ApplicationService(
     }
 
     fun expireApplications() {
+        val currentDate = LocalDate.now(clock)
         applicationRepo.getAllApplications(listOf(ApplicationStatus.ACTIVE))
-            .filter { it.applicationDate.isBefore(LocalDate.now().minusMonths(2)) }
+            .filter { !it.isValid(currentDate) }
             .forEach {
                 applicationRepo.updateApplication(it.copy(status = ApplicationStatus.EXPIRED))
                 userNotificationClient.notifyUser(it.name, "Your application ${it.id} has expired")
@@ -39,5 +42,4 @@ class ApplicationService(
 
         applicationRepo.updateApplication(application.copy(status = ApplicationStatus.APPROVED))
     }
-
 }

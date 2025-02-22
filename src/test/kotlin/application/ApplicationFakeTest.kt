@@ -1,8 +1,10 @@
 package application
 
-import system.SystemTestContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import system.SystemTestContext
+import java.time.Duration
+import java.time.LocalDate
 
 class ApplicationFakeTest {
     private val testContext = SystemTestContext()
@@ -11,9 +13,7 @@ class ApplicationFakeTest {
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
         with(testContext) {
             val application = Application.valid()
-
             applicationService.registerInitialApplication(application)
-
             assertThat(applicationService.applicationsForName(application.name)).contains(application)
         }
     }
@@ -21,19 +21,26 @@ class ApplicationFakeTest {
     @Test
     fun shouldRegisterApplicationSuccessfullyAndExpireWhenTooOld() {
         with(testContext) {
+            // Set initial date
+            clock.setTo(LocalDate.of(2022, 1, 1))
+            
+            // Create applications with different dates
             val applications = (0..2).map { counter ->
-                Application.valid(addToMonth = counter.toLong()).also {
+                Application.valid(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong())).also {
                     applicationService.registerInitialApplication(it)
                 }
             }
 
+            // Move time forward to where first application is expired but last is still valid
+            // First app: 2022-01-01 + 6 months = 2022-07-01 (expired)
+            // Last app: 2022-03-01 + 6 months = 2022-09-01 (still valid)
+            clock.advance(Duration.ofDays(7 * 30))  // Advance 7 months
             applicationService.expireApplications()
 
             // Assertions
             applicationService.activeApplicationFor(applications.first().name).let {
-                assertThat(it).doesNotContain(applications.first())
-                // Spot the bug ;)
-                //assertThat(it).contains(applications.last())
+                assertThat(it).doesNotContain(applications.first())  // First application should be expired
+                assertThat(it).contains(applications.last())         // Last application should still be active
             }
         }
     }
@@ -41,9 +48,13 @@ class ApplicationFakeTest {
     @Test
     fun shouldSendNotificationWhenApplicationIsExpired() {
         with(testContext) {
-            val application = Application.valid(addToMonth = -6)
+            // Set initial date and create application using current time
+            clock.setTo(LocalDate.of(2022, 1, 1))
+            val application = Application.valid(applicationDate = LocalDate.now(clock))
             applicationService.registerInitialApplication(application)
 
+            // Move time forward past expiration
+            clock.advance(Duration.ofDays(7 * 30))  // Advance 7 months
             applicationService.expireApplications()
 
             assertThat(applicationService.activeApplicationFor(application.name)).isEmpty()
