@@ -13,18 +13,53 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    
+    # Add concurrency to cancel old runs
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for faster checkout
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
+          cache: 'gradle'  # This caches Gradle dependencies
+      
+      # Cache Gradle wrapper and dependencies
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+            build
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      # Cache Kotlin compile output
+      - name: Cache Kotlin
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/classes
+            build/kotlin
+          key: ${{ runner.os }}-kotlin-${{ hashFiles('**/*.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-kotlin-
           
       - name: Build and test
         run: ./gradlew clean test
+        env:
+          # Optimize Gradle performance
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4 -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
       
       - name: Markdown Link Check
         uses: gaurav-nelson/github-action-markdown-link-check@v1
