@@ -54,7 +54,7 @@ flowchart LR
     ReducedCouplingBehaviour[Reduces coupling between tests<br/>and system behavior]
     ClarityDomain[Clearer domain because it is repeatedly<br/>expressed in tests]
     ClarityTests[Clearer tests as they<br/>reflect domain operations]
-    
+
     TDD --> Fakes
     TDD --> TestSetup
     TDD --> TTTD
@@ -118,6 +118,6 @@ I often switch to make sure I am not implementing features I _think_ I will need
 # Related reading
 
 - [How to decide on an architecture for automated tests](https://www.qwan.eu/2020/09/17/test-architecture.html)
-- [Test scopes by Wisen Tanasa on Twitter](https://twitter.com/ceilfors/status/1687780512277069824)
+- [Test scopes by Wisen Tanasa on X](https://x.com/ceilfors/status/1687780512277069824)
 
 Go [here to reach out for input or questions](../README.md). 😄

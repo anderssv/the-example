@@ -13,7 +13,7 @@ A few notes on things I am trying to show in this code. You can find links to th
 
 Reach out:
 - [Discussions](https://github.com/anderssv/the-example/discussions)
-- https://twitter.com/anderssv
+- https://x.com/anderssv
 - https://bsky.app/profile/anders.f12.no
 - [anders@f12.no](mailto:anders@f12.no)
 
