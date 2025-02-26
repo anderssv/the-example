@@ -45,6 +45,11 @@ class Exercise2Test {
         }
     }
 
+    /**
+     * Write a test that demonstrates handling multiple applications with different dates,
+     * using the DSL helper to create applications and verify that the expiration logic
+     * works correctly for applications of different ages.
+     */
     @Test
     fun shouldDemonstrateMultipleApplicationsWithDsl() {
         with(testContext) {
@@ -95,6 +100,11 @@ class Exercise2Test {
         }
     }
 
+    /**
+     * Write a test that demonstrates a complex scenario with multiple applications in different states,
+     * verifying both the state transitions and notification handling for active and expired applications
+     * simultaneously.
+     */
     @Test
     fun shouldDemonstrateComplexScenario() {
         with(testContext) {
