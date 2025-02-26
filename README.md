@@ -1,4 +1,7 @@
-Hi. This is a small collection of code I hope shows some good concepts. Please let me know what you think. 😄
+Hi. This is my repo for everything and nothing. It is used in [several blog posts](https://blog.f12.no) and for workshops.
+
+# The Examples
+This is a small collection of code I hope shows some good concepts. Please let me know what you think. 😄
 
 This repo is updated continuously, so be sure to star and watch it for updates.
 
@@ -20,7 +23,7 @@ Reach out:
 A lot of this content has come out of endless discussions with fellow developers.
 But special thanks goes out to Asgaut Mjølne, Ola Hast, and Terje Heen for the regular discussions we have.
 
-# TDD Workshop description
+# The TDD Workshop
 
 The contents in this repo is used as an example during my TDD workshop.
 
@@ -52,6 +55,8 @@ We will discuss along the way and will probably have to prioritise some things a
 - Git
 
 ## Setup Instructions
+
+### Build and terminal
 1. Download this repository
    ```bash
    git clone https://github.com/anderssv/the-example.git
@@ -67,3 +72,36 @@ We will discuss along the way and will probably have to prioritise some things a
    ```bash
    ./gradlew build
    ```
+### Development environment
+
+It works with most editors, but I recommend using IntelliJ IDEA.
+Most stuff is good with default plugins, but I also recommend:
+- [Mermaid](https://plugins.jetbrains.com/plugin/20146-mermaid) plugin
+- [Markdown](https://plugins.jetbrains.com/plugin/7793-markdown) plugin
+- [Supermaven](https://plugins.jetbrains.com/plugin/23893-supermaven) plugin
+- [GitHub Copilot](https://plugins.jetbrains.com/plugin/17718-github-copilot) plugin
+
+
+## Workshop System Context Diagram
+
+```mermaid
+
+graph TD
+    AS[ApplicationService]
+    AR[ApplicationRepository]
+    CR[CustomerRepository]
+    UN[UserNotificationClient]
+    CL[Clock]
+
+    AS --> AR
+    AS --> CR
+    AS --> UN
+    AS --> CL
+
+```
+
+The diagram above shows the main components of the system:
+- **ApplicationService**: Core service managing application logic
+- **Repositories**: Handle data persistence for Applications and Customers
+- **UserNotificationClient**: Manages user notifications
+- **Clock**: Provides time-related functionality

@@ -23,6 +23,10 @@ class Exercise2Test {
             .also { applicationService.registerInitialApplication(it) }
     }
 
+    /**
+     * Write a test that registers a new application and checks that it was stored and have the correct state.
+     * Use a helper DSL to create an application and store it such that it is ready for testing.
+     */
     @Test
     fun shouldDemonstrateDslUsage() {
         with(testContext) {
@@ -68,6 +72,11 @@ class Exercise2Test {
         }
     }
 
+    /**
+     * Write a test that registers an application,
+     * checks that it expires after 6 months
+     * and verifies that a notification was sent to the user telling them the application has expired.
+     */
     @Test
     fun shouldDemonstrateNotificationVerification() {
         with(testContext) {
@@ -89,7 +98,7 @@ class Exercise2Test {
     @Test
     fun shouldDemonstrateComplexScenario() {
         with(testContext) {
-            // Arrange: Set up multiple applications with different states
+            // Arrange: Set up two applications - one active and one expired - to test state transitions and notifications
             val activeApp = application {
                 copy(
                     applicationDate = LocalDate.now(clock),
@@ -122,7 +131,7 @@ class Exercise2Test {
     }
 
     /**
-     * This test demonstrates how to set up the system without relying on the system context as a helper class.
+     * Write a test that sets up all dependencies without the SystemContext.
      */
     @Test
     fun shouldWorkWithoutSystemContext() {
