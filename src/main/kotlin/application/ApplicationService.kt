@@ -2,7 +2,9 @@ package application
 
 import customer.Customer
 import customer.CustomerRepository
+import notifications.NotificationSendException
 import notifications.UserNotificationClient
+import java.io.IOException
 import java.time.Clock
 import java.time.LocalDate
 import java.util.*
@@ -42,5 +44,10 @@ class ApplicationService(
         if (application.status == ApplicationStatus.DENIED) throw IllegalStateException("Cannot approve a denied application")
 
         applicationRepo.updateApplication(application.copy(status = ApplicationStatus.APPROVED))
+        try {
+            userNotificationClient.notifyUser(application.id, application.name, "Your application ${application.id} has been approved")
+        } catch (e: IOException) {
+            throw NotificationSendException("Failed to send notification for application ${application.id}", e)
+        }
     }
 }

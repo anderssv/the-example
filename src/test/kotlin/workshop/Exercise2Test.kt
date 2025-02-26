@@ -3,10 +3,13 @@ package workshop
 
 import application.*
 import customer.CustomerRepositoryFake
+import notifications.NotificationSendException
 import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 import system.SystemTestContext
+import java.io.IOException
 import java.time.*
 
 /**
@@ -179,6 +182,28 @@ class Exercise2Test {
         // Verify customer was created
         val customer = customerRepo.getCustomer("Manual Setup Test")
         assertThat(customer.active).isTrue()
+    }
+
+    /**
+     * Write a test that demonstrates notification failure for a specific application ID
+     */
+    @Test
+    fun shouldFailToNotifyForSpecificApplication() {
+        with(testContext) {
+            // Arrange: Create an application and register it for notification failure
+            val application = application {
+                copy(applicationDate = LocalDate.of(2023, 1, 1))
+            }
+            clients.userNotificationClient.registerApplicationIdForFailure(application.id)
+
+            // Act & Assert: Verify that approval attempt throws NotificationSendException
+            val exception = assertThrows(NotificationSendException::class.java) {
+                applicationService.approveApplication(application.id)
+            }
+
+            // Verify that the underlying cause is IOException
+            assertThat(exception.cause).isInstanceOf(IOException::class.java)
+        }
     }
 
 }

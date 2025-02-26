@@ -1,11 +1,20 @@
 package notifications
 
+import java.io.IOException
 import java.util.UUID
 
 class UserNotificationClientFake : UserNotificationClient {
     private val notifications = mutableMapOf<String, MutableList<String>>()
+    private val failingApplicationIds = mutableSetOf<UUID>()
+
+    fun registerApplicationIdForFailure(applicationId: UUID) {
+        failingApplicationIds.add(applicationId)
+    }
 
     override fun notifyUser(applicationId: UUID, name: String, message: String) {
+        if (failingApplicationIds.contains(applicationId)) {
+            throw IOException("Simulated notification failure for application $applicationId")
+        }
         notifications.getOrPut(name, ::mutableListOf).add(message)
     }
 

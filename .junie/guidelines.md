@@ -32,6 +32,7 @@
    - Use fakes instead of mocks when possible
    - Follow Arrange-Act-Assert pattern
    - Utilize test data builders
+   - Run all tests after finishing a task
 
 2. **Code Organization**
    - Follow domain-driven package structure
