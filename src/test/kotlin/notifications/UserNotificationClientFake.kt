@@ -1,9 +1,11 @@
 package notifications
 
+import java.util.UUID
+
 class UserNotificationClientFake : UserNotificationClient {
     private val notifications = mutableMapOf<String, MutableList<String>>()
 
-    override fun notifyUser(name: String, message: String) {
+    override fun notifyUser(applicationId: UUID, name: String, message: String) {
         notifications.getOrPut(name, ::mutableListOf).add(message)
     }
 

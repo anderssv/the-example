@@ -26,9 +26,9 @@ class ApplicationService(
         val currentDate = LocalDate.now(clock)
         applicationRepo.getAllApplications(listOf(ApplicationStatus.ACTIVE))
             .filter { !it.isValid(currentDate) }
-            .forEach {
-                applicationRepo.updateApplication(it.copy(status = ApplicationStatus.EXPIRED))
-                userNotificationClient.notifyUser(it.name, "Your application ${it.id} has expired")
+            .forEach { application ->
+                applicationRepo.updateApplication(application.copy(status = ApplicationStatus.EXPIRED))
+                userNotificationClient.notifyUser(application.id, application.name, "Your application ${application.id} has expired")
             }
     }
 

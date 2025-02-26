@@ -1,7 +1,9 @@
 package notifications
 
+import java.util.UUID
+
 interface UserNotificationClient {
-    fun notifyUser(name: String, message: String)
+    fun notifyUser(applicationId: UUID, name: String, message: String)
 }
 
 /**
@@ -9,7 +11,7 @@ interface UserNotificationClient {
  */
 class UserNotificationClientImpl : UserNotificationClient {
 
-    override fun notifyUser(name: String, message: String) {
+    override fun notifyUser(applicationId: UUID, name: String, message: String) {
         TODO("Not yet implemented")
     }
 
