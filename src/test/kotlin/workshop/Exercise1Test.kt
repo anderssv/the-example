@@ -7,7 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
 import java.time.LocalDate
-import java.time.Duration
 
 /**
  * Exercise 1 - Bootup, test data and arrange-assert-act
@@ -19,7 +18,7 @@ class Exercise1Test {
      * Write a test that registers an application and verifies that it was stored correctly.
      */
     @Test
-    fun shouldDemonstrateArrangeActAssertPattern() {
+    fun shouldRegisterApplicationAndStoreCorrectly() {
         with(testContext) {
             // Arrange: Set up test data and initial conditions
             val application = Application.valid()
@@ -36,30 +35,24 @@ class Exercise1Test {
     }
 
     /**
-     * Write a test that registers and application, expires it after 6 months and verifies that it was expired.
+     * Write a test that registers and application that is older than 6 months, expires it and verifies that it was expired.
      */
     @Test
-    fun shouldDemonstrateTestDataCustomization() {
+    fun shouldRegisterAndApplicationAndModifyForTesting() {
         with(testContext) {
             // Arrange: Set up test data with custom values
-            val customDate = LocalDate.of(2023, 1, 1)
-            val application = Application.valid(applicationDate = customDate).copy(name = "Custom Name")
-
-            // Act: Register application and advance time by 6 months
+            val application = Application.valid(
+                applicationDate = LocalDate.of(2023, 1, 1)
+            ).copy(
+                name = "Custom Name"
+            )
             applicationService.registerInitialApplication(application)
 
-            // Verify initial state
-            var storedApplication = repositories.applicationRepo.getApplication(application.id)
-            assertThat(storedApplication.status).isEqualTo(ApplicationStatus.ACTIVE)
-            assertThat(storedApplication.applicationDate).isEqualTo(customDate)
-            assertThat(storedApplication.name).isEqualTo("Custom Name")
-
-            // Advance time by 6 months and expire applications
-            clock.advance(Duration.ofDays(180))
+            // Act: Expire the application
             applicationService.expireApplications()
 
             // Assert: Verify the application is expired
-            storedApplication = repositories.applicationRepo.getApplication(application.id)
+            val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.EXPIRED)
         }
     }
