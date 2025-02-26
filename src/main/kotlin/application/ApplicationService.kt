@@ -39,6 +39,7 @@ class ApplicationService(
     fun approveApplication(applicationId: UUID) {
         val application = applicationRepo.getApplication(applicationId)
         if (!customerRepository.getCustomer(application.name).active) throw IllegalStateException("Customer not active")
+        if (application.status == ApplicationStatus.DENIED) throw IllegalStateException("Cannot approve a denied application")
 
         applicationRepo.updateApplication(application.copy(status = ApplicationStatus.APPROVED))
     }

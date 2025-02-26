@@ -56,4 +56,23 @@ class Exercise1Test {
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.EXPIRED)
         }
     }
+
+    /**
+     * Write a test that verifies that the service throws a IllegalStateException when trying to approve a DENIED application.
+     */
+    @Test
+    fun shouldThrowExceptionWhenApprovingDeniedApplication() {
+        with(testContext) {
+            // Arrange: Set up test data with DENIED status
+            val application = Application.valid().copy(
+                status = ApplicationStatus.DENIED
+            )
+            applicationService.registerInitialApplication(application)
+
+            // Act & Assert: Verify that attempting to approve throws IllegalStateException
+            org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException::class.java) {
+                applicationService.approveApplication(application.id)
+            }
+        }
+    }
 }
