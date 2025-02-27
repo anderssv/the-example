@@ -36,7 +36,7 @@ We will discuss along the way and will probably have to prioritise some things a
 
 **Part 1 - Introduction**: TDD, why it's useful, different test levels, test coverage, when it fits, and the difference between TDD and writing tests after the code is written. We also talk about the red-green-refactor cycle, arrange-assert-act, object mother with test data builders, and maintenance of tests and code.
 
-**Exercise 1 - Bootup, test data and arrange-assert-act**
+**Exercise 1 - Bootup, test data and arrange-act-assert**
 
 **Part 2 - Techniques**: Here we will talk about test levels, test doubles and separation of tests (fakes, mocks, and error situations), testing through the domain, abstract async, test utils, test validators, BDD and test DSL.
 
