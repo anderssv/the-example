@@ -1,6 +1,6 @@
 package customer;
 
-class CustomerRepositoryFake: CustomerRepository {
+class CustomerRegisterClientFake: CustomerRegisterClient {
     private val db = mutableMapOf<String, Customer>()
 
     override fun addCustomer(customer: Customer) {

@@ -3,8 +3,8 @@ package system
 import application.ApplicationRepository
 import application.ApplicationRepositoryImpl
 import application.ApplicationService
-import customer.CustomerRepository
-import customer.CustomerRepositoryImpl
+import customer.CustomerRegisterClient
+import customer.CustomerRegisterClientImpl
 import notifications.UserNotificationClient
 import notifications.UserNotificationClientImpl
 import java.time.Clock
@@ -25,7 +25,7 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     open class Repositories {
         // Can be overridden in the subclass
         open val applicationRepo: ApplicationRepository by lazy { ApplicationRepositoryImpl() }
-        open val customerRepository: CustomerRepository by lazy { CustomerRepositoryImpl() }
+        open val customerRepository: CustomerRegisterClient by lazy { CustomerRegisterClientImpl() }
     }
 
     // Just some namespacing

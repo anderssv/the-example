@@ -2,7 +2,7 @@ package workshop
 
 
 import application.*
-import customer.CustomerRepositoryFake
+import customer.CustomerRegisterClientFake
 import notifications.NotificationSendException
 import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
@@ -103,7 +103,7 @@ class Exercise2Test {
     fun shouldStoreApplicationWithoutUsingSystemContext() {
         // Arrange: Set up all dependencies manually
         val applicationRepo = ApplicationRepositoryFake()
-        val customerRepo = CustomerRepositoryFake()
+        val customerRepo = CustomerRegisterClientFake()
         val notificationClient = UserNotificationClientFake()
         val fixedClock = Clock.fixed(
             Instant.parse("2023-01-01T10:00:00Z"),

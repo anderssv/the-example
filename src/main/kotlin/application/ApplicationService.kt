@@ -1,7 +1,7 @@
 package application
 
 import customer.Customer
-import customer.CustomerRepository
+import customer.CustomerRegisterClient
 import notifications.NotificationSendException
 import notifications.UserNotificationClient
 import java.io.IOException
@@ -11,7 +11,7 @@ import java.util.*
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,
-    private val customerRepository: CustomerRepository,
+    private val customerRepository: CustomerRegisterClient,
     private val userNotificationClient: UserNotificationClient,
     private val clock: Clock
 ) {

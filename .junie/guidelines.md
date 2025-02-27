@@ -67,3 +67,6 @@
    - Comments on the tests should be considered as correct, verify them against the test code
    - Use the provided test cases as a guide for implementation
    - Ensure all tests pass before submitting
+
+7. **Operations**
+   - When refactoring make sure to delete the old code

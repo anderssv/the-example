@@ -1,6 +1,6 @@
 package system
 
-import customer.CustomerRepositoryFake
+import customer.CustomerRegisterClientFake
 import application.ApplicationRepositoryFake
 import notifications.UserNotificationClientFake
 import java.time.LocalDate
@@ -19,7 +19,7 @@ import java.time.LocalDate
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRepositoryFake()
+        override val customerRepository = CustomerRegisterClientFake()
     }
 
     class Clients : SystemContext.Clients() {
