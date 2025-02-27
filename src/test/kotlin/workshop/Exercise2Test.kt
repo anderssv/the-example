@@ -30,7 +30,7 @@ class Exercise2Test {
     private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = customer()
-        return Application.valid(applicationDate = defaultDate, customer = customer)
+        return Application.valid(applicationDate = defaultDate, customerId = customer.id)
             .let(configure)
             .also { applicationService.registerInitialApplication(it) }
     }
@@ -129,7 +129,8 @@ class Exercise2Test {
 
         // Arrange: Set up test data
         val customDate = LocalDate.of(2023, 1, 1)
-        val application = Application.valid(applicationDate = customDate)
+        val customer = Customer.valid()
+        val application = Application.valid(applicationDate = customDate, customerId = customer.id)
             .copy(name = "Manual Setup Test")
 
         // Act: Perform the action being tested

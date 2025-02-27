@@ -12,10 +12,10 @@ fun Customer.Companion.valid() = Customer(
 
 fun Application.Companion.valid(
     applicationDate: LocalDate = LocalDate.of(2022, 2, 15),
-    customer: Customer = Customer.valid()
+    customerId: UUID
 ) = Application(
     id = UUID.randomUUID(),
-    customerId = customer.id,
+    customerId = customerId,
     name = "Tester One",
     birthDate = LocalDate.of(1978, 2, 23),
     applicationDate = applicationDate,

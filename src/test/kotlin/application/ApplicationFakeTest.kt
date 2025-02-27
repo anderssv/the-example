@@ -16,7 +16,7 @@ class ApplicationFakeTest {
             val customer = Customer.valid()
             repositories.customerRepository.addCustomer(customer)
 
-            val application = Application.valid(customer = customer)
+            val application = Application.valid(customerId = customer.id)
             applicationService.registerInitialApplication(application)
             assertThat(applicationService.applicationsForName(application.name)).contains(application)
         }
@@ -35,7 +35,7 @@ class ApplicationFakeTest {
 
                 Application.valid(
                     applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()),
-                    customer = customer
+                    customer.id
                 ).also {
                     applicationService.registerInitialApplication(it)
                 }
@@ -64,7 +64,7 @@ class ApplicationFakeTest {
             val customer = Customer.valid()
             repositories.customerRepository.addCustomer(customer)
 
-            val application = Application.valid(applicationDate = LocalDate.now(clock), customer = customer)
+            val application = Application.valid(applicationDate = LocalDate.now(clock), customer.id)
             applicationService.registerInitialApplication(application)
 
             // Move time forward past expiration

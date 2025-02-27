@@ -3,6 +3,7 @@ package workshop
 import application.Application
 import application.ApplicationStatus
 import application.valid
+import customer.Customer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
@@ -21,7 +22,8 @@ class Exercise1Test {
     fun shouldRegisterApplicationAndStoreCorrectly() {
         with(testContext) {
             // Arrange: Set up test data and initial conditions
-            val application = Application.valid()
+            val customer = Customer.valid()
+            val application = Application.valid(customerId = customer.id)
 
             // Act: Perform the action being tested
             applicationService.registerInitialApplication(application)
@@ -41,8 +43,10 @@ class Exercise1Test {
     fun shouldRegisterAndApplicationAndModifyForTesting() {
         with(testContext) {
             // Arrange: Set up test data with custom values
+            val customer = Customer.valid()
             val application = Application.valid(
-                applicationDate = LocalDate.of(2023, 1, 1)
+                applicationDate = LocalDate.of(2023, 1, 1),
+                customerId = customer.id
             ).copy(
                 name = "Custom Name"
             )
@@ -64,7 +68,8 @@ class Exercise1Test {
     fun shouldThrowExceptionWhenApprovingDeniedApplication() {
         with(testContext) {
             // Arrange: Set up test data with DENIED status
-            val application = Application.valid().copy(
+            val customer = Customer.valid()
+            val application = Application.valid(customerId = customer.id).copy(
                 status = ApplicationStatus.DENIED
             )
             applicationService.registerInitialApplication(application)

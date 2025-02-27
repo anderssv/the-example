@@ -27,7 +27,7 @@ class TestingThroughTheDomainTest {
             val customer = Customer.valid()
             repositories.customerRepository.addCustomer(customer)
 
-            val application = Application.valid(customer = customer)
+            val application = Application.valid(customerId = customer.id)
 
             // Data is set up, store directly in DB. Ignoring anything else the
             // system does to reach the state.
@@ -50,7 +50,7 @@ class TestingThroughTheDomainTest {
             val customer = Customer.valid()
             repositories.customerRepository.addCustomer(customer)
 
-            val application = Application.valid(customer = customer)
+            val application = Application.valid(customerId = customer.id)
 
             // Start the process of registering application, thus manipulating through the system and
             // getting everything in a consistent state
@@ -68,12 +68,8 @@ class TestingThroughTheDomainTest {
     @Test
     fun testAddActiveCustomerWhenNewApplication() {
         with(testContext) {
-            val application = Application.valid()
-            val customer = Customer(
-                id = application.customerId,
-                name = application.name,
-                active = true
-            )
+            val customer = Customer.valid()
+            val application = Application.valid(customerId = customer.id)
             repositories.customerRepository.addCustomer(customer)
 
             applicationService.registerInitialApplication(application)
@@ -83,7 +79,7 @@ class TestingThroughTheDomainTest {
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.APPROVED)
 
             val storedCustomer = repositories.customerRepository.getCustomer(storedApplication.customerId)
-            assertThat(storedCustomer.name).isEqualTo(application.name)
+            assertThat(storedCustomer.name).isEqualTo("Test Customer")
             assertThat(storedCustomer.active).isTrue()
         }
     }
