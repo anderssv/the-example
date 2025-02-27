@@ -1,9 +1,10 @@
 package customer
 
+import java.util.*
 
 interface CustomerRegisterClient {
     fun addCustomer(customer: Customer)
-    fun getCustomer(name: String): Customer
+    fun getCustomer(id: UUID): Customer
 }
 
 class CustomerRegisterClientImpl : CustomerRegisterClient {
@@ -11,7 +12,7 @@ class CustomerRegisterClientImpl : CustomerRegisterClient {
         TODO("Not yet implemented")
     }
 
-    override fun getCustomer(name: String): Customer {
+    override fun getCustomer(id: UUID): Customer {
         TODO("Not yet implemented")
     }
 }

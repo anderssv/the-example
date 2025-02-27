@@ -133,7 +133,8 @@ class Exercise2Test {
         assertThat(storedApplication.name).isEqualTo("Manual Setup Test")
 
         // Verify customer was created
-        val customer = customerRepo.getCustomer("Manual Setup Test")
+        val customer = customerRepo.getCustomer(storedApplication.customerId)
+        assertThat(customer.name).isEqualTo("Manual Setup Test")
         assertThat(customer.active).isTrue()
     }
 

@@ -1,13 +1,18 @@
-package customer;
+package customer
+
+import java.util.*
 
 class CustomerRegisterClientFake: CustomerRegisterClient {
-    private val db = mutableMapOf<String, Customer>()
+    private val customersById = mutableMapOf<UUID, Customer>()
+    private val customersByName = mutableMapOf<String, Customer>()
 
     override fun addCustomer(customer: Customer) {
-        db[customer.name] = customer
+        customersById[customer.id] = customer
+        customersByName[customer.name] = customer
     }
 
-    override fun getCustomer(name: String): Customer {
-        return db[name]!!
+    override fun getCustomer(id: UUID): Customer {
+        return customersById[id] ?: throw IllegalStateException("Customer not found")
     }
+
 }

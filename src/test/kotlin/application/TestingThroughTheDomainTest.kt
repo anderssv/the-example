@@ -66,8 +66,12 @@ class TestingThroughTheDomainTest {
             applicationService.registerInitialApplication(application)
             applicationService.approveApplication(application.id)
 
-            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
-            assertThat(repositories.customerRepository.getCustomer(application.name).name).isEqualTo(application.name)
+            val storedApplication = repositories.applicationRepo.getApplication(application.id)
+            assertThat(storedApplication.status).isEqualTo(ApplicationStatus.APPROVED)
+
+            val customer = repositories.customerRepository.getCustomer(storedApplication.customerId)
+            assertThat(customer.name).isEqualTo(application.name)
+            assertThat(customer.active).isTrue()
         }
     }
 }

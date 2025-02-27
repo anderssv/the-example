@@ -16,8 +16,15 @@ class ApplicationService(
     private val clock: Clock
 ) {
     fun registerInitialApplication(application: Application) {
+        // Get or create customer
+        val customer = try {
+            customerRepository.getCustomer(application.customerId)
+        } catch (e: IllegalStateException) {
+            Customer(application.customerId, application.name, true).also {
+                customerRepository.addCustomer(it)
+            }
+        }
         applicationRepo.addApplication(application)
-        customerRepository.addCustomer(Customer(application.name, true))
     }
 
     fun applicationsForName(name: String): List<Application> {
@@ -40,7 +47,8 @@ class ApplicationService(
 
     fun approveApplication(applicationId: UUID) {
         val application = applicationRepo.getApplication(applicationId)
-        if (!customerRepository.getCustomer(application.name).active) throw IllegalStateException("Customer not active")
+        val customer = customerRepository.getCustomer(application.customerId)
+        if (!customer.active) throw IllegalStateException("Customer not active")
         if (application.status == ApplicationStatus.DENIED) throw IllegalStateException("Cannot approve a denied application")
 
         applicationRepo.updateApplication(application.copy(status = ApplicationStatus.APPROVED))

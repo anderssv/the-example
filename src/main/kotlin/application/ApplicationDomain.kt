@@ -16,6 +16,7 @@ enum class ApplicationStatus {
  */
 data class Application(
     val id: UUID, 
+    val customerId: UUID,
     val name: String, 
     val birthDate: LocalDate, 
     val applicationDate: LocalDate, 
