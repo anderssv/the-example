@@ -2,6 +2,7 @@ package workshop
 
 
 import application.*
+import customer.Customer
 import customer.CustomerRegisterClientFake
 import notifications.NotificationSendException
 import notifications.UserNotificationClientFake
@@ -18,10 +19,18 @@ import java.time.*
 class Exercise2Test {
     private val testContext = SystemTestContext()
 
-    // Helper method for DSL
+    // Helper method for Customer DSL
+    private fun SystemTestContext.customer(configure: Customer.() -> Customer = { this }): Customer {
+        return Customer.valid()
+            .let(configure)
+            .also { repositories.customerRepository.addCustomer(it) }
+    }
+
+    // Helper method for Application DSL
     private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
-        return Application.valid(applicationDate = defaultDate)
+        val customer = customer()
+        return Application.valid(applicationDate = defaultDate, customer = customer)
             .let(configure)
             .also { applicationService.registerInitialApplication(it) }
     }
@@ -131,11 +140,6 @@ class Exercise2Test {
         assertThat(storedApplication.status).isEqualTo(ApplicationStatus.ACTIVE)
         assertThat(storedApplication.applicationDate).isEqualTo(customDate)
         assertThat(storedApplication.name).isEqualTo("Manual Setup Test")
-
-        // Verify customer was created
-        val customer = customerRepo.getCustomer(storedApplication.customerId)
-        assertThat(customer.name).isEqualTo("Manual Setup Test")
-        assertThat(customer.active).isTrue()
     }
 
 }

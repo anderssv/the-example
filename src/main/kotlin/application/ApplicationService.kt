@@ -16,14 +16,6 @@ class ApplicationService(
     private val clock: Clock
 ) {
     fun registerInitialApplication(application: Application) {
-        // Get or create customer
-        val customer = try {
-            customerRepository.getCustomer(application.customerId)
-        } catch (e: IllegalStateException) {
-            Customer(application.customerId, application.name, true).also {
-                customerRepository.addCustomer(it)
-            }
-        }
         applicationRepo.addApplication(application)
     }
 

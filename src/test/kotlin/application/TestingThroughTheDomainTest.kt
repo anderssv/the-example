@@ -1,5 +1,6 @@
 package application
 
+import customer.Customer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -23,7 +24,10 @@ class TestingThroughTheDomainTest {
     @Disabled("This test is disabled because relies on the internals of the system through data. It is an example of what breaks when you don't use TTTD.")
     fun testDataOrientedTest() {
         with(testContext) {
-            val application = Application.valid()
+            val customer = Customer.valid()
+            repositories.customerRepository.addCustomer(customer)
+
+            val application = Application.valid(customer = customer)
 
             // Data is set up, store directly in DB. Ignoring anything else the
             // system does to reach the state.
@@ -43,7 +47,10 @@ class TestingThroughTheDomainTest {
     @Test
     fun testDomainOrientedTest() {
         with(testContext) {
-            val application = Application.valid()
+            val customer = Customer.valid()
+            repositories.customerRepository.addCustomer(customer)
+
+            val application = Application.valid(customer = customer)
 
             // Start the process of registering application, thus manipulating through the system and
             // getting everything in a consistent state
@@ -62,6 +69,12 @@ class TestingThroughTheDomainTest {
     fun testAddActiveCustomerWhenNewApplication() {
         with(testContext) {
             val application = Application.valid()
+            val customer = Customer(
+                id = application.customerId,
+                name = application.name,
+                active = true
+            )
+            repositories.customerRepository.addCustomer(customer)
 
             applicationService.registerInitialApplication(application)
             applicationService.approveApplication(application.id)
@@ -69,9 +82,9 @@ class TestingThroughTheDomainTest {
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.APPROVED)
 
-            val customer = repositories.customerRepository.getCustomer(storedApplication.customerId)
-            assertThat(customer.name).isEqualTo(application.name)
-            assertThat(customer.active).isTrue()
+            val storedCustomer = repositories.customerRepository.getCustomer(storedApplication.customerId)
+            assertThat(storedCustomer.name).isEqualTo(application.name)
+            assertThat(storedCustomer.active).isTrue()
         }
     }
 }

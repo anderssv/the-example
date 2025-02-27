@@ -1,5 +1,6 @@
 package application
 
+import customer.Customer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
@@ -12,7 +13,10 @@ class ApplicationFakeTest {
     @Test
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
         with(testContext) {
-            val application = Application.valid()
+            val customer = Customer.valid()
+            repositories.customerRepository.addCustomer(customer)
+
+            val application = Application.valid(customer = customer)
             applicationService.registerInitialApplication(application)
             assertThat(applicationService.applicationsForName(application.name)).contains(application)
         }
@@ -23,10 +27,16 @@ class ApplicationFakeTest {
         with(testContext) {
             // Set initial date
             clock.setTo(LocalDate.of(2022, 1, 1))
-            
+
             // Create applications with different dates
             val applications = (0..2).map { counter ->
-                Application.valid(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong())).also {
+                val customer = Customer.valid()
+                repositories.customerRepository.addCustomer(customer)
+
+                Application.valid(
+                    applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()),
+                    customer = customer
+                ).also {
                     applicationService.registerInitialApplication(it)
                 }
             }
@@ -50,7 +60,11 @@ class ApplicationFakeTest {
         with(testContext) {
             // Set initial date and create application using current time
             clock.setTo(LocalDate.of(2022, 1, 1))
-            val application = Application.valid(applicationDate = LocalDate.now(clock))
+
+            val customer = Customer.valid()
+            repositories.customerRepository.addCustomer(customer)
+
+            val application = Application.valid(applicationDate = LocalDate.now(clock), customer = customer)
             applicationService.registerInitialApplication(application)
 
             // Move time forward past expiration
