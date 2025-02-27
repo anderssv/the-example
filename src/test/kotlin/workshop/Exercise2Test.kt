@@ -49,41 +49,10 @@ class Exercise2Test {
     }
 
     /**
-     * Write a test that demonstrates handling multiple applications with different dates,
-     * using the DSL helper to create applications and verify that the expiration logic
-     * works correctly for applications of different ages.
-     */
-    @Test
-    fun shouldRegisterMultipleApplicationsAndValidateDateHandlingInExpiry() {
-        with(testContext) {
-            // Arrange: Set initial date and create applications
-            clock.setTo(LocalDate.of(2023, 1, 1))
-
-            // Create applications with different dates (1 month apart)
-            val applications = listOf(
-                application { copy(applicationDate = LocalDate.now(clock)) },
-                application { copy(applicationDate = LocalDate.now(clock).plusMonths(1)) },
-                application { copy(applicationDate = LocalDate.now(clock).plusMonths(2)) }
-            )
-
-            // Act: Move time forward 7 months (past 6-month expiration for first application)
-            clock.advance(Duration.ofDays(7 * 30))
-            applicationService.expireApplications()
-
-            // Assert: Verify the expected outcomes
-            // First application (Jan) should be expired (7 months > 6 months)
-            assertThat(repositories.applicationRepo.getApplication(applications[0].id).status)
-                .isEqualTo(ApplicationStatus.EXPIRED)
-            // Last application (Mar) should still be active (5 months < 6 months)
-            assertThat(repositories.applicationRepo.getApplication(applications[2].id).status)
-                .isEqualTo(ApplicationStatus.ACTIVE)
-        }
-    }
-
-    /**
-     * Write a test that registers an application,
-     * checks that it expires after 6 months
+     * Write a test that registers an application, checks that it expires after 6 months
      * and verifies that a notification was sent to the user telling them the application has expired.
+     *
+     * The fakes should help you verify that the notification was sent.
      */
     @Test
     fun shouldExpireApplicationAfter6Months() {
@@ -104,42 +73,26 @@ class Exercise2Test {
     }
 
     /**
-     * Write a test that demonstrates a complex scenario with multiple applications in different states,
-     * verifying both the state transitions and notification handling for active and expired applications
-     * simultaneously.
+     * Write a test that demonstrates notification failure for a specific application ID
+     *
+     * The fakes should help you provoke the failure.
      */
     @Test
-    fun shouldExpireApplicationAndNotifyUserOnExpiration() {
+    fun shouldFailToNotifyForSpecificApplication() {
         with(testContext) {
-            // Arrange: Set up two applications - one active and one expired - to test state transitions and notifications
-            val activeApp = application {
-                copy(
-                    applicationDate = LocalDate.now(clock),
-                    name = "Active User"
-                )
+            // Arrange: Create an application and register it for notification failure
+            val application = application {
+                copy(applicationDate = LocalDate.of(2023, 1, 1))
+            }
+            clients.userNotificationClient.registerApplicationIdForFailure(application.id)
+
+            // Act & Assert: Verify that approval attempt throws NotificationSendException
+            val exception = assertThrows(NotificationSendException::class.java) {
+                applicationService.approveApplication(application.id)
             }
 
-            val expiredApp = application {
-                copy(
-                    applicationDate = LocalDate.now(clock).minusMonths(7),
-                    name = "Expired User"
-                )
-            }
-
-            // Act: Process applications
-            applicationService.expireApplications()
-
-            // Assert: Verify complex scenario outcomes
-            // Active application should remain active
-            assertThat(repositories.applicationRepo.getApplication(activeApp.id).status)
-                .isEqualTo(ApplicationStatus.ACTIVE)
-
-            // Expired application should be expired and notification sent
-            val expiredStatus = repositories.applicationRepo.getApplication(expiredApp.id).status
-            assertThat(expiredStatus).isEqualTo(ApplicationStatus.EXPIRED)
-
-            val notifications = clients.userNotificationClient.getNotificationForUser("Expired User")
-            assertThat(notifications).contains("Your application ${expiredApp.id} has expired")
+            // Verify that the underlying cause is IOException
+            assertThat(exception.cause).isInstanceOf(IOException::class.java)
         }
     }
 
@@ -182,28 +135,6 @@ class Exercise2Test {
         // Verify customer was created
         val customer = customerRepo.getCustomer("Manual Setup Test")
         assertThat(customer.active).isTrue()
-    }
-
-    /**
-     * Write a test that demonstrates notification failure for a specific application ID
-     */
-    @Test
-    fun shouldFailToNotifyForSpecificApplication() {
-        with(testContext) {
-            // Arrange: Create an application and register it for notification failure
-            val application = application {
-                copy(applicationDate = LocalDate.of(2023, 1, 1))
-            }
-            clients.userNotificationClient.registerApplicationIdForFailure(application.id)
-
-            // Act & Assert: Verify that approval attempt throws NotificationSendException
-            val exception = assertThrows(NotificationSendException::class.java) {
-                applicationService.approveApplication(application.id)
-            }
-
-            // Verify that the underlying cause is IOException
-            assertThat(exception.cause).isInstanceOf(IOException::class.java)
-        }
     }
 
 }
