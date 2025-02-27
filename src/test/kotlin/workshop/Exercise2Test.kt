@@ -6,8 +6,8 @@ import customer.CustomerRepositoryFake
 import notifications.NotificationSendException
 import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import system.SystemTestContext
 import java.io.IOException
 import java.time.*
@@ -31,7 +31,7 @@ class Exercise2Test {
      * Use a helper DSL to create an application and store it such that it is ready for testing.
      */
     @Test
-    fun shouldDemonstrateDslUsage() {
+    fun shouldStoreApplication() {
         with(testContext) {
             // Arrange: Using DSL for cleaner test setup
             val application = application {
@@ -54,7 +54,7 @@ class Exercise2Test {
      * works correctly for applications of different ages.
      */
     @Test
-    fun shouldDemonstrateMultipleApplicationsWithDsl() {
+    fun shouldRegisterMultipleApplicationsAndValidateDateHandlingInExpiry() {
         with(testContext) {
             // Arrange: Set initial date and create applications
             clock.setTo(LocalDate.of(2023, 1, 1))
@@ -86,7 +86,7 @@ class Exercise2Test {
      * and verifies that a notification was sent to the user telling them the application has expired.
      */
     @Test
-    fun shouldDemonstrateNotificationVerification() {
+    fun shouldExpireApplicationAfter6Months() {
         with(testContext) {
             // Arrange: Create an application that will expire
             val application = application {
@@ -109,7 +109,7 @@ class Exercise2Test {
      * simultaneously.
      */
     @Test
-    fun shouldDemonstrateComplexScenario() {
+    fun shouldExpireApplicationAndNotifyUserOnExpiration() {
         with(testContext) {
             // Arrange: Set up two applications - one active and one expired - to test state transitions and notifications
             val activeApp = application {
@@ -147,7 +147,7 @@ class Exercise2Test {
      * Write a test that sets up all dependencies without the SystemContext.
      */
     @Test
-    fun shouldWorkWithoutSystemContext() {
+    fun shouldStoreApplicationWithoutUsingSystemContext() {
         // Arrange: Set up all dependencies manually
         val applicationRepo = ApplicationRepositoryFake()
         val customerRepo = CustomerRepositoryFake()
