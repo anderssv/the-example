@@ -30,14 +30,14 @@ We will discuss along the way and will probably have to prioritise some things a
 graph TD
     AS[ApplicationService]
     AR[ApplicationRepository]
-    CR[CustomerRepository]
+    CR[CustomerRegisterClient]
     UN[UserNotificationClient]
     CL[Clock]
 
-    AS --> AR
-    AS --> CR
-    AS --> UN
-    AS --> CL
+    AS -->|uses| AR
+    AS -->|requires active| CR
+    AS -->|notifies| UN
+    AS -->|uses| CL
 
 ```
 
