@@ -41,13 +41,14 @@
    - Maintain clear separation between domain and infrastructure code
 
 3. **Code Principles**
-   - Favor immutability
+   - Favour immutability
    - Use data classes for simple data structures
    - Avoid side effects in functions
    - Prefer composition to inheritance
    - Use sealed classes for representing state
    - Use UUIDs for unique identifiers
    - Prefer objects to primitive types
+   - Re-use test data setup, prefer <class>.valid() test extension methods.
 
 4. **Naming Conventions**
    - *Domain.kt for domain models
@@ -60,3 +61,9 @@
    - Check /doc directory for detailed guides
    - Keep README.md updated
    - Document complex business rules in code
+
+6. **Exercises specific instructions**
+   - Follow the instructions in the exercise's README.md
+   - Comments on the tests should be considered as correct, verify them against the test code
+   - Use the provided test cases as a guide for implementation
+   - Ensure all tests pass before submitting
