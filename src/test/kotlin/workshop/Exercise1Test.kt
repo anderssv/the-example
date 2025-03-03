@@ -11,24 +11,33 @@ import java.time.LocalDate
 
 /**
  * Exercise 1 - Bootup, test data and arrange-assert-act
+ *
+ * We use the testContext to get access to the system under test.
+ * We will dive into the setup of the testContext in a later exercise.
  */
 class Exercise1Test {
     private val testContext = SystemTestContext()
 
     /**
      * Write a test that registers an application and verifies that it was stored correctly.
+     *
+     * Hint: Use the applicationService to register the application and the applicationRepo to verify that it was stored correctly.
+     *
+     * Questions:
+     * - How do we set up and re-use test data?
+     * - What is the best abstraction to verify that the application was stored correctly?
      */
     @Test
     fun shouldRegisterApplicationAndStoreCorrectly() {
         with(testContext) {
-            // Arrange: Set up test data and initial conditions
+            // Arrange: Set up test data. In this case, an application
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
 
-            // Act: Perform the action being tested
+            // Act: Register the application, use applicationService
             applicationService.registerInitialApplication(application)
 
-            // Assert: Verify the expected outcome
+            // Assert: Verify that the application was stored correctly in the repository
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.ACTIVE)
             assertThat(storedApplication.name).isEqualTo("Tester One")
@@ -38,11 +47,16 @@ class Exercise1Test {
 
     /**
      * Write a test that registers and application that is older than 6 months, expires it and verifies that it was expired.
+     *
+     * Questions:
+     * - How can we re-use test data setup and make in tunable in each test?
+     * - How do we signify what are the important changes for that test?
+     * - Should we use data on the application to verify or ask questions?
      */
     @Test
     fun shouldRegisterAndApplicationAndModifyForTesting() {
         with(testContext) {
-            // Arrange: Set up test data with custom values
+            // Arrange: Set up test data with an application older than 6 months
             val customer = Customer.valid()
             val application = Application.valid(
                 applicationDate = LocalDate.of(2023, 1, 1),
@@ -52,22 +66,27 @@ class Exercise1Test {
             )
             applicationService.registerInitialApplication(application)
 
-            // Act: Expire the application
+            // Act: Expire the application through domain logic in applicationService
             applicationService.expireApplications()
 
-            // Assert: Verify the application is expired
+            // Assert: Verify the application is expired in the repository
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.EXPIRED)
         }
     }
 
     /**
-     * Write a test that verifies that the service throws a IllegalStateException when trying to approve a DENIED application.
+     * Write a test that verifies that the service throws an IllegalStateException when trying to approve a DENIED application.
+     *
+     * Questions:
+     * - Is this a normal control flow or an exceptional case?
+     * - What solutions are alternatives here?
+     * - Can or should we encode the arrange, act assert steps?
      */
     @Test
     fun shouldThrowExceptionWhenApprovingDeniedApplication() {
         with(testContext) {
-            // Arrange: Set up test data with DENIED status
+            // Arrange: Set up a test data application with DENIED status and store it in the system
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id).copy(
                 status = ApplicationStatus.DENIED

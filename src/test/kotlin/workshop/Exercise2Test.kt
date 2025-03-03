@@ -15,6 +15,8 @@ import java.time.*
 
 /**
  * Exercise 2 - Fakes, helpers, and DSLs
+ *
+ * We want to look at the tools available for making test writing easier and more maintainable.
  */
 class Exercise2Test {
     private val testContext = SystemTestContext()
@@ -38,11 +40,15 @@ class Exercise2Test {
     /**
      * Write a test that registers a new application and checks that it was stored and have the correct state.
      * Use a helper DSL to create an application and store it such that it is ready for testing.
+     *
+     * Questions:
+     * - When is this worth it?
+     * - Could it be done with the assertions as well?
      */
     @Test
     fun shouldStoreApplication() {
         with(testContext) {
-            // Arrange: Using DSL for cleaner test setup
+            // Arrange: Create an application and store it with a DSL
             val application = application {
                 copy(
                     name = "DSL Test User",
@@ -58,10 +64,14 @@ class Exercise2Test {
     }
 
     /**
-     * Write a test that registers an application, checks that it expires after 6 months
+     * Write a test that registers an application, checks that it expires after 6 months,
      * and verifies that a notification was sent to the user telling them the application has expired.
      *
      * The fakes should help you verify that the notification was sent.
+     *
+     * Questions:
+     * - How would you do this with mocks?
+     * - How would mocks fare if something changed?
      */
     @Test
     fun shouldExpireApplicationAfter6Months() {
@@ -71,7 +81,8 @@ class Exercise2Test {
                 copy(applicationDate = LocalDate.of(2023, 1, 1))
             }
 
-            // Act: Advance time and expire applications
+            // Act: Advance time and expire applications,
+            // you could have just set time back in time but wouldn't show the usage
             clock.advance(Duration.ofDays(180))
             applicationService.expireApplications()
 
@@ -85,6 +96,10 @@ class Exercise2Test {
      * Write a test that demonstrates notification failure for a specific application ID
      *
      * The fakes should help you provoke the failure.
+     *
+     * Questions:
+     * - How does this differ from stubs?
+     * - How would you do this with mocks?
      */
     @Test
     fun shouldFailToNotifyForSpecificApplication() {
@@ -107,6 +122,11 @@ class Exercise2Test {
 
     /**
      * Write a test that sets up all dependencies without the SystemContext.
+     *
+     * Questions:
+     * - What is the benefit of using the SystemContext?
+     * - What is the benefit of setting up all dependencies manually?
+     * - How much should you set up manually?
      */
     @Test
     fun shouldStoreApplicationWithoutUsingSystemContext() {
@@ -119,7 +139,7 @@ class Exercise2Test {
             ZoneId.systemDefault()
         )
 
-        // Create service with manual dependencies
+        // Create a service with manual dependencies
         val applicationService = ApplicationService(
             applicationRepo = applicationRepo,
             customerRepository = customerRepo,
