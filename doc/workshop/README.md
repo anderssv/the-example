@@ -1,6 +1,6 @@
 # The TDD Workshop
 
-The contents in this repo is used as an example during my TDD workshop.
+The contents in this repo are used as an example during my TDD workshop.
 
 Duration: 4 hours
 
@@ -9,17 +9,17 @@ and how to work with a simple architecture to achieve changeable systems and mai
 
 We will discuss along the way and will probably have to prioritise some things away. But we'll figure that out together.
 
-**Part 1 - Introduction**: TDD, why it's useful, different test levels, test coverage, when it fits, and the difference between TDD and writing tests after the code is written. We also talk about the red-green-refactor cycle, arrange-assert-act, object mother with test data builders, and maintenance of tests and code.
+**Part 1—Introduction**: TDD, why it's useful, different test levels, test coverage, when it fits, and the difference between TDD and writing tests after the code is written. We also talk about the red-green-refactor cycle, arrange-assert-act, object mother with test data builders, and maintenance of tests and code.
 
 **Exercise 1 - Bootup, test data and arrange-act-assert**
 
-**Part 2 - Techniques**: Here we will talk about test levels, test doubles and separation of tests (fakes, mocks, and error situations), testing through the domain, abstract async, test utils, test validators, BDD and test DSL.
+**Part 2—Techniques**: Here we will talk about test levels, test doubles and separation of tests (fakes, mocks, and error situations), testing through the domain, abstract async, test utils, test validators, BDD and test DSL.
 
-**Exercise 2 - Fakes, helpers, and DSLs**
+**Exercise 2—Fakes, helpers, and DSLs**
 
-**Part 3 - Testable and simple architecture**: We will talk about manual DI, queues in DB, SSE for listening to events, observability (logs, metrics, traces, opentelemetry, and agents), tricks (streaming, profiler, jcmd, heap and GC and local database).
+**Part 3—Testable and simple architecture**: We will talk about manual DI, queues in DB, SSE for listening to events, observability (logs, metrics, traces, opentelemetry, and agents), tricks (streaming, profiler, jcmd, heap and GC and local database).
 
-**Exercise 3 - Manual DI, mocking and async testing**
+**Exercise 3—Manual DI, mocking and async testing**
 
 **Conclusion**: Summary, questions and answers.
 
@@ -41,7 +41,7 @@ graph TD
 
 ```
 
-The diagram above shows the main components of the system:
+The diagram above shows the main parts of the system:
 - **ApplicationService**: Core service managing application logic
 - **Repositories**: Handle data persistence for Applications and Customers
 - **UserNotificationClient**: Manages user notifications

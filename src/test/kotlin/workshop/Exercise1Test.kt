@@ -5,6 +5,7 @@ import application.ApplicationStatus
 import application.valid
 import customer.Customer
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
 import java.time.LocalDate
@@ -94,7 +95,7 @@ class Exercise1Test {
             applicationService.registerInitialApplication(application)
 
             // Act & Assert: Verify that attempting to approve throws IllegalStateException
-            org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException::class.java) {
+            assertThrows(IllegalStateException::class.java) {
                 applicationService.approveApplication(application.id)
             }
         }

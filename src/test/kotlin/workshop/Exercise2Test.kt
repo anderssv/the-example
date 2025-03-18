@@ -22,7 +22,7 @@ class Exercise2Test {
     private val testContext = SystemTestContext()
 
     // Helper method for Customer DSL
-    private fun SystemTestContext.customer(configure: Customer.() -> Customer = { this }): Customer {
+    private fun SystemTestContext.customer(configure: Customer.() -> Customer): Customer {
         return Customer.valid()
             .let(configure)
             .also { repositories.customerRepository.addCustomer(it) }
@@ -31,7 +31,7 @@ class Exercise2Test {
     // Helper method for Application DSL
     private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
-        val customer = customer()
+        val customer = customer { this } // We do nothing with the default
         return Application.valid(applicationDate = defaultDate, customerId = customer.id)
             .let(configure)
             .also { applicationService.registerInitialApplication(it) }
