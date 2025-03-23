@@ -5,6 +5,14 @@ import java.util.*
 class ApplicationRepositoryFake : ApplicationRepository {
     private val db = mutableMapOf<UUID, Application>()
 
+    override fun updateApplication(application: Application) {
+        db[application.id] = application
+    }
+
+    override fun getApplication(applicationId: UUID): Application {
+        return db[applicationId]!!
+    }
+
     override fun addApplication(application: Application) {
         db[application.id] = application
     }
@@ -16,13 +24,4 @@ class ApplicationRepositoryFake : ApplicationRepository {
     override fun getAllApplications(statuses: List<ApplicationStatus>): List<Application> {
         return db.values.filter { it.status in statuses }.toList()
     }
-
-    override fun updateApplication(application: Application) {
-        db[application.id] = application
-    }
-
-    override fun getApplication(applicationId: UUID): Application {
-        return db[applicationId]!!
-    }
-
 }
