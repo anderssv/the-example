@@ -61,6 +61,7 @@
    - Check /doc directory for detailed guides
    - Keep README.md updated
    - Document complex business rules in code
+   - Update .junie/guidelines.md with new learnings
 
 6. **Exercises specific instructions**
    - Follow the instructions in the exercise's README.md
@@ -69,4 +70,8 @@
    - Ensure all tests pass before submitting
 
 7. **Operations**
-   - When refactoring make sure to delete the old code
+   - When refactoring, make sure to delete the old code
+
+8. **Interactions**
+   - Ask questions when clarification is needed
+   - Ask when you need more information to perform a task
