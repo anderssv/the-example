@@ -1,14 +1,7 @@
 package workshop
 
-import application.Application
-import application.ApplicationStatus
-import application.valid
-import customer.Customer
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
-import java.time.LocalDate
 
 /**
  * Exercise 1 - Bootup, test data and arrange-assert-act

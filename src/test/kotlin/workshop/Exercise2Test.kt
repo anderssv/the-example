@@ -1,17 +1,12 @@
 package workshop
 
 
-import application.*
+import application.Application
+import application.valid
 import customer.Customer
-import customer.CustomerRegisterClientFake
-import notifications.NotificationSendException
-import notifications.UserNotificationClientFake
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
-import java.io.IOException
-import java.time.*
+import java.time.LocalDate
 
 /**
  * Exercise 2 - Fakes, helpers, and DSLs
