@@ -21,20 +21,13 @@ import java.time.*
 class Exercise2Test {
     private val testContext = SystemTestContext()
 
-    // Helper method for Customer DSL
-    private fun SystemTestContext.customer(configure: Customer.() -> Customer): Customer {
-        return Customer.valid()
-            .let(configure)
-            .also { repositories.customerRepository.addCustomer(it) }
-    }
-
     // Helper method for Application DSL
     private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
-        val customer = customer { this } // We do nothing with the default
+        val customer = Customer.valid()
         return Application.valid(applicationDate = defaultDate, customerId = customer.id)
             .let(configure)
-            .also { applicationService.registerInitialApplication(it) }
+            .also { applicationService.registerInitialApplication(customer, it) }
     }
 
     /**
@@ -154,7 +147,7 @@ class Exercise2Test {
             .copy(name = "Manual Setup Test")
 
         // Act: Perform the action being tested
-        applicationService.registerInitialApplication(application)
+        applicationService.registerInitialApplication(customer, application)
 
         // Assert: Verify the expected outcome
         val storedApplication = applicationRepo.getApplication(application.id)

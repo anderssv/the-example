@@ -4,6 +4,7 @@ import customer.Customer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import system.SystemTestContext
 
 /**
@@ -21,20 +22,20 @@ class TestingThroughTheDomainTest {
      * These kinds of tests are more brittle when the system changes.
      */
     @Test
-    @Disabled("This test is disabled because relies on the internals of the system through data. It is an example of what breaks when you don't use TTTD.")
     fun testDataOrientedTest() {
-        with(testContext) {
-            val customer = Customer.valid()
-            repositories.customerRepository.addCustomer(customer)
+        assertThrows<NullPointerException> { // This is an assertion
+            // added after it started failing to keep the illustration
+            with(testContext) {
+                val customer = Customer.valid()
+                val application = Application.valid(customerId = customer.id)
 
-            val application = Application.valid(customerId = customer.id)
+                // Data is set up, store directly in DB. Ignoring anything else the
+                // system does to reach the state.
+                repositories.applicationRepo.addApplication(application)
+                applicationService.approveApplication(application.id)
 
-            // Data is set up, store directly in DB. Ignoring anything else the
-            // system does to reach the state.
-            repositories.applicationRepo.addApplication(application)
-            applicationService.approveApplication(application.id)
-
-            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+                assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+            }
         }
     }
 
@@ -48,13 +49,11 @@ class TestingThroughTheDomainTest {
     fun testDomainOrientedTest() {
         with(testContext) {
             val customer = Customer.valid()
-            repositories.customerRepository.addCustomer(customer)
-
             val application = Application.valid(customerId = customer.id)
 
             // Start the process of registering application, thus manipulating through the system and
             // getting everything in a consistent state
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
             applicationService.approveApplication(application.id)
 
             assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
@@ -70,15 +69,14 @@ class TestingThroughTheDomainTest {
         with(testContext) {
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
-            repositories.customerRepository.addCustomer(customer)
 
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
             applicationService.approveApplication(application.id)
 
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.APPROVED)
 
-            val storedCustomer = repositories.customerRepository.getCustomer(storedApplication.customerId)
+            val storedCustomer = repositories.customerRepository.getCustomer(storedApplication.customerId)!!
             assertThat(storedCustomer.name).isEqualTo("Test Customer")
             assertThat(storedCustomer.active).isTrue()
         }

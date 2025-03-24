@@ -36,7 +36,7 @@ class Exercise1Test {
             val application = Application.valid(customerId = customer.id)
 
             // Act: Register the application, use applicationService
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
 
             // Assert: Verify that the application was stored correctly in the repository
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
@@ -65,7 +65,7 @@ class Exercise1Test {
             ).copy(
                 name = "Custom Name"
             )
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
 
             // Act: Expire the application through domain logic in applicationService
             applicationService.expireApplications()
@@ -92,7 +92,7 @@ class Exercise1Test {
             val application = Application.valid(customerId = customer.id).copy(
                 status = ApplicationStatus.DENIED
             )
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
 
             // Act & Assert: Verify that attempting to approve throws IllegalStateException
             assertThrows(IllegalStateException::class.java) {

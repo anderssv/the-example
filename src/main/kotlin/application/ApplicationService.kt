@@ -15,7 +15,10 @@ class ApplicationService(
     private val userNotificationClient: UserNotificationClient,
     private val clock: Clock
 ) {
-    fun registerInitialApplication(application: Application) {
+    fun registerInitialApplication(customer: Customer, application: Application) {
+        if (customerRepository.getCustomer(customer.id) == null) {
+            customerRepository.addCustomer(customer)
+        }
         applicationRepo.addApplication(application)
     }
 
@@ -39,7 +42,7 @@ class ApplicationService(
 
     fun approveApplication(applicationId: UUID) {
         val application = applicationRepo.getApplication(applicationId)
-        val customer = customerRepository.getCustomer(application.customerId)
+        val customer = customerRepository.getCustomer(application.customerId)!!
         if (!customer.active) throw IllegalStateException("Customer not active")
         if (application.status == ApplicationStatus.DENIED) throw IllegalStateException("Cannot approve a denied application")
 

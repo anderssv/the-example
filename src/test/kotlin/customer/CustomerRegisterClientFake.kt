@@ -11,8 +11,8 @@ class CustomerRegisterClientFake: CustomerRegisterClient {
         customersByName[customer.name] = customer
     }
 
-    override fun getCustomer(id: UUID): Customer {
-        return customersById[id] ?: throw IllegalStateException("Customer not found")
+    override fun getCustomer(id: UUID): Customer? {
+        return customersById[id]
     }
 
 }

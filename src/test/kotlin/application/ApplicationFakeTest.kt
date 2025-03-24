@@ -14,10 +14,9 @@ class ApplicationFakeTest {
     fun shouldRegisterApplicationSuccessfullyAndRegisterOnPerson() {
         with(testContext) {
             val customer = Customer.valid()
-            repositories.customerRepository.addCustomer(customer)
 
             val application = Application.valid(customerId = customer.id)
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
             assertThat(applicationService.applicationsForName(application.name)).contains(application)
         }
     }
@@ -31,13 +30,12 @@ class ApplicationFakeTest {
             // Create applications with different dates
             val applications = (0..2).map { counter ->
                 val customer = Customer.valid()
-                repositories.customerRepository.addCustomer(customer)
 
                 Application.valid(
                     applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()),
                     customer.id
                 ).also {
-                    applicationService.registerInitialApplication(it)
+                    applicationService.registerInitialApplication(customer, it)
                 }
             }
 
@@ -62,10 +60,9 @@ class ApplicationFakeTest {
             clock.setTo(LocalDate.of(2022, 1, 1))
 
             val customer = Customer.valid()
-            repositories.customerRepository.addCustomer(customer)
 
             val application = Application.valid(applicationDate = LocalDate.now(clock), customer.id)
-            applicationService.registerInitialApplication(application)
+            applicationService.registerInitialApplication(customer, application)
 
             // Move time forward past expiration
             clock.advance(Duration.ofDays(7 * 30))  // Advance 7 months
