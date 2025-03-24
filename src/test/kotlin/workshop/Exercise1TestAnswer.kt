@@ -16,7 +16,7 @@ import java.time.LocalDate
  * We use the testContext to get access to the system under test.
  * We will dive into the setup of the testContext in a later exercise.
  */
-class Exercise1Test {
+class Exercise1TestAnswer {
     private val testContext = SystemTestContext()
 
     /**

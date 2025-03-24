@@ -18,7 +18,7 @@ import java.time.*
  *
  * We want to look at the tools available for making test writing easier and more maintainable.
  */
-class Exercise2Test {
+class Exercise2TestAnswer {
     private val testContext = SystemTestContext()
 
     // Helper method for Application DSL
