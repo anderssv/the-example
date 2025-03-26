@@ -22,7 +22,13 @@ class Exercise2TestAnswer {
     private val testContext = SystemTestContext()
 
     // Helper method for Application DSL
-    private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
+    private fun SystemTestContext.withStoredApplication(
+        /*
+         * A (optional, because it has { this } as the default) lambda that can be
+         * used to modify the application before storing it.
+         */
+        configure: Application.() -> Application = { this }
+    ): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = Customer.valid()
         return Application.valid(applicationDate = defaultDate, customerId = customer.id)
@@ -42,7 +48,7 @@ class Exercise2TestAnswer {
     fun shouldStoreApplication() {
         with(testContext) {
             // Arrange: Create an application and store it with a DSL
-            val application = application {
+            val application = withStoredApplication {
                 copy(
                     name = "DSL Test User",
                     applicationDate = LocalDate.of(2023, 3, 1)
@@ -70,7 +76,7 @@ class Exercise2TestAnswer {
     fun shouldExpireApplicationAfter6Months() {
         with(testContext) {
             // Arrange: Create an application that will expire
-            val application = application {
+            val application = withStoredApplication {
                 copy(applicationDate = LocalDate.of(2023, 1, 1))
             }
 
@@ -98,7 +104,7 @@ class Exercise2TestAnswer {
     fun shouldFailToNotifyForSpecificApplication() {
         with(testContext) {
             // Arrange: Create an application and register it for notification failure
-            val application = application {
+            val application = withStoredApplication {
                 copy(applicationDate = LocalDate.of(2023, 1, 1))
             }
             clients.userNotificationClient.registerApplicationIdForFailure(application.id)

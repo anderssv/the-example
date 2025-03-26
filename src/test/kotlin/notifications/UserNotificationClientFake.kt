@@ -1,7 +1,7 @@
 package notifications
 
 import java.io.IOException
-import java.util.UUID
+import java.util.*
 
 class UserNotificationClientFake : UserNotificationClient {
     private val notifications = mutableMapOf<String, MutableList<String>>()

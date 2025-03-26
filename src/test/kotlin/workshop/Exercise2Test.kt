@@ -17,7 +17,13 @@ class Exercise2Test {
     private val testContext = SystemTestContext()
 
     // Helper method for Application DSL
-    private fun SystemTestContext.application(configure: Application.() -> Application = { this }): Application {
+    private fun SystemTestContext.withStoredApplication(
+        /*
+         * A (optional, because it has { this } as the default) lambda that can be
+         * used to modify the application before storing it.
+         */
+        configure: Application.() -> Application = { this }
+    ): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = Customer.valid()
         return Application.valid(applicationDate = defaultDate, customerId = customer.id)

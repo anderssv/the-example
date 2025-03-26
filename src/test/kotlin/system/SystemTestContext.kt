@@ -1,9 +1,8 @@
 package system
 
-import customer.CustomerRegisterClientFake
 import application.ApplicationRepositoryFake
+import customer.CustomerRegisterClientFake
 import notifications.UserNotificationClientFake
-import java.time.LocalDate
 
 /**
  * Overrides the relevant properties to make them Fakes
