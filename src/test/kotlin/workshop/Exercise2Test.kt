@@ -86,22 +86,4 @@ class Exercise2Test {
             // 3. Verify that the underlying cause is IOException
         }
     }
-
-    /**
-     * Write a test that sets up all dependencies without the SystemContext.
-     *
-     * Questions:
-     * - What is the benefit of using the SystemContext?
-     * - What is the benefit of setting up all dependencies manually?
-     * - How much should you set up manually?
-     */
-    @Test
-    fun shouldStoreApplicationWithoutUsingSystemContext() {
-        // TODO: Implement this test
-        // 1. Set up all dependencies manually (applicationRepo, customerRepo, notificationClient, clock)
-        // 2. Create a service with manual dependencies
-        // 3. Set up test data
-        // 4. Perform the action being tested
-        // 5. Verify the expected outcome
-    }
 }
