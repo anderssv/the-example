@@ -64,10 +64,10 @@
    - Update .junie/guidelines.md with new learnings
 
 6. **Exercises specific instructions**
-   - Follow the instructions in the exercise's README.md
+   - A short introduction to the exercises can be found in doc/workshop/README.md
    - Comments on the tests should be considered as correct, verify them against the test code
    - Use the provided test cases as a guide for implementation
-   - Ensure all tests pass before submitting
+   - Ensure all tests pass
 
 7. **Operations**
    - When refactoring, make sure to delete the old code
