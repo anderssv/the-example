@@ -30,7 +30,15 @@ class BrregClientTest {
                             "beskrivelse": "Aksjeselskap"
                         },
                         "registreringsdatoEnhetsregisteret": "2021-01-01",
-                        "registrertIMvaregisteret": true
+                        "registrertIMvaregisteret": true,
+                        "registrertIForetaksregisteret": true,
+                        "registrertIStiftelsesregisteret": false,
+                        "registrertIFrivillighetsregisteret": false,
+                        "konkurs": false,
+                        "underAvvikling": false,
+                        "underTvangsavviklingEllerTvangsopplosning": false,
+                        "maalform": "NB",
+                        "harRegistrertAntallAnsatte": false
                     }
                 """.trimIndent()
 

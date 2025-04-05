@@ -7,29 +7,30 @@ package brreg
 data class BrregEntity(
     val organisasjonsnummer: String,
     val navn: String,
-    val organisasjonsform: OrganisasjonsformDto? = null,
-    val registreringsdatoEnhetsregisteret: String? = null,
-    val registrertIMvaregisteret: Boolean? = null,
+    val organisasjonsform: OrganisasjonsformDto,
+    val registreringsdatoEnhetsregisteret: String,
+    val registrertIMvaregisteret: Boolean,
     val naeringskode1: NaeringskodeDto? = null,
     val antallAnsatte: Int? = null,
     val forretningsadresse: AdresseDto? = null,
     val stiftelsesdato: String? = null,
     val institusjonellSektorkode: InstitusjonellSektorkodeDto? = null,
-    val registrertIForetaksregisteret: Boolean? = null,
-    val registrertIStiftelsesregisteret: Boolean? = null,
-    val registrertIFrivillighetsregisteret: Boolean? = null,
-    val konkurs: Boolean? = null,
-    val underAvvikling: Boolean? = null,
-    val underTvangsavviklingEllerTvangsopplosning: Boolean? = null,
-    val maalform: String? = null,
+    val registrertIForetaksregisteret: Boolean,
+    val registrertIStiftelsesregisteret: Boolean,
+    val registrertIFrivillighetsregisteret: Boolean,
+    val konkurs: Boolean,
+    val underAvvikling: Boolean,
+    val underTvangsavviklingEllerTvangsopplosning: Boolean,
+    val maalform: String,
+    val harRegistrertAntallAnsatte: Boolean,
     val links: List<LinkDto>? = null
 ) {
     companion object
 }
 
 data class OrganisasjonsformDto(
-    val kode: String? = null,
-    val beskrivelse: String? = null,
+    val kode: String,
+    val beskrivelse: String,
     val links: List<LinkDto>? = null
 ) {
     companion object

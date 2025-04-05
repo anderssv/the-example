@@ -24,7 +24,18 @@ class BrregClientFake : BrregClient {
     fun createDefaultEntity(organizationNumber: String): BrregEntity {
         val entity = BrregEntity(
             organisasjonsnummer = organizationNumber,
-            navn = "Test Entity $organizationNumber"
+            navn = "Test Entity $organizationNumber",
+            organisasjonsform = OrganisasjonsformDto.valid(),
+            registreringsdatoEnhetsregisteret = "2021-01-01",
+            registrertIMvaregisteret = true,
+            registrertIForetaksregisteret = true,
+            registrertIStiftelsesregisteret = false,
+            registrertIFrivillighetsregisteret = false,
+            konkurs = false,
+            underAvvikling = false,
+            underTvangsavviklingEllerTvangsopplosning = false,
+            maalform = "NB",
+            harRegistrertAntallAnsatte = false
         )
         addEntity(entity)
         return entity
@@ -41,21 +52,22 @@ class BrregClientFake : BrregClient {
 fun BrregEntity.Companion.valid(
     organisasjonsnummer: String = "123456789",
     navn: String = "Test Entity",
-    organisasjonsform: OrganisasjonsformDto? = OrganisasjonsformDto.valid(),
-    registreringsdatoEnhetsregisteret: String? = "2021-01-01",
-    registrertIMvaregisteret: Boolean? = true,
+    organisasjonsform: OrganisasjonsformDto = OrganisasjonsformDto.valid(),
+    registreringsdatoEnhetsregisteret: String = "2021-01-01",
+    registrertIMvaregisteret: Boolean = true,
     naeringskode1: NaeringskodeDto? = NaeringskodeDto.valid(),
     antallAnsatte: Int? = 10,
     forretningsadresse: AdresseDto? = AdresseDto.valid(),
     stiftelsesdato: String? = "2020-01-01",
     institusjonellSektorkode: InstitusjonellSektorkodeDto? = InstitusjonellSektorkodeDto.valid(),
-    registrertIForetaksregisteret: Boolean? = true,
-    registrertIStiftelsesregisteret: Boolean? = false,
-    registrertIFrivillighetsregisteret: Boolean? = false,
-    konkurs: Boolean? = false,
-    underAvvikling: Boolean? = false,
-    underTvangsavviklingEllerTvangsopplosning: Boolean? = false,
-    maalform: String? = "NB",
+    registrertIForetaksregisteret: Boolean = true,
+    registrertIStiftelsesregisteret: Boolean = false,
+    registrertIFrivillighetsregisteret: Boolean = false,
+    konkurs: Boolean = false,
+    underAvvikling: Boolean = false,
+    underTvangsavviklingEllerTvangsopplosning: Boolean = false,
+    maalform: String = "NB",
+    harRegistrertAntallAnsatte: Boolean = false,
     links: List<LinkDto>? = listOf(LinkDto.valid())
 ): BrregEntity {
     return BrregEntity(
@@ -76,6 +88,7 @@ fun BrregEntity.Companion.valid(
         underAvvikling = underAvvikling,
         underTvangsavviklingEllerTvangsopplosning = underTvangsavviklingEllerTvangsopplosning,
         maalform = maalform,
+        harRegistrertAntallAnsatte = harRegistrertAntallAnsatte,
         links = links
     )
 }
@@ -84,8 +97,8 @@ fun BrregEntity.Companion.valid(
  * Extension function to create a valid OrganisasjonsformDto for testing.
  */
 fun OrganisasjonsformDto.Companion.valid(
-    kode: String? = "AS",
-    beskrivelse: String? = "Aksjeselskap",
+    kode: String = "AS",
+    beskrivelse: String = "Aksjeselskap",
     links: List<LinkDto>? = null
 ): OrganisasjonsformDto {
     return OrganisasjonsformDto(
