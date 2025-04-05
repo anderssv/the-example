@@ -10,11 +10,11 @@ data class BrregEntity(
     val organisasjonsform: OrganisasjonsformDto,
     val registreringsdatoEnhetsregisteret: String,
     val registrertIMvaregisteret: Boolean,
-    val naeringskode1: NaeringskodeDto? = null,
-    val antallAnsatte: Int? = null,
-    val forretningsadresse: AdresseDto? = null,
-    val stiftelsesdato: String? = null,
-    val institusjonellSektorkode: InstitusjonellSektorkodeDto? = null,
+    val naeringskode1: NaeringskodeDto?,
+    val antallAnsatte: Int?,
+    val forretningsadresse: AdresseDto?,
+    val stiftelsesdato: String?,
+    val institusjonellSektorkode: InstitusjonellSektorkodeDto?,
     val registrertIForetaksregisteret: Boolean,
     val registrertIStiftelsesregisteret: Boolean,
     val registrertIFrivillighetsregisteret: Boolean,
@@ -23,7 +23,7 @@ data class BrregEntity(
     val underTvangsavviklingEllerTvangsopplosning: Boolean,
     val maalform: String,
     val harRegistrertAntallAnsatte: Boolean,
-    val links: List<LinkDto>? = null
+    val links: List<LinkDto>?
 ) {
     companion object
 }
@@ -31,43 +31,43 @@ data class BrregEntity(
 data class OrganisasjonsformDto(
     val kode: String,
     val beskrivelse: String,
-    val links: List<LinkDto>? = null
+    val links: List<LinkDto>?
 ) {
     companion object
 }
 
 data class NaeringskodeDto(
-    val kode: String? = null,
-    val beskrivelse: String? = null,
-    val links: List<LinkDto>? = null
+    val kode: String?,
+    val beskrivelse: String?,
+    val links: List<LinkDto>?
 ) {
     companion object
 }
 
 data class AdresseDto(
-    val adresse: List<String>? = null,
-    val postnummer: String? = null,
-    val poststed: String? = null,
-    val kommunenummer: String? = null,
-    val kommune: String? = null,
-    val landkode: String? = null,
-    val land: String? = null
+    val adresse: List<String>?,
+    val postnummer: String?,
+    val poststed: String?,
+    val kommunenummer: String?,
+    val kommune: String?,
+    val landkode: String?,
+    val land: String?
 ) {
     companion object
 }
 
 data class InstitusjonellSektorkodeDto(
-    val kode: String? = null,
-    val beskrivelse: String? = null,
-    val links: List<LinkDto>? = null
+    val kode: String?,
+    val beskrivelse: String?,
+    val links: List<LinkDto>?
 ) {
     companion object
 }
 
 data class LinkDto(
-    val href: String? = null,
-    val rel: String? = null,
-    val type: String? = null
+    val href: String?,
+    val rel: String?,
+    val type: String?
 ) {
     companion object
 }

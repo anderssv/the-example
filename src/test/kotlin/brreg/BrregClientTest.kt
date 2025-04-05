@@ -153,4 +153,28 @@ class BrregClientTest {
         assertThat(entity?.naeringskode1?.kode).isEqualTo("64.190")
         assertThat(entity?.naeringskode1?.beskrivelse).contains("Bankvirksomhet")
     }
+    @Test
+    fun shouldReturnCorrectEntityFromFake() = runTest {
+        // Arrange: Create a fake BrregClient and add an entity
+        val brregClientFake = BrregClientFake()
+        val testEntity = BrregEntity.valid(
+            organisasjonsnummer = "123456789",
+            navn = "Test Fake Entity",
+            antallAnsatte = 42
+        )
+        brregClientFake.addEntity(testEntity)
+
+        // Act: Call the method being tested
+        val foundEntity = brregClientFake.getEntity("123456789")
+        val notFoundEntity = brregClientFake.getEntity("999999999")
+
+        // Assert: Verify the results
+        assertThat(foundEntity).isNotNull
+        assertThat(foundEntity?.organisasjonsnummer).isEqualTo("123456789")
+        assertThat(foundEntity?.navn).isEqualTo("Test Fake Entity")
+        assertThat(foundEntity?.antallAnsatte).isEqualTo(42)
+
+        // Verify that non-existent entity returns null
+        assertThat(notFoundEntity).isNull()
+    }
 }

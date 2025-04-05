@@ -28,13 +28,15 @@ fun BrregEntity.Companion.valid(
     navn: String = "Test Entity",
     organisasjonsform: OrganisasjonsformDto = OrganisasjonsformDto(
         kode = "AS",
-        beskrivelse = "Aksjeselskap"
+        beskrivelse = "Aksjeselskap",
+        links = null
     ),
     registreringsdatoEnhetsregisteret: String = "2021-01-01",
     registrertIMvaregisteret: Boolean = true,
     naeringskode1: NaeringskodeDto? = NaeringskodeDto(
         kode = "62.010",
-        beskrivelse = "Programmeringstjenester"
+        beskrivelse = "Programmeringstjenester",
+        links = null
     ),
     antallAnsatte: Int? = 10,
     forretningsadresse: AdresseDto? = AdresseDto(
@@ -49,7 +51,8 @@ fun BrregEntity.Companion.valid(
     stiftelsesdato: String? = "2020-01-01",
     institusjonellSektorkode: InstitusjonellSektorkodeDto? = InstitusjonellSektorkodeDto(
         kode = "2100",
-        beskrivelse = "Private aksjeselskaper mv."
+        beskrivelse = "Private aksjeselskaper mv.",
+        links = null
     ),
     registrertIForetaksregisteret: Boolean = true,
     registrertIStiftelsesregisteret: Boolean = false,
@@ -89,4 +92,3 @@ fun BrregEntity.Companion.valid(
         links = links
     )
 }
-

@@ -49,6 +49,8 @@
    - Use UUIDs for unique identifiers
    - Prefer objects to primitive types
    - Re-use test data setup, prefer <class>.valid() test extension methods.
+   - Use idiomatic Kotlin code and minimize dependencies.
+   - Avoid default values unless it helps write test data.
 
 4. **Naming Conventions**
    - *Domain.kt for domain models
