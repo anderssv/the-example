@@ -28,7 +28,7 @@ interface BrregClient {
 class BrregClientImpl(private val client: HttpClient) : BrregClient {
     companion object {
         private const val BASE_URL = "https://data.brreg.no/enhetsregisteret/api/enheter"
-        
+
         fun client(engine: HttpClientEngine): HttpClient = HttpClient(engine) {
             install(ContentNegotiation) {
                 jackson {

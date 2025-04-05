@@ -85,8 +85,6 @@ class BrregClientTest {
             )
         }
 
-
-
         val brregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
 
         // Act: Call the method being tested
@@ -103,13 +101,7 @@ class BrregClientTest {
             throw Exception("Simulated exception")
         }
 
-        val httpClient = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                jackson()
-            }
-        }
-
-        val brregClient = BrregClientImpl(httpClient)
+        val brregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
 
         // Act & Assert: Verify that an exception is thrown
         assertThrows<Exception> {
