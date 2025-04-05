@@ -28,7 +28,7 @@
 
 ## Best Practices
 1. **Testing**
-   - Write tests first (TDD approach)
+   - Write tests before the implementation and let that guide you implementing (TDD approach)
    - Use fakes instead of mocks when possible
    - Follow Arrange-Act-Assert pattern
    - Utilize test data builders

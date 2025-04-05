@@ -1,6 +1,7 @@
 package system
 
 import application.ApplicationRepositoryFake
+import brreg.BrregClientFake
 import customer.CustomerRegisterClientFake
 import notifications.UserNotificationClientFake
 
@@ -23,6 +24,7 @@ class SystemTestContext : SystemContext() {
 
     class Clients : SystemContext.Clients() {
         override val userNotificationClient = UserNotificationClientFake()
+        override val brregClient = BrregClientFake()
     }
 
     // Override the contexts with Fakes

@@ -3,6 +3,8 @@ package system
 import application.ApplicationRepository
 import application.ApplicationRepositoryImpl
 import application.ApplicationService
+import brreg.BrregClient
+import brreg.BrregClientImpl
 import customer.CustomerRegisterClient
 import customer.CustomerRegisterClientImpl
 import notifications.UserNotificationClient
@@ -31,6 +33,7 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     // Just some namespacing
     open class Clients {
         open val userNotificationClient: UserNotificationClient by lazy { UserNotificationClientImpl() }
+        open val brregClient: BrregClient by lazy { BrregClientImpl() }
     }
 
     // Open because they will be overridden with Fakes
