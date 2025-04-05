@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import kotlin.text.RegexOption.IGNORE_CASE
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    id("com.github.ben-manes.versions") version "0.49.0"
+    kotlin("jvm") version "2.1.20"
+    id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 group = "no.mikill"
@@ -16,15 +16,17 @@ repositories {
 
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
-    implementation("io.ktor:ktor-client-core:2.3.9")
-    implementation("io.ktor:ktor-client-cio:2.3.9")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
-    implementation("io.ktor:ktor-serialization-jackson:2.3.9")
-    testImplementation("org.assertj:assertj-core:3.26.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
+    implementation("io.ktor:ktor-client-core:3.1.2")
+    implementation("io.ktor:ktor-client-cio:3.1.2")
+    implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
+    implementation("io.ktor:ktor-serialization-jackson:3.1.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock:2.3.9")
+    testImplementation("io.ktor:ktor-client-mock:3.1.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 }
 
 tasks {
