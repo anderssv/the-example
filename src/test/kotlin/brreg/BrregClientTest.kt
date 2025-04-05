@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.assertThrows
 
 class BrregClientTest {
 
@@ -84,13 +85,9 @@ class BrregClientTest {
             )
         }
 
-        val httpClient = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                jackson()
-            }
-        }
 
-        val brregClient = BrregClientImpl(httpClient)
+
+        val brregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
 
         // Act: Call the method being tested
         val entity = brregClient.getEntity("999999999")
@@ -100,7 +97,7 @@ class BrregClientTest {
     }
 
     @Test
-    fun shouldReturnNullWhenExceptionOccurs() = runTest {
+    fun shouldThrowExceptionWhenExceptionOccurs() = runTest {
         // Arrange: Create a mock HttpClient that throws an exception
         val mockEngine = MockEngine { _ ->
             throw Exception("Simulated exception")
@@ -114,11 +111,10 @@ class BrregClientTest {
 
         val brregClient = BrregClientImpl(httpClient)
 
-        // Act: Call the method being tested
-        val entity = brregClient.getEntity("112233445")
-
-        // Assert: Verify the result
-        assertThat(entity).isNull()
+        // Act & Assert: Verify that an exception is thrown
+        assertThrows<Exception> {
+            brregClient.getEntity("112233445")
+        }
     }
 
     @Test
