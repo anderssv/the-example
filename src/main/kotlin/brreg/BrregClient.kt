@@ -33,13 +33,16 @@ class BrregClientImpl(private val client: HttpClient) : BrregClient {
      */
     constructor() : this(HttpClient(CIO) {
         install(ContentNegotiation) {
-            jackson()
+            jackson {
+                // Configure Jackson to ignore unknown properties
+                configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            }
         }
     })
 
     override suspend fun getEntity(organizationNumber: String): BrregEntity? {
         return try {
-            client.get("$BASE_URL/$organizationNumber").body()
+            client.get("$BASE_URL/$organizationNumber").body<BrregEntity>()
         } catch (e: Exception) {
             // Handle exceptions, e.g., log them
             null
