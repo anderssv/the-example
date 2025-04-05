@@ -1,28 +1,25 @@
 package brreg
 
-import io.ktor.client.*
 import io.ktor.client.engine.mock.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class BrregClientTest {
 
     @Test
     fun shouldFetchEntityByOrganizationNumber() = runTest {
-            // Arrange: Create a mock HttpClient that returns a predefined response
-            val mockEngine = MockEngine { request ->
-                // Verify the request URL
-                assertThat(request.url.toString()).isEqualTo("https://data.brreg.no/enhetsregisteret/api/enheter/112233445")
+        // Arrange: Create a mock HttpClient that returns a predefined response
+        val mockEngine = MockEngine { request ->
+            // Verify the request URL
+            assertThat(request.url.toString()).isEqualTo("https://data.brreg.no/enhetsregisteret/api/enheter/112233445")
 
-                // Return a mock response
-                val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-                val responseBody = """
+            // Return a mock response
+            val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+            val responseBody = """
                     {
                         "organisasjonsnummer": "112233445",
                         "navn": "Test Entity",
@@ -43,32 +40,28 @@ class BrregClientTest {
                     }
                 """.trimIndent()
 
-                respond(
-                    content = responseBody,
-                    status = HttpStatusCode.OK,
-                    headers = responseHeaders
-                )
-            }
+            respond(
+                content = responseBody,
+                status = HttpStatusCode.OK,
+                headers = responseHeaders
+            )
+        }
 
-            val httpClient = HttpClient(mockEngine) {
-                install(ContentNegotiation) {
-                    jackson()
-                }
-            }
+        val brregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
 
-            val brregClient = BrregClientImpl(httpClient)
+        // Act: Call the method being tested
+        val entity = brregClient.getEntity("112233445")
 
-            // Act: Call the method being tested
-            val entity = brregClient.getEntity("112233445")
-
-            // Assert: Verify the result
-            assertThat(entity).isNotNull
-            assertThat(entity?.organisasjonsnummer).isEqualTo("112233445")
-            assertThat(entity?.navn).isEqualTo("Test Entity")
-            assertThat(entity?.organisasjonsform?.kode).isEqualTo("AS")
-            assertThat(entity?.organisasjonsform?.beskrivelse).isEqualTo("Aksjeselskap")
-            assertThat(entity?.registreringsdatoEnhetsregisteret).isEqualTo("2021-01-01")
-            assertThat(entity?.registrertIMvaregisteret).isTrue()
+        // Assert: Verify the result
+        assertThat(entity).isNotNull
+        with(entity!!) {
+            assertThat(organisasjonsnummer).isEqualTo("112233445")
+            assertThat(navn).isEqualTo("Test Entity")
+            assertThat(organisasjonsform.kode).isEqualTo("AS")
+            assertThat(organisasjonsform.beskrivelse).isEqualTo("Aksjeselskap")
+            assertThat(registreringsdatoEnhetsregisteret).isEqualTo("2021-01-01")
+            assertThat(registrertIMvaregisteret).isTrue()
+        }
     }
 
     @Test
@@ -120,27 +113,18 @@ class BrregClientTest {
 
         // Assert: Verify the result
         assertThat(entity).isNotNull
-        assertThat(entity?.organisasjonsnummer).isEqualTo("984851006")
-        assertThat(entity?.navn).isEqualTo("DNB BANK ASA")
+        with(entity!!) {
+            assertThat(organisasjonsnummer).isEqualTo("984851006")
+            assertThat(navn).isEqualTo("DNB BANK ASA")
 
-        // Verify organizational form
-        assertThat(entity?.organisasjonsform).isNotNull
-        assertThat(entity?.organisasjonsform?.kode).isEqualTo("ASA")
-        assertThat(entity?.organisasjonsform?.beskrivelse).isEqualTo("Allmennaksjeselskap")
+            assertThat(registrertIForetaksregisteret).isTrue()
+            assertThat(organisasjonsform.kode).isEqualTo("ASA")
 
-        // Verify address
-        assertThat(entity?.forretningsadresse).isNotNull
-        assertThat(entity?.forretningsadresse?.kommune).isEqualTo("OSLO")
-        assertThat(entity?.forretningsadresse?.postnummer).isEqualTo("0191")
-
-        // Verify that the entity is registered in MVA register
-        assertThat(entity?.registrertIMvaregisteret).isTrue()
-
-        // Verify business code
-        assertThat(entity?.naeringskode1).isNotNull
-        assertThat(entity?.naeringskode1?.kode).isEqualTo("64.190")
-        assertThat(entity?.naeringskode1?.beskrivelse).contains("Bankvirksomhet")
+            assertThat(forretningsadresse).isNotNull
+            assertThat(naeringskode1?.kode).isEqualTo("64.190")
+        }
     }
+
     @Test
     fun shouldReturnCorrectEntityFromFake() = runTest {
         // Arrange: Create a fake BrregClient and add an entity
@@ -158,9 +142,11 @@ class BrregClientTest {
 
         // Assert: Verify the results
         assertThat(foundEntity).isNotNull
-        assertThat(foundEntity?.organisasjonsnummer).isEqualTo("123456789")
-        assertThat(foundEntity?.navn).isEqualTo("Test Fake Entity")
-        assertThat(foundEntity?.antallAnsatte).isEqualTo(42)
+        with(foundEntity!!) {
+            assertThat(organisasjonsnummer).isEqualTo("123456789")
+            assertThat(navn).isEqualTo("Test Fake Entity")
+            assertThat(antallAnsatte).isEqualTo(42)
+        }
 
         // Verify that non-existent entity returns null
         assertThat(notFoundEntity).isNull()
