@@ -31,8 +31,7 @@
    - Write tests before the implementation and let that guide you implementing (TDD approach)
    - Use fakes instead of mocks when possible
    - Follow Arrange-Act-Assert pattern
-   - Utilize test data builders
-   - Run all tests after finishing a task
+   - Re-use test data setup, prefer <class>.valid() test extension methods.
 
 2. **Code Organization**
    - Follow domain-driven package structure
@@ -48,7 +47,6 @@
    - Use sealed classes for representing state
    - Use UUIDs for unique identifiers
    - Prefer objects to primitive types
-   - Re-use test data setup, prefer <class>.valid() test extension methods.
    - Use idiomatic Kotlin code and minimize dependencies.
    - Avoid default values unless it helps write test data.
 
@@ -60,20 +58,19 @@
    - *Client.kt for clients to other services
 
 5. **Documentation**
-   - Check /doc directory for detailed guides
+   - Check ./doc directory for detailed guides on how to write tests
    - Keep README.md updated
    - Document complex business rules in code
    - Update .junie/guidelines.md with new learnings
 
 6. **Exercises specific instructions**
-   - A short introduction to the exercises can be found in doc/workshop/README.md
+   - A short introduction to the exercises can be found in ./doc/workshop/README.md
    - Comments on the tests should be considered as correct, verify them against the test code
    - Use the provided test cases as a guide for implementation
    - Ensure all tests pass
 
-7. **Operations**
-   - When refactoring, make sure to delete the old code
-
-8. **Interactions**
+7. **Interactions**
    - Ask questions when clarification is needed
    - Ask when you need more information to perform a task
+   - When refactoring, make sure to delete the old code
+   - Run all tests after finishing a task
