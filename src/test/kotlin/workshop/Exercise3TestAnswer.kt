@@ -1,8 +1,14 @@
 package workshop
 
 import application.*
+import brreg.BrregClient
+import brreg.BrregClientImpl
+import brreg.BrregEntity
 import customer.Customer
 import customer.CustomerRegisterClientFake
+import io.ktor.client.engine.mock.*
+import io.ktor.http.*
+import kotlinx.coroutines.test.runTest
 import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -59,4 +65,36 @@ class Exercise3TestAnswer {
         assertThat(storedApplication.name).isEqualTo("Manual Setup Test")
     }
 
+    /**
+     * This test demonstrates that mocking is useful when we need to verify
+     * client interactions based on response codes.
+     * 
+     * It shows how we can:
+     * 1. Control the response code returned by the mock
+     * 2. Verify that the client handles the response code correctly
+     * 3. Verify that the client makes the correct request
+     */
+    @Test
+    fun shouldReturnNullWhenEntityNotFound() = runTest {
+        // Arrange: Create a mock HttpClient that returns a 404 response
+        val mockEngine = MockEngine { request ->
+            // Verify the request URL
+            assertThat(request.url.toString()).isEqualTo("https://data.brreg.no/enhetsregisteret/api/enheter/999999999")
+
+            // Return a 404 response
+            respond(
+                content = "",
+                status = HttpStatusCode.NotFound
+            )
+        }
+
+        // Create a BrregClient with the mock engine
+        val brregClient: BrregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
+
+        // Act: Call the method being tested
+        val entity = brregClient.getEntity("999999999")
+
+        // Assert: Verify the result
+        assertThat(entity).isNull()
+    }
 }
