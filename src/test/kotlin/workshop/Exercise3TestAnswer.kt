@@ -1,3 +1,5 @@
+package workshop
+
 import application.*
 import customer.Customer
 import customer.CustomerRegisterClientFake
