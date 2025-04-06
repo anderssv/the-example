@@ -3,7 +3,6 @@ package workshop
 import application.*
 import brreg.BrregClient
 import brreg.BrregClientImpl
-import brreg.BrregEntity
 import customer.Customer
 import customer.CustomerRegisterClientFake
 import io.ktor.client.engine.mock.*
@@ -66,16 +65,15 @@ class Exercise3TestAnswer {
     }
 
     /**
-     * This test demonstrates that mocking is useful when we need to verify
-     * client interactions based on response codes.
-     * 
-     * It shows how we can:
-     * 1. Control the response code returned by the mock
-     * 2. Verify that the client handles the response code correctly
-     * 3. Verify that the client makes the correct request
+     * Write a test that verifies that the KTor client returns a null object when the remote responds with a 404.
+     *
+     * Questions:
+     * - When would you use mocking instead of a fake implementation?
+     * - Is it important to verify the request URL in this test?
+     * - What are the trade-offs between mocking HTTP responses and using real HTTP calls in tests?
      */
     @Test
-    fun shouldReturnNullWhenEntityNotFound() = runTest {
+    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() = runTest {
         // Arrange: Create a mock HttpClient that returns a 404 response
         val mockEngine = MockEngine { request ->
             // Verify the request URL
