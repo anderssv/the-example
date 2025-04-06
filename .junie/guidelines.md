@@ -25,6 +25,10 @@
    ```bash
    ./gradlew build
    ```
+3. Print available dependency updates
+   ```
+   ./gradlew dependencyUpdates
+   ``` 
 
 ## Best Practices
 1. **Testing**
