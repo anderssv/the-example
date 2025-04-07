@@ -24,4 +24,21 @@ class Exercise3Test {
         // 4. Register the application using applicationService
         // 5. Verify that the application was stored correctly in the repository
     }
+    
+    /**
+     * Write a test that verifies that the KTor client returns a null object when the remote responds with a 404.
+     *
+     * Questions:
+     * - When would you use mocking instead of a fake implementation?
+     * - Is it important to verify the request URL in this test?
+     * - What are the trade-offs between mocking HTTP responses and using real HTTP calls in tests?
+     */
+    @Test
+    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() {
+        // TODO: Implement this test
+        // 1. Create a mock HttpClient that returns a 404 response
+        // 2. Create a BrregClient with the mock engine
+        // 3. Call the method being tested
+        // 4. Verify the result is null
+    }
 }
