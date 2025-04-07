@@ -72,6 +72,7 @@
    - Comments on the tests should be considered as correct, verify them against the test code
    - Use the provided test cases as a guide for implementation
    - Ensure all tests pass
+   - The workshop exericises have one Exercise[number]Test.kt which is a skeleton to work on. The implementation and example answer can be found in Exercise[number]TestAnswer.kt .
 
 7. **Interactions**
    - Ask questions when clarification is needed
