@@ -95,4 +95,17 @@ class Exercise3TestAnswer {
         // Assert: Verify the result
         assertThat(entity).isNull()
     }
+
+    /**
+     * Some test that tests something async
+     *
+     * Questions:
+     * - Do fakes have to be async?
+     * - If you have to wait, can you avoid blocking?
+     * - How parallel can you run tests?
+     */
+    @Test
+    fun testSomethingAsync() {
+        // Should be a call that is made, then waiting for the result with a loop
+    }
 }
