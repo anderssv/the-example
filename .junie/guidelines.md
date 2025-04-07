@@ -79,3 +79,5 @@
    - Ask when you need more information to perform a task
    - When refactoring, make sure to delete the old code
    - Run all tests after finishing a task
+   - Compile often to get early feedback without running the tests
+   - Run tests that you have changed frequently
