@@ -134,6 +134,9 @@ class Exercise3TestAnswer {
         println("Wall wait time: $elapsed")
     }
 
+    /**
+     * Just to have multiple tests that will wait to show that things are run in parallel. Include the full one in the skeleton.
+     */
     @Test
     fun testSomethingAsync2() = runTest {
         withContext(Dispatchers.Default) {
