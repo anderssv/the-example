@@ -1,6 +1,15 @@
 package workshop
 
+import application.Application
+import application.ApplicationStatus
+import application.valid
+import customer.Customer
+import io.ktor.client.engine.mock.*
+import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 /**
  * Exercise 3—Manual DI, mocking and async testing
@@ -24,7 +33,7 @@ class Exercise3Test {
         // 4. Register the application using applicationService
         // 5. Verify that the application was stored correctly in the repository
     }
-    
+
     /**
      * Write a test that verifies that the KTor client returns a null object when the remote responds with a 404.
      *
@@ -34,7 +43,7 @@ class Exercise3Test {
      * - What are the trade-offs between mocking HTTP responses and using real HTTP calls in tests?
      */
     @Test
-    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() {
+    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() = runTest {
         // TODO: Implement this test
         // 1. Create a mock HttpClient that returns a 404 response
         // 2. Create a BrregClient with the mock engine
@@ -42,4 +51,30 @@ class Exercise3Test {
         // 4. Verify the result is null
     }
 
+    /**
+     * Write a test that used delay to see interactions between async in Kotlin, delay and dispatchers.
+     *
+     * Questions:
+     * - Do fakes have to be async?
+     * - If you have to wait, can you avoid blocking?
+     * - How parallel can you run tests?
+     */
+    @Test
+    fun testSomethingAsync() = runTest {
+        // TODO: Implement this test
+        // 1. Define wait times (longWait and shortWait)
+        // 2. Measure elapsed time for an async operation with delays
+        // 3. Verify that elapsed time is within expected range
+        // 4. Print wait times for comparison
+    }
+
+    /**
+     * Just to have multiple tests that will wait to show that things are run in parallel.
+     */
+    @Test
+    fun testSomethingAsync2() = runTest {
+        // TODO: Implement this test
+        // 1. Use a non-default dispatcher
+        // 2. Add a delay to simulate waiting
+    }
 }

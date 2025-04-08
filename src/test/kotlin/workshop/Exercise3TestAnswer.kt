@@ -7,7 +7,11 @@ import customer.Customer
 import customer.CustomerRegisterClientFake
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,6 +19,10 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
+import kotlin.time.measureTime
 
 /**
  * Exercise 3—Manual DI, mocking and async testing
@@ -97,7 +105,7 @@ class Exercise3TestAnswer {
     }
 
     /**
-     * Some test that tests something async
+     * Write a test that used delay to see interactions between async in Kotlin, delay and dispatchers.
      *
      * Questions:
      * - Do fakes have to be async?
@@ -105,7 +113,35 @@ class Exercise3TestAnswer {
      * - How parallel can you run tests?
      */
     @Test
-    fun testSomethingAsync() {
-        // Should be a call that is made, then waiting for the result with a loop
+    fun testSomethingAsync() = runTest {
+        val longWait = 1.minutes
+        val shortWait = 5.seconds
+
+        val elapsed = TimeSource.Monotonic.measureTime {
+            val deferred = async {
+                delay(longWait) // will be skipped because of runTest
+                withContext(Dispatchers.IO) {
+                    delay(shortWait) // Switching the dispatcher makes it wait anyway
+                }
+            }
+            deferred.await()
+        }
+
+        assertThat(elapsed).isGreaterThanOrEqualTo(5.seconds)
+        assertThat(elapsed).isLessThan(1.minutes)
+
+        println("Total wait time: ${longWait + shortWait}")
+        println("Wall wait time: $elapsed")
     }
+
+    /**
+     * Just to have multiple tests that will wait to show that things are run in parallel. Include the full one in the skeleton.
+     */
+    @Test
+    fun testSomethingAsync2() = runTest {
+        withContext(Dispatchers.Default) {
+            delay(10.seconds)
+        }
+    }
+
 }
