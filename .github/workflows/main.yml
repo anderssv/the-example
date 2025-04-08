@@ -75,10 +75,10 @@ jobs:
           fetch-depth: 1
 
       - name: Markdown Link Check
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        uses: lycheeverse/lychee-action@v1
         with:
-          use-quiet-mode: 'yes'
-          use-verbose-mode: 'yes'
-          folder-path: '.'
-          file-extension: '.md'
-          config-file: '.markdown-link-check.json'
+          args: --verbose --no-progress --exclude "^https?://x\\.com" './**/*.md'
+          fail: true
+          jobSummary: true
+          # Use GitHub token to avoid rate limiting
+          token: ${{ secrets.GITHUB_TOKEN }}
