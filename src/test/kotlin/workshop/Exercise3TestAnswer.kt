@@ -105,7 +105,7 @@ class Exercise3TestAnswer {
     }
 
     /**
-     * Some test that tests something async
+     * Write a test that used delay to see interactions between async in Kotlin, delay and dispatchers.
      *
      * Questions:
      * - Do fakes have to be async?
