@@ -1,78 +1,48 @@
-# The TDD Workshop
+# TDD Workshop Summary
 
-The contents in this repo are used as an example during my TDD workshop.
+Based on the materials provided, the TDD (Test-Driven Development) workshop is a comprehensive 4-hour session designed to help developers improve their testing practices and create more maintainable code. The workshop combines theoretical concepts with hands-on exercises using Kotlin examples.
 
-Duration: 4 hours
+## Workshop Structure
 
-The TDD workshop covers an introduction to TDD, the techniques used to write tests,
-and how to work with a simple architecture to achieve changeable systems and maintainable tests.
+### Part 1: Introduction to TDD
+- **Core Concepts**: Explanation of TDD philosophy, the red-green-refactor cycle, and the benefits of writing tests before code
+- **Test Coverage**: Discussion on appropriate levels of test coverage and when TDD is most beneficial
+- **Test Types**: Overview of different test levels (unit, integration, system, etc.)
+- **Test Data Management**: Introduction to Object Mother pattern and test data builders for reusable test setup
+- **Exercise 1**: Practical session on setting up test data and implementing the Arrange-Act-Assert pattern
 
-We will discuss along the way and will probably have to prioritise some things away. But we'll figure that out together.
+### Part 2: Testing Techniques
+- **Test Doubles**: Detailed explanation of fakes, mocks, and stubs with emphasis on fakes for maintainable tests
+- **Testing Through the Domain**: Approach for writing domain-oriented tests that are less brittle to implementation changes
+- **Test DSLs**: Creating domain-specific languages for more readable and maintainable tests
+- **Test Helpers**: Implementation of utility classes to simplify test setup
+- **Exercise 2**: Hands-on practice implementing fakes, test helpers, and working with the test clock
 
-**Part 1—Introduction**: TDD, why it's useful, different test levels, test coverage, when it fits, and the difference between TDD and writing tests after the code is written. We also talk about the red-green-refactor cycle, arrange-assert-act, object mother with test data builders, and maintenance of tests and code.
+### Part 3: Testable Architecture
+- **Manual Dependency Injection**: Implementation and benefits over frameworks
+- **Simple Architecture**: Designing systems that are inherently testable
+- **Observability**: Incorporating logs, metrics, and traces
+- **Performance Considerations**: Techniques for faster tests including streaming, profiling
+- **Exercise 3**: Implementing manual dependency injection and working with asynchronous code testing
 
-**Exercise 1 - Bootup, test data and arrange-act-assert**
+### Conclusion
+- Summary of key learnings
+- Q&A session
+- Guidance on applying these concepts to participants' own codebases
 
-**Part 2—Techniques**: Here we will talk about test levels, test doubles and separation of tests (fakes, mocks, and error situations), testing through the domain, abstract async, test utils, test validators, BDD and test DSL.
+## Key Themes Throughout the Workshop
 
-**Exercise 2—Fakes, helpers, and DSLs**
+1. **Maintainability**: Techniques to make tests that break only when they should, not due to unrelated changes
+2. **Speed**: Ensuring tests run quickly enough to be part of a tight feedback loop
+3. **Reusability**: Patterns for creating test components that can be reused across the test suite
+4. **Readability**: Making tests that clearly express their intent and serve as documentation
+5. **Practical Implementation**: Real-world examples in Kotlin showing how to implement these patterns
 
-**Part 3—Testable and simple architecture**: We will talk about manual DI, queues in DB, SSE for listening to events, observability (logs, metrics, traces, opentelemetry, and agents), tricks (streaming, profiler, jcmd, heap and GC and local database).
+The workshop demonstrates these concepts using a sample application that includes:
+- An application service with repositories
+- Customer registration functionality
+- Test fakes for different components
+- Test helpers for clock manipulation and data setup
+- Examples of manual dependency injection
 
-**Exercise 3—Manual DI, mocking and async testing**
-
-**Conclusion**: Summary, questions and answers.
-
-## Workshop System Context Diagram
-
-```mermaid
-
-graph TD
-    AS[ApplicationService]
-    AR[ApplicationRepository]
-    CR[CustomerRegisterClient]
-    UN[UserNotificationClient]
-    CL[Clock]
-
-    AS -->|uses| AR
-    AS -->|requires active| CR
-    AS -->|notifies| UN
-    AS -->|uses| CL
-
-```
-
-The diagram above shows the main parts of the system:
-- **ApplicationService**: Core service managing application logic
-- **Repositories**: Handle data persistence for Applications and Customers
-- **UserNotificationClient**: Manages user notifications
-- **Clock**: Provides time-related functionality
-
-## Domain Model (Application's Perspective)
-
-```mermaid
-graph TD
-    A[Application]
-    C[Customer]
-
-    subgraph Application States
-    ACTIVE[ACTIVE]
-    APPROVED[APPROVED]
-    DENIED[DENIED]
-    EXPIRED[EXPIRED]
-    end
-
-    A -->|requires active| C
-    A -->|can be| ACTIVE
-    ACTIVE -->|can transition to| APPROVED
-    ACTIVE -->|can transition to| DENIED
-    ACTIVE -->|after 6 months| EXPIRED
-```
-
-The domain diagram above shows:
-- **Application**: Core domain entity with its possible states
-- **Customer**: Required for application processing
-- **State Transitions**: Shows how an application can move between different states
-- **Rules**:
-    - Applications require an active customer
-    - Active applications can be approved or denied
-    - Applications expire after 6 months
+The material emphasizes pragmatic approaches to testing that help developers create maintainable test suites that provide value over time rather than becoming a burden during refactoring.
