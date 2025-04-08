@@ -133,4 +133,12 @@ class Exercise3TestAnswer {
         println("Total wait time: ${longWait + shortWait}")
         println("Wall wait time: $elapsed")
     }
+
+    @Test
+    fun testSomethingAsync2() = runTest {
+        withContext(Dispatchers.Default) {
+            delay(10.seconds)
+        }
+    }
+
 }
