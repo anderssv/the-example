@@ -84,12 +84,12 @@ class Exercise1TestAnswer {
     @Test
     fun shouldThrowExceptionWhenApprovingDeniedApplication() {
         with(testContext) {
-            // Arrange: Set up a test data application with DENIED status and store it in the system
+            // Arrange: Set up a test data application and store it in the system
             val customer = Customer.valid()
-            val application = Application.valid(customerId = customer.id).copy(
-                status = ApplicationStatus.DENIED
-            )
+            val application = Application.valid(customerId = customer.id)
+
             applicationService.registerInitialApplication(customer, application)
+            applicationService.rejectApplication(application.id)
 
             // Act & Assert: Verify that attempting to approve throws IllegalStateException
             assertThrows(IllegalStateException::class.java) {
