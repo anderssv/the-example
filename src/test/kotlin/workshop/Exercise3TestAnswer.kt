@@ -59,8 +59,8 @@ class Exercise3TestAnswer {
         // Arrange: Set up test data
         val customDate = LocalDate.of(2023, 1, 1)
         val customer = Customer.valid()
-        val application = Application.valid(applicationDate = customDate, customerId = customer.id)
-            .copy(name = "Manual Setup Test")
+        val application = Application.valid(customerId = customer.id)
+            .copy(name = "Manual Setup Test", applicationDate = customDate)
 
         // Act: Perform the action being tested
         applicationService.registerInitialApplication(customer, application)

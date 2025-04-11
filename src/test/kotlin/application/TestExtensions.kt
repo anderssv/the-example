@@ -10,14 +10,14 @@ fun Customer.Companion.valid() = Customer(
     active = true
 )
 
+// TODO Show how you can have helper parameters here that offloads work that would be hard to do with copy
 fun Application.Companion.valid(
-    applicationDate: LocalDate = LocalDate.of(2022, 2, 15),
     customerId: UUID
 ) = Application(
     id = UUID.randomUUID(),
     customerId = customerId,
     name = "Tester One",
     birthDate = LocalDate.of(1978, 2, 23),
-    applicationDate = applicationDate,
+    applicationDate = LocalDate.now(),
     status = ApplicationStatus.ACTIVE
 )
