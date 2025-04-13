@@ -22,18 +22,24 @@ class TestingThroughTheDomainTest {
      */
     @Test
     fun testDataOrientedTest() {
-        assertThrows<NullPointerException> { // This is an assertion
-            // added after it started failing to keep the illustration
+        // This is an assertion added after it
+        // started failing to keep the illustration
+        assertThrows<NullPointerException> {
             with(testContext) {
+                // Arrange
                 val customer = Customer.valid()
                 val application = Application.valid(customerId = customer.id)
 
+                // Act
                 // Data is set up, store directly in DB. Ignoring anything else the
                 // system does to reach the state.
                 repositories.applicationRepo.addApplication(application)
                 applicationService.approveApplication(application.id)
 
-                assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+                // Assert
+                assertThat(
+                    repositories.applicationRepo.getApplication(application.id).status
+                ).isEqualTo(ApplicationStatus.APPROVED)
             }
         }
     }
@@ -47,15 +53,20 @@ class TestingThroughTheDomainTest {
     @Test
     fun testDomainOrientedTest() {
         with(testContext) {
+            // Arrange
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
 
-            // Start the process of registering application, thus manipulating through the system and
-            // getting everything in a consistent state
+            // Act
+            // Start the process of registering application, thus manipulating through
+            // the system and getting everything in a consistent state
             applicationService.registerInitialApplication(customer, application)
             applicationService.approveApplication(application.id)
 
-            assertThat(repositories.applicationRepo.getApplication(application.id).status).isEqualTo(ApplicationStatus.APPROVED)
+            // Assert
+            assertThat(
+                repositories.applicationRepo.getApplication(application.id).status
+            ).isEqualTo(ApplicationStatus.APPROVED)
         }
     }
 
