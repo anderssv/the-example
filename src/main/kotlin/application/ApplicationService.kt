@@ -53,4 +53,14 @@ class ApplicationService(
             throw NotificationSendException("Failed to send notification for application ${application.id}", e)
         }
     }
+
+    fun rejectApplication(applicationId: UUID) {
+        val application = applicationRepo.getApplication(applicationId)
+        applicationRepo.updateApplication(application.copy(status = ApplicationStatus.DENIED))
+        try {
+            userNotificationClient.notifyUser(application.id, application.name, "Your application ${application.id} has been denied")
+        } catch (e: IOException) {
+            throw NotificationSendException("Failed to send notification for application ${application.id}", e)
+        }
+    }
 }

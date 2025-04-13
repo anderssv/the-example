@@ -18,7 +18,7 @@ class ApplicationExpirationTest {
 
             val customer = Customer.valid()
 
-            val application = Application.valid(applicationDate = LocalDate.now(clock), customer.id)
+            val application = Application.valid(customer.id).copy(applicationDate = LocalDate.now(clock))
             applicationService.registerInitialApplication(customer, application)
 
             // Verify it's active

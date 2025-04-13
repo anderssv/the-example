@@ -31,12 +31,11 @@ class ApplicationFakeTest {
             val applications = (0..2).map { counter ->
                 val customer = Customer.valid()
 
-                Application.valid(
-                    applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()),
-                    customer.id
-                ).also {
-                    applicationService.registerInitialApplication(customer, it)
-                }
+                Application.valid(customer.id)
+                    .copy(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()))
+                    .also {
+                        applicationService.registerInitialApplication(customer, it)
+                    }
             }
 
             // Move time forward to where first application is expired but last is still valid
@@ -61,7 +60,7 @@ class ApplicationFakeTest {
 
             val customer = Customer.valid()
 
-            val application = Application.valid(applicationDate = LocalDate.now(clock), customer.id)
+            val application = Application.valid(customer.id).copy(applicationDate = LocalDate.now(clock))
             applicationService.registerInitialApplication(customer, application)
 
             // Move time forward past expiration

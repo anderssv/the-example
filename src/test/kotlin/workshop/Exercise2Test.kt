@@ -26,7 +26,8 @@ class Exercise2Test {
     ): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = Customer.valid()
-        return Application.valid(applicationDate = defaultDate, customerId = customer.id)
+        return Application.valid(customerId = customer.id)
+            .copy(applicationDate = defaultDate)
             .let(configure)
             .also { applicationService.registerInitialApplication(customer, it) }
     }
