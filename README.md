@@ -6,6 +6,9 @@ This is a small collection of code I hope shows some good concepts. Please let m
 This repo is updated continuously, so be sure to star and watch it for updates.
 
 A few notes on things I am trying to show in this code. You can find links to the specific examples on each page (if there are any):
+
+**🎯 Start here:** [TDD Concepts Overview](doc/tdd-concepts-overview.md) - Visual guide showing how all concepts relate
+
 - [Test Driven Development](doc/tdd.md)
   - [Test Fakes](doc/fakes.md)
   - [Test Setup](doc/test-setup.md)

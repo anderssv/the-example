@@ -4,6 +4,9 @@ Based on the materials provided, the TDD (Test-Driven Development) workshop is a
 
 ## Getting Started
 
+### Visual Overview
+📊 [TDD Concepts Overview](../tdd-concepts-overview.md) - Comprehensive visual guide showing how all concepts relate and work together
+
 ### Workshop Exercises
 1. [Exercise 1](../../src/test/kotlin/workshop/Exercise1Test.kt) - Test data setup and Arrange-Act-Assert
 2. [Exercise 2](../../src/test/kotlin/workshop/Exercise2Test.kt) - Fakes, helpers, and DSLs
