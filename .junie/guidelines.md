@@ -36,6 +36,12 @@
    - Use fakes instead of mocks when possible
    - Follow Arrange-Act-Assert pattern
    - Re-use test data setup, prefer <class>.valid() test extension methods.
+   - **Client/Repository interfaces should work with domain objects, not DTOs**
+     - The interface boundary should accept and return domain objects
+     - Keep DTOs internal to the implementation (mapping happens inside the adapter)
+     - This makes fakes trivial (just a HashMap of domain objects)
+     - If mapping is complex, apply port-and-adapter patterns _inside_ the implementation while keeping the interface domain-focused
+     - See [Fakes documentation](./doc/fakes.md#the-interface-should-work-with-domain-objects-not-dtos) for details
 
 2. **Code Organization**
    - Follow domain-driven package structure

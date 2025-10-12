@@ -58,6 +58,44 @@ flowchart TD
     Service --> RepositoryFake
 ```
 
+# The interface should work with domain objects, not DTOs
+
+A common barrier when adopting fakes is the temptation to use DTOs (Data Transfer Objects) at the interface boundary between your domain and external systems. This makes fakes harder to write and reduces their benefits.
+
+**The key insight:** Your client/repository/adapter interface should accept and return domain objects, not DTOs. The adapter's role is to _protect_ the domain from external changes, but this doesn't mean the domain can't be used by the adapter.
+
+```kotlin
+// ❌ DTO-focused interface - harder to fake, couples domain to external format
+interface CustomerClient {
+    fun getCustomer(id: String): CustomerDTO  // External format leaks into interface
+}
+
+// ✅ Domain-focused interface - easy to fake, protects domain
+interface CustomerClient {
+    fun getCustomer(id: String): Customer  // Returns domain object
+}
+```
+
+The implementation handles the mapping:
+```kotlin
+class CustomerClientImpl : CustomerClient {
+    override fun getCustomer(id: String): Customer {
+        val dto = httpClient.get<CustomerDTO>("/customers/$id")
+        return dto.toDomain()  // Conversion happens inside the adapter
+    }
+}
+```
+
+This way:
+- The fake works directly with domain objects (simple HashMap!)
+- Your domain tests never see DTOs
+- The domain doesn't change when external APIs change
+- If mapping becomes complex, you can apply port-and-adapter patterns _inside_ the client implementation while keeping the interface domain-focused
+
+Your adapter should **take what it gets and convert it to the domain**, so the domain doesn't have to change unnecessarily.
+
+**Note on external APIs:** For some external integrations (like [BrregClient](../src/main/kotlin/brreg/BrregClient.kt)), the external API's data model may be treated as your domain model for that integration. This is fine when you're primarily consuming data as-is. The key principle still applies: keep the interface consistent and protect your core domain from unnecessary coupling to external formats.
+
 # I make fakes like...
 
 It is quite simple really.
