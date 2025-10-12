@@ -126,7 +126,7 @@ Have a look at [Testing Through the Domain](tttd.md) for some more pointers.
 If you really need to verify that the Fake received some information or was called, you can create custom methods
 (only available in the Fake, not the interface) to verify those.
 You can see an example of such a
-method [here](https://github.com/anderssv/the-example/blob/main/src/test/kotlin/notifications/UserNotificationClientFake.kt#L13).
+method [here](https://github.com/anderssv/the-example/blob/main/src/test/kotlin/notifications/UserNotificationClientFake.kt#L26).
 
 ## Testing errors
 
