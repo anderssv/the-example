@@ -12,6 +12,19 @@ import java.time.LocalDate
  * Exercise 2 - Fakes, helpers, and DSLs
  *
  * We want to look at the tools available for making test writing easier and more maintainable.
+ *
+ * Related Documentation:
+ * - Fakes: doc/fakes.md
+ * - Test Setup: doc/test-setup.md
+ *
+ * Example Implementation:
+ * - ApplicationFakeTest.kt (lines 56-83)
+ * - UserNotificationClientFake.kt (example fake)
+ * - ApplicationRepositoryFake.kt (example fake)
+ *
+ * Answers:
+ * - Exercise2TestAnswer.kt
+ * - doc/workshop/exercise-answers.md
  */
 class Exercise2Test {
     private val testContext = SystemTestContext()

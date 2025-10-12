@@ -8,6 +8,17 @@ import system.SystemTestContext
  *
  * We use the testContext to get access to the system under test.
  * We will dive into the setup of the testContext in a later exercise.
+ *
+ * Related Documentation:
+ * - Test Setup: doc/test-setup.md
+ * - TDD Overview: doc/tdd.md
+ *
+ * Example Implementation:
+ * - ApplicationFakeTest.kt (lines 14-22, 25-52)
+ *
+ * Answers:
+ * - Exercise1TestAnswer.kt
+ * - doc/workshop/exercise-answers.md
  */
 class Exercise1Test {
     private val testContext = SystemTestContext()

@@ -13,6 +13,19 @@ import java.time.LocalDate
 
 /**
  * Exercise 3—Manual DI, mocking and async testing
+ *
+ * Related Documentation:
+ * - Manual Dependency Injection: doc/manual-dependency-injection.md
+ * - System Design: doc/system-design.md
+ *
+ * Example Implementation:
+ * - SystemTestContext.kt (test DI setup)
+ * - SystemContext.kt (production DI setup)
+ * - BrregClientTest.kt (example HTTP mocking)
+ *
+ * Answers:
+ * - Exercise3TestAnswer.kt
+ * - doc/workshop/exercise-answers.md
  */
 class Exercise3Test {
 
