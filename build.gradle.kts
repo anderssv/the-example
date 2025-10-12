@@ -25,6 +25,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-client-mock:3.1.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+    testImplementation("org.slf4j:slf4j-simple:2.0.16")  // Eliminates SLF4J warnings in tests
 }
 
 tasks {
