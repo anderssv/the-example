@@ -8,107 +8,6 @@
 
 This document provides a comprehensive visual overview of how all TDD concepts in this repository relate to each other and work together to create maintainable, fast, and reliable tests.
 
-## The Complete Picture
-
-```mermaid
-graph TB
-    subgraph "Core Philosophy"
-        TDD[Test-Driven Development<br/>Red → Green → Refactor]
-        Goals[Test Goals:<br/>• Predictable<br/>• Readable<br/>• Easy to write<br/>• Maintainable<br/>• Fast]
-    end
-
-    subgraph "Three Core Techniques"
-        TestSetup[Test Setup<br/>doc/test-setup.md]
-        Fakes[Fakes<br/>doc/fakes.md]
-        TTTD[Testing Through<br/>the Domain<br/>doc/tttd.md]
-    end
-
-    subgraph "Test Setup Components"
-        ObjectMother[Object Mother Pattern<br/>Customer.valid<br/>Application.valid]
-        DI[Manual Dependency Injection<br/>SystemContext<br/>SystemTestContext]
-        TestHelpers[Test Helpers<br/>Clock manipulation<br/>DSLs]
-    end
-
-    subgraph "Fake Implementation"
-        FakeRepo[Repository Fakes<br/>HashMap-based<br/>In-memory]
-        FakeClient[Client Fakes<br/>Configurable behavior<br/>Error injection]
-        FakeVerify[Fake Verification<br/>Custom methods<br/>State inspection]
-    end
-
-    subgraph "Testing Through Domain"
-        DomainMutation[Domain Actions<br/>Service methods<br/>Use case flows]
-        StateVerify[State Verification<br/>Query results<br/>Domain queries]
-        AvoidData[Avoid Direct<br/>Data Setup<br/>Reduce brittleness]
-    end
-
-    subgraph "Test Types & Layers"
-        DomainTests[Domain Tests<br/>Pure logic<br/>No fakes]
-        IOTests[IO Tests<br/>DB/HTTP<br/>No fakes]
-        VarTests[Variation Tests<br/>Edge cases<br/>With fakes]
-        OutcomeTests[Outcome Tests<br/>End-to-end scenarios<br/>With fakes]
-    end
-
-    subgraph "Benefits Achieved"
-        Reusable[Reusable<br/>Across tests]
-        LowCoupling[Low Coupling<br/>To implementation]
-        FastExec[Fast Execution<br/>In-memory]
-        EasyMaint[Easy Maintenance<br/>Few changes needed]
-        ClearIntent[Clear Intent<br/>Self-documenting]
-    end
-
-    TDD --> Goals
-    Goals --> TestSetup
-    Goals --> Fakes
-    Goals --> TTTD
-
-    TestSetup --> ObjectMother
-    TestSetup --> DI
-    TestSetup --> TestHelpers
-
-    Fakes --> FakeRepo
-    Fakes --> FakeClient
-    Fakes --> FakeVerify
-
-    TTTD --> DomainMutation
-    TTTD --> StateVerify
-    TTTD --> AvoidData
-
-    ObjectMother --> DomainTests
-    ObjectMother --> VarTests
-    ObjectMother --> OutcomeTests
-
-    DI --> VarTests
-    DI --> OutcomeTests
-    DI --> IOTests
-
-    FakeRepo --> VarTests
-    FakeRepo --> OutcomeTests
-    FakeClient --> VarTests
-    FakeClient --> OutcomeTests
-
-    DomainMutation --> OutcomeTests
-    StateVerify --> OutcomeTests
-    StateVerify --> VarTests
-
-    DomainTests --> Reusable
-    IOTests --> LowCoupling
-    VarTests --> FastExec
-    OutcomeTests --> EasyMaint
-
-    TestSetup --> Reusable
-    Fakes --> FastExec
-    Fakes --> LowCoupling
-    TTTD --> EasyMaint
-    TTTD --> ClearIntent
-    ObjectMother --> Reusable
-
-    style TDD fill:#e1f5fe,color:#000
-    style Goals fill:#f3e5f5,color:#000
-    style TestSetup fill:#e8f5e9,color:#000
-    style Fakes fill:#fff3e0,color:#000
-    style TTTD fill:#fce4ec,color:#000
-```
-
 ## Concept Relationships
 
 ### 1. Foundation: TDD Cycle
@@ -230,26 +129,29 @@ flowchart LR
 sequenceDiagram
     participant Test
     participant Service
-    participant Repo as Repository<br/>(Fake)
-    participant Client as Notification<br/>(Fake)
+    participant AppRepo as Application<br/>Repo (Fake)
+    participant CustRepo as Customer<br/>Repo (Fake)
 
-    Note over Test: ❌ Data-Oriented Approach
-    Test->>Repo: addApplication(withStatus=DENIED)
+    Note over Test,CustRepo: ❌ Data-Oriented Approach (Brittle)
+    Note over Test: Create test data
+    Test->>AppRepo: addApplication(application)
+    Note over Test,CustRepo: Directly manipulate storage<br/>bypassing domain logic
     Test->>Service: approveApplication(id)
-    Note over Test: Brittle: Breaks when<br/>business logic changes
+    Service->>CustRepo: getCustomer(customerId)
+    CustRepo-->>Service: null (customer not stored!)
+    Note over Service: ❌ NullPointerException<br/>Test breaks when new requirement<br/>added (customer storage)
 
-    Note over Test: ✅ Domain-Oriented Approach
-    Test->>Service: registerApplication(customer, app)
-    Service->>Repo: addApplication(ACTIVE)
-    Test->>Service: rejectApplication(id)
-    Service->>Repo: updateApplication(DENIED)
-    Service->>Client: notifyUser("rejected")
+    Note over Test,CustRepo: ✅ Domain-Oriented Approach (Resilient)
+    Note over Test: Create test data
+    Test->>Service: registerInitialApplication(customer, app)
+    Service->>CustRepo: addCustomer(customer)
+    Service->>AppRepo: addApplication(app)
+    Note over Test,CustRepo: Domain method ensures<br/>all invariants are met
     Test->>Service: approveApplication(id)
-    Note over Test: Resilient: Uses actual<br/>domain transitions
-
-    Test->>Repo: getApplication(id)
-    Repo-->>Test: Application state
-    Note over Test: Verify outcomes,<br/>not implementation
+    Service->>CustRepo: getCustomer(customerId)
+    CustRepo-->>Service: customer (exists!)
+    Service->>AppRepo: updateApplication(APPROVED)
+    Note over Test: ✅ Test survives changes<br/>Domain logic maintains consistency
 ```
 
 ### 5. Test Type Decision Tree
