@@ -7,8 +7,6 @@ This repo is updated continuously, so be sure to star and watch it for updates.
 
 A few notes on things I am trying to show in this code. You can find links to the specific examples on each page (if there are any):
 
-**🎯 Start here:** [TDD Concepts Overview](doc/tdd-concepts-overview.md) - Visual guide showing how all concepts relate
-
 - [Test Driven Development](doc/tdd.md)
   - [Test Fakes](doc/fakes.md)
   - [Test Setup](doc/test-setup.md)
@@ -16,6 +14,10 @@ A few notes on things I am trying to show in this code. You can find links to th
 - [System Design](doc/system-design.md)
   - [Manual Dependency Injection](doc/manual-dependency-injection.md)
   - [Sum types](doc/sum-types.md)
+
+I used Claude to generate a visual representation of this.
+It is fairly accurate, but might not make much sense before you actually read the information here.
+You can find it here: [TDD Concepts Overview](doc/tdd-concepts-overview.md) - Visual guide showing how all concepts relate
 
 Reach out:
 - [Discussions](https://github.com/anderssv/the-example/discussions)
