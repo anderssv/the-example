@@ -59,14 +59,16 @@ class ParsingTest {
     @Test
     fun testShouldParseInvalidAddress() {
         val mapper = jacksonObjectMapper()
-        val parsed: RegistrationForm = mapper.readValue(
-            getTestJson(
-                email = "hello",
-                addressJson = """
-                                  "address": { "city": "Oslo" }
-                              """.trimIndent()
+        val parsed: RegistrationForm =
+            mapper.readValue(
+                getTestJson(
+                    email = "hello",
+                    addressJson =
+                        """
+                        "address": { "city": "Oslo" }
+                        """.trimIndent(),
+                ),
             )
-        )
 
         assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Invalid::class.java)
         (parsed as RegistrationForm.Invalid).let {
@@ -87,8 +89,10 @@ class ParsingTest {
 
         assertThat(parsed).isExactlyInstanceOf(RegistrationForm.Valid.Registration::class.java)
         (parsed as RegistrationForm.Valid.Registration).let {
-            assertAll({ assertThat(it.email.user).isEqualTo("hello") },
-                { assertThat(it.email.domain).isEqualTo("hello.com") })
+            assertAll(
+                { assertThat(it.email.user).isEqualTo("hello") },
+                { assertThat(it.email.domain).isEqualTo("hello.com") },
+            )
         }
     }
 
@@ -125,23 +129,26 @@ class ParsingTest {
         assertThat(repo.getRegistration(Email.ValidEmail("valid", "mail.com"))).isNotNull
     }
 
-    private fun getTestJson(email: String, addressJson: String? = getAddressJson(), anonymous: Boolean = false) = """
-                {
-                    "email": "$email",
-                    ${if (addressJson != null) "$addressJson," else ""}
-                    "anonymous": $anonymous,
-                    "name": "Myname"   
-                }
-            """.trimIndent()
-
-    private fun getAddressJson(): String {
-        return """
-            "address": {
-                "streetName": "test",
-                "city": "Oslo",
-                "poCode": "0164",
-                "country": "Norway"
-            }
+    private fun getTestJson(
+        email: String,
+        addressJson: String? = getAddressJson(),
+        anonymous: Boolean = false,
+    ) = """
+        {
+            "email": "$email",
+            ${if (addressJson != null) "$addressJson," else ""}
+            "anonymous": $anonymous,
+            "name": "Myname"   
+        }
         """.trimIndent()
-    }
+
+    private fun getAddressJson(): String =
+        """
+        "address": {
+            "streetName": "test",
+            "city": "Oslo",
+            "poCode": "0164",
+            "country": "Norway"
+        }
+        """.trimIndent()
 }

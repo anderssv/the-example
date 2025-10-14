@@ -1,15 +1,25 @@
 package system
 
-import java.time.*
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
-class TestClock private constructor(private var dateTime: ZonedDateTime) : Clock() {
+class TestClock private constructor(
+    private var dateTime: ZonedDateTime,
+) : Clock() {
     companion object {
         fun at(dateTime: ZonedDateTime): TestClock = TestClock(dateTime)
+
         fun now(): TestClock = at(ZonedDateTime.now())
     }
 
     override fun instant(): Instant = dateTime.toInstant()
+
     override fun withZone(zone: ZoneId?): Clock = TestClock(dateTime.withZoneSameInstant(zone ?: ZoneId.systemDefault()))
+
     override fun getZone(): ZoneId = dateTime.zone
 
     fun advance(duration: Duration) {

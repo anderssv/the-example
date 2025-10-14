@@ -23,7 +23,7 @@ data class BrregEntity(
     val underTvangsavviklingEllerTvangsopplosning: Boolean,
     val maalform: String,
     val harRegistrertAntallAnsatte: Boolean,
-    val links: List<LinkDto>?
+    val links: List<LinkDto>?,
 ) {
     companion object
 }
@@ -31,7 +31,7 @@ data class BrregEntity(
 data class OrganisasjonsformDto(
     val kode: String,
     val beskrivelse: String,
-    val links: List<LinkDto>?
+    val links: List<LinkDto>?,
 ) {
     companion object
 }
@@ -39,7 +39,7 @@ data class OrganisasjonsformDto(
 data class NaeringskodeDto(
     val kode: String?,
     val beskrivelse: String?,
-    val links: List<LinkDto>?
+    val links: List<LinkDto>?,
 ) {
     companion object
 }
@@ -51,7 +51,7 @@ data class AdresseDto(
     val kommunenummer: String?,
     val kommune: String?,
     val landkode: String?,
-    val land: String?
+    val land: String?,
 ) {
     companion object
 }
@@ -59,7 +59,7 @@ data class AdresseDto(
 data class InstitusjonellSektorkodeDto(
     val kode: String?,
     val beskrivelse: String?,
-    val links: List<LinkDto>?
+    val links: List<LinkDto>?,
 ) {
     companion object
 }
@@ -67,7 +67,7 @@ data class InstitusjonellSektorkodeDto(
 data class LinkDto(
     val href: String?,
     val rel: String?,
-    val type: String?
+    val type: String?,
 ) {
     companion object
 }

@@ -28,26 +28,28 @@ class ApplicationFakeTest {
             clock.setTo(LocalDate.of(2022, 1, 1))
 
             // Create applications with different dates
-            val applications = (0..2).map { counter ->
-                val customer = Customer.valid()
+            val applications =
+                (0..2).map { counter ->
+                    val customer = Customer.valid()
 
-                Application.valid(customer.id)
-                    .copy(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()))
-                    .also {
-                        applicationService.registerInitialApplication(customer, it)
-                    }
-            }
+                    Application
+                        .valid(customer.id)
+                        .copy(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()))
+                        .also {
+                            applicationService.registerInitialApplication(customer, it)
+                        }
+                }
 
             // Move time forward to where first application is expired but last is still valid
             // First app: 2022-01-01 + 6 months = 2022-07-01 (expired)
             // Last app: 2022-03-01 + 6 months = 2022-09-01 (still valid)
-            clock.advance(Duration.ofDays(7 * 30))  // Advance 7 months
+            clock.advance(Duration.ofDays(7 * 30)) // Advance 7 months
             applicationService.expireApplications()
 
             // Assertions
             applicationService.activeApplicationFor(applications.first().name).let {
-                assertThat(it).doesNotContain(applications.first())  // First application should be expired
-                assertThat(it).contains(applications.last())         // Last application should still be active
+                assertThat(it).doesNotContain(applications.first()) // First application should be expired
+                assertThat(it).contains(applications.last()) // Last application should still be active
             }
         }
     }
@@ -64,7 +66,7 @@ class ApplicationFakeTest {
             applicationService.registerInitialApplication(customer, application)
 
             // Move time forward past expiration
-            clock.advance(Duration.ofDays(7 * 30))  // Advance 7 months
+            clock.advance(Duration.ofDays(7 * 30)) // Advance 7 months
             applicationService.expireApplications()
 
             assertThat(applicationService.activeApplicationFor(application.name)).isEmpty()

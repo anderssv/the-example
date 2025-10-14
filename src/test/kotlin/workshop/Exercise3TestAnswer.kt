@@ -1,12 +1,17 @@
 package workshop
 
-import application.*
+import application.Application
+import application.ApplicationRepositoryFake
+import application.ApplicationService
+import application.ApplicationStatus
+import application.valid
 import brreg.BrregClient
 import brreg.BrregClientImpl
 import customer.Customer
 import customer.CustomerRegisterClientFake
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -28,7 +33,6 @@ import kotlin.time.measureTime
  * Exercise 3—Manual DI, mocking and async testing
  */
 class Exercise3TestAnswer {
-
     /**
      * Write a test that sets up all dependencies without the SystemContext.
      *
@@ -43,24 +47,28 @@ class Exercise3TestAnswer {
         val applicationRepo = ApplicationRepositoryFake()
         val customerRepo = CustomerRegisterClientFake()
         val notificationClient = UserNotificationClientFake()
-        val fixedClock = Clock.fixed(
-            Instant.parse("2023-01-01T10:00:00Z"),
-            ZoneId.systemDefault()
-        )
+        val fixedClock =
+            Clock.fixed(
+                Instant.parse("2023-01-01T10:00:00Z"),
+                ZoneId.systemDefault(),
+            )
 
         // Create a service with manual dependencies
-        val applicationService = ApplicationService(
-            applicationRepo = applicationRepo,
-            customerRepository = customerRepo,
-            userNotificationClient = notificationClient,
-            clock = fixedClock
-        )
+        val applicationService =
+            ApplicationService(
+                applicationRepo = applicationRepo,
+                customerRepository = customerRepo,
+                userNotificationClient = notificationClient,
+                clock = fixedClock,
+            )
 
         // Arrange: Set up test data
         val customDate = LocalDate.of(2023, 1, 1)
         val customer = Customer.valid()
-        val application = Application.valid(customerId = customer.id)
-            .copy(name = "Manual Setup Test", applicationDate = customDate)
+        val application =
+            Application
+                .valid(customerId = customer.id)
+                .copy(name = "Manual Setup Test", applicationDate = customDate)
 
         // Act: Perform the action being tested
         applicationService.registerInitialApplication(customer, application)
@@ -81,28 +89,30 @@ class Exercise3TestAnswer {
      * - What are the trade-offs between mocking HTTP responses and using real HTTP calls in tests?
      */
     @Test
-    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() = runTest {
-        // Arrange: Create a mock HttpClient that returns a 404 response
-        val mockEngine = MockEngine { request ->
-            // Verify the request URL
-            assertThat(request.url.toString()).isEqualTo("https://data.brreg.no/enhetsregisteret/api/enheter/999999999")
+    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() =
+        runTest {
+            // Arrange: Create a mock HttpClient that returns a 404 response
+            val mockEngine =
+                MockEngine { request ->
+                    // Verify the request URL
+                    assertThat(request.url.toString()).isEqualTo("https://data.brreg.no/enhetsregisteret/api/enheter/999999999")
 
-            // Return a 404 response
-            respond(
-                content = "",
-                status = HttpStatusCode.NotFound
-            )
+                    // Return a 404 response
+                    respond(
+                        content = "",
+                        status = HttpStatusCode.NotFound,
+                    )
+                }
+
+            // Create a BrregClient with the mock engine
+            val brregClient: BrregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
+
+            // Act: Call the method being tested
+            val entity = brregClient.getEntity("999999999")
+
+            // Assert: Verify the result
+            assertThat(entity).isNull()
         }
-
-        // Create a BrregClient with the mock engine
-        val brregClient: BrregClient = BrregClientImpl(BrregClientImpl.client(mockEngine))
-
-        // Act: Call the method being tested
-        val entity = brregClient.getEntity("999999999")
-
-        // Assert: Verify the result
-        assertThat(entity).isNull()
-    }
 
     /**
      * Write a test that used delay to see interactions between async in Kotlin, delay and dispatchers.
@@ -113,35 +123,38 @@ class Exercise3TestAnswer {
      * - How parallel can you run tests?
      */
     @Test
-    fun testSomethingAsync() = runTest {
-        val longWait = 1.minutes
-        val shortWait = 5.seconds
+    fun testSomethingAsync() =
+        runTest {
+            val longWait = 1.minutes
+            val shortWait = 5.seconds
 
-        val elapsed = TimeSource.Monotonic.measureTime {
-            val deferred = async {
-                delay(longWait) // will be skipped because of runTest
-                withContext(Dispatchers.IO) {
-                    delay(shortWait) // Switching the dispatcher makes it wait anyway
+            val elapsed =
+                TimeSource.Monotonic.measureTime {
+                    val deferred =
+                        async {
+                            delay(longWait) // will be skipped because of runTest
+                            withContext(Dispatchers.IO) {
+                                delay(shortWait) // Switching the dispatcher makes it wait anyway
+                            }
+                        }
+                    deferred.await()
                 }
-            }
-            deferred.await()
+
+            assertThat(elapsed).isGreaterThanOrEqualTo(5.seconds)
+            assertThat(elapsed).isLessThan(1.minutes)
+
+            println("Total wait time: ${longWait + shortWait}")
+            println("Wall wait time: $elapsed")
         }
-
-        assertThat(elapsed).isGreaterThanOrEqualTo(5.seconds)
-        assertThat(elapsed).isLessThan(1.minutes)
-
-        println("Total wait time: ${longWait + shortWait}")
-        println("Wall wait time: $elapsed")
-    }
 
     /**
      * Just to have multiple tests that will wait to show that things are run in parallel. Include the full one in the skeleton.
      */
     @Test
-    fun testSomethingAsync2() = runTest {
-        withContext(Dispatchers.Default) {
-            delay(10.seconds)
+    fun testSomethingAsync2() =
+        runTest {
+            withContext(Dispatchers.Default) {
+                delay(10.seconds)
+            }
         }
-    }
-
 }

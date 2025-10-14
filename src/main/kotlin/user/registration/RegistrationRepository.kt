@@ -13,7 +13,5 @@ class RegistrationRepository {
         }
     }
 
-    fun getRegistration(email: Email.ValidEmail): RegistrationForm.Valid? {
-        return db[email]
-    }
+    fun getRegistration(email: Email.ValidEmail): RegistrationForm.Valid? = db[email]
 }

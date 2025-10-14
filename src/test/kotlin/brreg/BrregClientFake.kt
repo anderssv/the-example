@@ -15,9 +15,7 @@ class BrregClientFake : BrregClient {
         entities[entity.organisasjonsnummer] = entity
     }
 
-    override suspend fun getEntity(organizationNumber: String): BrregEntity? {
-        return entities[organizationNumber]
-    }
+    override suspend fun getEntity(organizationNumber: String): BrregEntity? = entities[organizationNumber]
 }
 
 /**
@@ -26,39 +24,43 @@ class BrregClientFake : BrregClient {
 fun BrregEntity.Companion.valid(
     organisasjonsnummer: String = "123456789",
     navn: String = "Test Entity",
-    antallAnsatte: Int? = 10
-): BrregEntity {
-    return BrregEntity(
+    antallAnsatte: Int? = 10,
+): BrregEntity =
+    BrregEntity(
         organisasjonsnummer = organisasjonsnummer,
         navn = navn,
-        organisasjonsform = OrganisasjonsformDto(
-            kode = "AS",
-            beskrivelse = "Aksjeselskap",
-            links = null
-        ),
+        organisasjonsform =
+            OrganisasjonsformDto(
+                kode = "AS",
+                beskrivelse = "Aksjeselskap",
+                links = null,
+            ),
         registreringsdatoEnhetsregisteret = "2021-01-01",
         registrertIMvaregisteret = true,
-        naeringskode1 = NaeringskodeDto(
-            kode = "62.010",
-            beskrivelse = "Programmeringstjenester",
-            links = null
-        ),
+        naeringskode1 =
+            NaeringskodeDto(
+                kode = "62.010",
+                beskrivelse = "Programmeringstjenester",
+                links = null,
+            ),
         antallAnsatte = antallAnsatte,
-        forretningsadresse = AdresseDto(
-            adresse = listOf("Testveien 1"),
-            postnummer = "0123",
-            poststed = "OSLO",
-            kommunenummer = "0301",
-            kommune = "OSLO",
-            landkode = "NO",
-            land = "Norge"
-        ),
+        forretningsadresse =
+            AdresseDto(
+                adresse = listOf("Testveien 1"),
+                postnummer = "0123",
+                poststed = "OSLO",
+                kommunenummer = "0301",
+                kommune = "OSLO",
+                landkode = "NO",
+                land = "Norge",
+            ),
         stiftelsesdato = "2020-01-01",
-        institusjonellSektorkode = InstitusjonellSektorkodeDto(
-            kode = "2100",
-            beskrivelse = "Private aksjeselskaper mv.",
-            links = null
-        ),
+        institusjonellSektorkode =
+            InstitusjonellSektorkodeDto(
+                kode = "2100",
+                beskrivelse = "Private aksjeselskaper mv.",
+                links = null,
+            ),
         registrertIForetaksregisteret = true,
         registrertIStiftelsesregisteret = false,
         registrertIFrivillighetsregisteret = false,
@@ -67,12 +69,12 @@ fun BrregEntity.Companion.valid(
         underTvangsavviklingEllerTvangsopplosning = false,
         maalform = "NB",
         harRegistrertAntallAnsatte = false,
-        links = listOf(
-            LinkDto(
-                href = "https://data.brreg.no/enhetsregisteret/api/enheter/123456789",
-                rel = "self",
-                type = "application/json"
-            )
-        )
+        links =
+            listOf(
+                LinkDto(
+                    href = "https://data.brreg.no/enhetsregisteret/api/enheter/123456789",
+                    rel = "self",
+                    type = "application/json",
+                ),
+            ),
     )
-}

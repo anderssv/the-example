@@ -48,7 +48,7 @@ open class SystemContext { // You can pass things like config and DB in here, YM
             repositories.applicationRepo,
             repositories.customerRepository,
             clients.userNotificationClient,
-            clock
+            clock,
         )
     }
 }

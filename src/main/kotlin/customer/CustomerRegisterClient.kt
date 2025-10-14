@@ -4,6 +4,7 @@ import java.util.*
 
 interface CustomerRegisterClient {
     fun addCustomer(customer: Customer)
+
     fun getCustomer(id: UUID): Customer?
 }
 

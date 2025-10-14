@@ -1,13 +1,13 @@
 package application
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 enum class ApplicationStatus {
     ACTIVE,
     APPROVED,
     DENIED,
-    EXPIRED
+    EXPIRED,
 }
 
 /**
@@ -15,12 +15,12 @@ enum class ApplicationStatus {
  * variations of test data.
  */
 data class Application(
-    val id: UUID, 
+    val id: UUID,
     val customerId: UUID,
-    val name: String, 
-    val birthDate: LocalDate, 
-    val applicationDate: LocalDate, 
-    val status: ApplicationStatus
+    val name: String,
+    val birthDate: LocalDate,
+    val applicationDate: LocalDate,
+    val status: ApplicationStatus,
 ) {
     companion object
 

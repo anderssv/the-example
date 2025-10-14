@@ -58,10 +58,11 @@ class Exercise1TestAnswer {
         with(testContext) {
             // Arrange: Set up test data with an application older than 6 months
             val customer = Customer.valid()
-            val application = Application.valid(customerId = customer.id).copy(
-                name = "Custom Name",
-                applicationDate = LocalDate.of(2023, 1, 1)
-            )
+            val application =
+                Application.valid(customerId = customer.id).copy(
+                    name = "Custom Name",
+                    applicationDate = LocalDate.of(2023, 1, 1),
+                )
             applicationService.registerInitialApplication(customer, application)
 
             // Act: Expire the application through domain logic in applicationService

@@ -1,8 +1,8 @@
 package customer
 
-import java.util.*
+import java.util.UUID
 
-class CustomerRegisterClientFake: CustomerRegisterClient {
+class CustomerRegisterClientFake : CustomerRegisterClient {
     private val customersById = mutableMapOf<UUID, Customer>()
     private val customersByName = mutableMapOf<String, Customer>()
 
@@ -11,8 +11,5 @@ class CustomerRegisterClientFake: CustomerRegisterClient {
         customersByName[customer.name] = customer
     }
 
-    override fun getCustomer(id: UUID): Customer? {
-        return customersById[id]
-    }
-
+    override fun getCustomer(id: UUID): Customer? = customersById[id]
 }

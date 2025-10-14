@@ -13,22 +13,24 @@ class ApplicationService(
     private val applicationRepo: ApplicationRepository,
     private val customerRepository: CustomerRegisterClient,
     private val userNotificationClient: UserNotificationClient,
-    private val clock: Clock
+    private val clock: Clock,
 ) {
-    fun registerInitialApplication(customer: Customer, application: Application) {
+    fun registerInitialApplication(
+        customer: Customer,
+        application: Application,
+    ) {
         if (customerRepository.getCustomer(customer.id) == null) {
             customerRepository.addCustomer(customer)
         }
         applicationRepo.addApplication(application)
     }
 
-    fun applicationsForName(name: String): List<Application> {
-        return applicationRepo.getApplicationsForName(name)
-    }
+    fun applicationsForName(name: String): List<Application> = applicationRepo.getApplicationsForName(name)
 
     fun expireApplications() {
         val currentDate = LocalDate.now(clock)
-        applicationRepo.getAllApplications(listOf(ApplicationStatus.ACTIVE))
+        applicationRepo
+            .getAllApplications(listOf(ApplicationStatus.ACTIVE))
             .filter { !it.isValid(currentDate) }
             .forEach { application ->
                 applicationRepo.updateApplication(application.copy(status = ApplicationStatus.EXPIRED))
@@ -36,9 +38,10 @@ class ApplicationService(
             }
     }
 
-    fun activeApplicationFor(name: String): List<Application> {
-        return applicationRepo.getApplicationsForName(name).filter { it.status == ApplicationStatus.ACTIVE }
-    }
+    fun activeApplicationFor(name: String): List<Application> =
+        applicationRepo.getApplicationsForName(name).filter {
+            it.status == ApplicationStatus.ACTIVE
+        }
 
     fun approveApplication(applicationId: UUID) {
         val application = applicationRepo.getApplication(applicationId)

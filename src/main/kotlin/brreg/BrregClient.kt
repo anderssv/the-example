@@ -1,13 +1,13 @@
 package brreg
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.jackson.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.http.isSuccess
+import io.ktor.serialization.jackson.jackson
 
 /**
  * Client for accessing the Brreg API.
@@ -25,28 +25,31 @@ interface BrregClient {
 /**
  * Implementation of the BrregClient interface using KTor.
  */
-class BrregClientImpl(private val client: HttpClient) : BrregClient {
+class BrregClientImpl(
+    private val client: HttpClient,
+) : BrregClient {
     companion object {
         private const val BASE_URL = "https://data.brreg.no/enhetsregisteret/api/enheter"
 
-        fun client(engine: HttpClientEngine): HttpClient = HttpClient(engine) {
-            install(ContentNegotiation) {
-                jackson {
-                    // Configure Jackson to ignore unknown properties
-                    configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        fun client(engine: HttpClientEngine): HttpClient =
+            HttpClient(engine) {
+                install(ContentNegotiation) {
+                    jackson {
+                        // Configure Jackson to ignore unknown properties
+                        configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    }
                 }
+                this.expectSuccess = false // Allow non-2xx responses
             }
-            this.expectSuccess = false // Allow non-2xx responses
-        }
     }
 
     /**
      * Creates a new BrregClientImpl with a default HttpClient.
      */
-    constructor() : this(client(CIO.create()))
+    constructor() : this(client(OkHttp.create()))
 
     override suspend fun getEntity(organizationNumber: String): BrregEntity? {
-        val response  = client.get("$BASE_URL/$organizationNumber")
+        val response = client.get("$BASE_URL/$organizationNumber")
         return when {
             response.status.isSuccess() -> response.body()
             response.status.value in 400..499 -> null

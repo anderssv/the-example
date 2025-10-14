@@ -1,17 +1,16 @@
 package workshop
 
-
-import application.*
+import application.Application
+import application.valid
 import customer.Customer
-import customer.CustomerRegisterClientFake
 import notifications.NotificationSendException
-import notifications.UserNotificationClientFake
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
 import java.io.IOException
-import java.time.*
+import java.time.Duration
+import java.time.LocalDate
 
 /**
  * Exercise 2 - Fakes, helpers, and DSLs
@@ -27,11 +26,12 @@ class Exercise2TestAnswer {
          * A (optional, because it has { this } as the default) lambda that can be
          * used to modify the application before storing it.
          */
-        configure: Application.() -> Application = { this }
+        configure: Application.() -> Application = { this },
     ): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = Customer.valid()
-        return Application.valid(customerId = customer.id)
+        return Application
+            .valid(customerId = customer.id)
             .copy(applicationDate = defaultDate)
             .let(configure)
             .also { applicationService.registerInitialApplication(customer, it) }
@@ -49,12 +49,13 @@ class Exercise2TestAnswer {
     fun shouldStoreApplication() {
         with(testContext) {
             // Arrange: Create an application and store it with a DSL
-            val application = withStoredApplication {
-                copy(
-                    name = "DSL Test User",
-                    applicationDate = LocalDate.of(2023, 3, 1)
-                )
-            }
+            val application =
+                withStoredApplication {
+                    copy(
+                        name = "DSL Test User",
+                        applicationDate = LocalDate.of(2023, 3, 1),
+                    )
+                }
 
             // Assert: Verify the application was created correctly
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
@@ -77,9 +78,10 @@ class Exercise2TestAnswer {
     fun shouldExpireApplicationAfter6Months() {
         with(testContext) {
             // Arrange: Create an application that will expire
-            val application = withStoredApplication {
-                copy(applicationDate = LocalDate.of(2023, 1, 1))
-            }
+            val application =
+                withStoredApplication {
+                    copy(applicationDate = LocalDate.of(2023, 1, 1))
+                }
 
             // Act: Advance time and expire applications,
             // you could have just set time back in time but wouldn't show the usage
@@ -106,19 +108,20 @@ class Exercise2TestAnswer {
     fun shouldFailToNotifyForSpecificApplication() {
         with(testContext) {
             // Arrange: Create an application and register it for notification failure
-            val application = withStoredApplication {
-                copy(applicationDate = LocalDate.of(2023, 1, 1))
-            }
+            val application =
+                withStoredApplication {
+                    copy(applicationDate = LocalDate.of(2023, 1, 1))
+                }
             clients.userNotificationClient.registerApplicationIdForFailure(application.id)
 
             // Act & Assert: Verify that approval attempt throws NotificationSendException
-            val exception = assertThrows(NotificationSendException::class.java) {
-                applicationService.approveApplication(application.id)
-            }
+            val exception =
+                assertThrows(NotificationSendException::class.java) {
+                    applicationService.approveApplication(application.id)
+                }
 
             // Verify that the underlying cause is IOException
             assertThat(exception.cause).isInstanceOf(IOException::class.java)
         }
     }
-
 }

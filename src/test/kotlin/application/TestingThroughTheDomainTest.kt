@@ -38,7 +38,7 @@ class TestingThroughTheDomainTest {
 
                 // Assert
                 assertThat(
-                    repositories.applicationRepo.getApplication(application.id).status
+                    repositories.applicationRepo.getApplication(application.id).status,
                 ).isEqualTo(ApplicationStatus.APPROVED)
             }
         }
@@ -65,7 +65,7 @@ class TestingThroughTheDomainTest {
 
             // Assert
             assertThat(
-                repositories.applicationRepo.getApplication(application.id).status
+                repositories.applicationRepo.getApplication(application.id).status,
             ).isEqualTo(ApplicationStatus.APPROVED)
         }
     }

@@ -1,15 +1,33 @@
 package workshop
 
 import application.Application
+import application.ApplicationRepositoryFake
+import application.ApplicationService
 import application.ApplicationStatus
 import application.valid
+import brreg.BrregClient
+import brreg.BrregClientImpl
 import customer.Customer
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import customer.CustomerRegisterClientFake
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import notifications.UserNotificationClientFake
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
+import kotlin.time.measureTime
 
 /**
  * Exercise 3—Manual DI, mocking and async testing
@@ -28,7 +46,6 @@ import java.time.LocalDate
  * - doc/workshop/exercise-answers.md
  */
 class Exercise3Test {
-
     /**
      * Write a test that sets up all dependencies without the SystemContext.
      *
@@ -56,13 +73,14 @@ class Exercise3Test {
      * - What are the trade-offs between mocking HTTP responses and using real HTTP calls in tests?
      */
     @Test
-    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() = runTest {
-        // TODO: Implement this test
-        // 1. Create a mock HttpClient that returns a 404 response
-        // 2. Create a BrregClient with the mock engine
-        // 3. Call the method being tested
-        // 4. Verify the result is null
-    }
+    fun testThatTheClientCodeBehavesAsExpectedOn404Responses() =
+        runTest {
+            // TODO: Implement this test
+            // 1. Create a mock HttpClient that returns a 404 response
+            // 2. Create a BrregClient with the mock engine
+            // 3. Call the method being tested
+            // 4. Verify the result is null
+        }
 
     /**
      * Write a test that used delay to see interactions between async in Kotlin, delay and dispatchers.
@@ -73,21 +91,23 @@ class Exercise3Test {
      * - How parallel can you run tests?
      */
     @Test
-    fun testSomethingAsync() = runTest {
-        // TODO: Implement this test
-        // 1. Define wait times (longWait and shortWait)
-        // 2. Measure elapsed time for an async operation with delays
-        // 3. Verify that elapsed time is within expected range
-        // 4. Print wait times for comparison
-    }
+    fun testSomethingAsync() =
+        runTest {
+            // TODO: Implement this test
+            // 1. Define wait times (longWait and shortWait)
+            // 2. Measure elapsed time for an async operation with delays
+            // 3. Verify that elapsed time is within expected range
+            // 4. Print wait times for comparison
+        }
 
     /**
      * Just to have multiple tests that will wait to show that things are run in parallel.
      */
     @Test
-    fun testSomethingAsync2() = runTest {
-        // TODO: Implement this test
-        // 1. Use a non-default dispatcher
-        // 2. Add a delay to simulate waiting
-    }
+    fun testSomethingAsync2() =
+        runTest {
+            // TODO: Implement this test
+            // 1. Use a non-default dispatcher
+            // 2. Add a delay to simulate waiting
+        }
 }

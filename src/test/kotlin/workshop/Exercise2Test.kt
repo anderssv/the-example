@@ -1,11 +1,15 @@
 package workshop
 
-
 import application.Application
 import application.valid
 import customer.Customer
+import notifications.NotificationSendException
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import system.SystemTestContext
+import java.io.IOException
+import java.time.Duration
 import java.time.LocalDate
 
 /**
@@ -35,11 +39,12 @@ class Exercise2Test {
          * A (optional, because it has { this } as the default) lambda that can be
          * used to modify the application before storing it.
          */
-        configure: Application.() -> Application = { this }
+        configure: Application.() -> Application = { this },
     ): Application {
         val defaultDate: LocalDate = LocalDate.of(2022, 2, 15)
         val customer = Customer.valid()
-        return Application.valid(customerId = customer.id)
+        return Application
+            .valid(customerId = customer.id)
             .copy(applicationDate = defaultDate)
             .let(configure)
             .also { applicationService.registerInitialApplication(customer, it) }

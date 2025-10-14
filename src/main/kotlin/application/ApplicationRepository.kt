@@ -1,12 +1,16 @@
 package application
 
-import java.util.*
+import java.util.UUID
 
 interface ApplicationRepository {
     fun getApplicationsForName(name: String): List<Application>
+
     fun getAllApplications(statuses: List<ApplicationStatus>): List<Application>
+
     fun addApplication(application: Application)
+
     fun updateApplication(application: Application)
+
     fun getApplication(applicationId: UUID): Application
 }
 

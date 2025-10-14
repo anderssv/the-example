@@ -11,7 +11,11 @@ class UserNotificationClientFake : UserNotificationClient {
         failingApplicationIds.add(applicationId)
     }
 
-    override fun notifyUser(applicationId: UUID, name: String, message: String) {
+    override fun notifyUser(
+        applicationId: UUID,
+        name: String,
+        message: String,
+    ) {
         if (failingApplicationIds.contains(applicationId)) {
             throw IOException("Simulated notification failure for application $applicationId")
         }
@@ -23,7 +27,5 @@ class UserNotificationClientFake : UserNotificationClient {
      *
      * Lets us verify that the user was indeed notified given a sequence of events in the system
      */
-    fun getNotificationForUser(name: String): List<String> {
-        return notifications.getOrDefault(name, emptyList())
-    }
+    fun getNotificationForUser(name: String): List<String> = notifications.getOrDefault(name, emptyList())
 }
