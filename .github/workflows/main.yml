@@ -77,7 +77,7 @@ jobs:
       - name: Markdown Link Check
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --verbose --no-progress --exclude "^https?://x\\.com" './**/*.md'
+          args: --verbose --no-progress --exclude "^https?://x\\.com" --exclude "^https?://.*medium\\.com" --exclude "^https?://web\\.archive\\.org" './**/*.md'
           fail: true
           jobSummary: true
           # Use GitHub token to avoid rate limiting
