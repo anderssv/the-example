@@ -177,6 +177,70 @@ fun shouldExpireOldApplications() {
 - **Variation tests** (with fakes): Edge cases, specific variations
 - **Outcome tests** (with fakes): Interactions between components, end-to-end flows
 
+## When to use real implementations vs fakes
+
+**Use real database/HTTP tests when:**
+- Testing JSONB/JSON serialization behavior
+- Verifying SQL query correctness (joins, indexes, edge cases)
+- Testing database-specific features (constraints, triggers, transactions)
+- Validating migration scripts work correctly
+- Testing HTTP client response parsing and error handling
+
+**Use fakes when:**
+- Testing business logic and domain rules
+- Testing component interactions
+- Most outcome/variation tests
+- Speed matters (fakes are in-memory, real DBs are slow)
+
+## Test tagging
+
+Use JUnit tags to run test subsets:
+
+```kotlin
+@Tag("unit")
+class DomainLogicTest { ... }
+
+@Tag("integration")
+class DatabaseRepositoryTest { ... }
+
+@Tag("database")
+class JsonbSerializationTest { ... }
+
+@Tag("e2e")
+class FullFlowTest { ... }
+```
+
+Run specific tags:
+```bash
+./gradlew test -Dinclude.tags=unit
+./gradlew test -Dexclude.tags=e2e
+```
+
+## Parallel-safe assertions
+
+Tests run in parallel by default. Never assert on absolute counts or global state:
+
+```kotlin
+// BAD - fails when other tests create data concurrently
+assertThat(repository.getAllPolls()).hasSize(1)
+assertThat(repository.count()).isEqualTo(5)
+
+// GOOD - verify specific data you created using its ID
+val poll = repository.findPollById(myPollId)
+assertThat(poll).isNotNull
+assertThat(poll.title).isEqualTo("My Poll")
+
+// GOOD - filter to your specific test data
+assertThat(repository.getAllPolls())
+    .anyMatch { it.id == myPollId }
+```
+
+Key principles:
+- Each test creates its own data with unique IDs (UUIDs)
+- Query by the specific ID you created, not by position or count
+- Use `anyMatch`/`contains` instead of `hasSize` when checking lists
+- Fakes should be per-test-instance, not shared across tests
+
 ## Anti-patterns
 
 - Using mocks when fakes would work (fakes are reusable, mocks are not)
@@ -184,3 +248,34 @@ fun shouldExpireOldApplications() {
 - Verifying method calls instead of system state
 - Creating new test data factories for each test file (centralize in TestExtensions.kt)
 - Testing DTOs at interface boundaries (interfaces should use domain objects)
+
+## When mocks are appropriate
+
+Mocks (e.g., Ktor's `MockEngine`, WireMock) are the right choice for testing HTTP protocol behavior:
+
+```kotlin
+@Test
+fun shouldHandle404Response() = runTest {
+    val mockEngine = MockEngine { request ->
+        respond(
+            content = """{"error": "not found"}""",
+            status = HttpStatusCode.NotFound,
+            headers = headersOf(HttpHeaders.ContentType, "application/json")
+        )
+    }
+    val client = MyApiClient(mockEngine)
+
+    val result = client.getResource("missing-id")
+
+    assertThat(result).isInstanceOf(ResourceNotFound::class.java)
+}
+```
+
+Use mocks when testing:
+- Specific HTTP status codes (404, 500, 503)
+- Timeout and retry behavior
+- Header handling and content negotiation
+- Rate limiting responses
+- Protocol-level error conditions
+
+For everything else (business logic, component interactions), prefer fakes.
