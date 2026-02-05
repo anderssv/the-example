@@ -89,7 +89,8 @@ I write several types of tests:
 - **Domain tests** - No Fakes - Ideally this is where you can write most of your tests. No fakes, no infrastructure, no
   nothing. Just pure business logic. But life happens, and you need the others too.
 - **IO tests** — No Fakes — Like testing HTTP calls to a third party provider. Or testing the SQL in a DB Repo. This
-  makes sure the Client/Repository class performs as expected.
+  makes sure the Client/Repository class performs as expected. See [HTTP Client Testing](http-client-testing.md) for
+  when to use MockEngine vs Fakes.
 - **Variation tests** — Fakes — Focus in on a part of the system. Test the available variations. Example: In generating
   mail content it should have this section included if the recipient has X attribute.
 - **Outcome tests** — Fakes — This focuses on outcomes in interactions between components. Example: Was an email sent

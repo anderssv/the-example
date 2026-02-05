@@ -156,6 +156,45 @@ that makes this kind of code nice.
 But you can survive fine without.
 😊
 
+# Parallel-safe assertions
+
+Tests in this project run in parallel by default. This means you cannot rely on absolute counts or assume your test is the only one creating data.
+
+**Never check absolute counts:**
+```kotlin
+// BAD - fails when other tests create data concurrently
+assertThat(repository.getAllApplications()).hasSize(1)
+assertThat(repository.count()).isEqualTo(5)
+```
+
+**Always query by the specific ID you created:**
+```kotlin
+// GOOD - verify specific data using its unique ID
+val application = Application.valid()  // Creates with UUID.randomUUID()
+applicationService.register(application)
+
+val stored = repository.getApplication(application.id)
+assertThat(stored).isNotNull
+assertThat(stored.name).isEqualTo("Tester One")
+```
+
+**When checking lists, filter to your data:**
+```kotlin
+// GOOD - filter to your specific test data
+assertThat(repository.getAllApplications())
+    .anyMatch { it.id == application.id }
+
+// GOOD - use contains for specific items
+assertThat(applicationService.activeApplications())
+    .contains(application)
+```
+
+Key principles:
+- Each test creates its own data with unique IDs (UUIDs)
+- Query by the specific ID you created, not by position or count
+- Use `anyMatch`/`contains` instead of `hasSize` when checking lists
+- The `SystemTestContext` creates fresh fakes per test instance, ensuring isolation
+
 # Other techniques to consider
 
 Another technique you can consider looking into is creating a test

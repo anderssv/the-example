@@ -13,6 +13,12 @@
 
 # Run specific test class
 ./gradlew test --tests "fully.qualified.TestClassName"
+
+# Run tests by tag
+./gradlew test -Dinclude.tags=unit
+./gradlew test -Dexclude.tags=integration
+
+# Common tags: unit, integration, database, e2e
 ```
 
 ## Development Setup
