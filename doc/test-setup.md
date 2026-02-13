@@ -120,15 +120,17 @@ The SystemTestContext then looks like this:
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRepositoryFake()
     }
 
     class Clients : SystemContext.Clients() {
+        override val customerRepository = CustomerRegisterClientFake()
         override val userNotificationClient = UserNotificationClientFake()
+        override val brregClient = BrregClientFake()
     }
 
     override val repositories = Repositories()
     override val clients = Clients()
+    override val clock = TestClock.now()
 }
 ```
 
@@ -147,8 +149,8 @@ with(testContext) {
 }
 ```
 
-Both ```repositories.applicationRepo``` and ```applicationService``` are objects from the ApplicationTestContext.
-The ApplicationTestContext is then used in many of the tests, making everything available with very little setup.
+Both ```repositories.applicationRepo``` and ```applicationService``` are objects from the SystemTestContext.
+The SystemTestContext is then used in many of the tests, making everything available with very little setup.
 
 The ```with()``` function is one of
 the [scope functions in Kotlin](https://kotlinlang.org/docs/scope-functions.html#functions)

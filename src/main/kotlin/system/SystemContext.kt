@@ -27,11 +27,11 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     open class Repositories {
         // Can be overridden in the subclass
         open val applicationRepo: ApplicationRepository by lazy { ApplicationRepositoryImpl() }
-        open val customerRepository: CustomerRegisterClient by lazy { CustomerRegisterClientImpl() }
     }
 
     // Just some namespacing
     open class Clients {
+        open val customerRepository: CustomerRegisterClient by lazy { CustomerRegisterClientImpl() }
         open val userNotificationClient: UserNotificationClient by lazy { UserNotificationClientImpl() }
         open val brregClient: BrregClient by lazy { BrregClientImpl() }
     }
@@ -46,7 +46,7 @@ open class SystemContext { // You can pass things like config and DB in here, YM
     val applicationService by lazy {
         ApplicationService(
             repositories.applicationRepo,
-            repositories.customerRepository,
+            clients.customerRepository,
             clients.userNotificationClient,
             clock,
         )

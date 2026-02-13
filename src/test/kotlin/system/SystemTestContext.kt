@@ -19,10 +19,10 @@ import notifications.UserNotificationClientFake
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRegisterClientFake()
     }
 
     class Clients : SystemContext.Clients() {
+        override val customerRepository = CustomerRegisterClientFake()
         override val userNotificationClient = UserNotificationClientFake()
         override val brregClient = BrregClientFake()
     }
