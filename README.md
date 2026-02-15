@@ -36,6 +36,7 @@ If you're looking for the workshop, you can [find it here](doc/workshop/README.m
 
 This repository includes reusable [Claude Code skills](skills/README.md) that teach Claude the patterns and practices used here:
 
+- **kotlin-sum-types** 🔀 - Parse, don't validate with sealed classes for type-safe validation
 - **kotlin-tdd** 🧪 - Test-Driven Development with fakes, object mothers, and Testing Through The Domain
 - **kotlin-context-di** 🔌 - Manual dependency injection using SystemContext and TestContext patterns
 

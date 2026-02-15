@@ -12,6 +12,29 @@ npx skills add anderssv/the-example/skills
 
 ## Available Skills
 
+### 🔀 kotlin-sum-types
+
+Parse, don't validate - using sealed classes for type-safe validation and state representation.
+
+**Location:** `domain/kotlin-sum-types/`
+
+**What it teaches:**
+- Sealed classes for representing valid/invalid states
+- Parse don't validate principle
+- Type-safe validation at boundaries
+- Composable validation (Email → Address → RegistrationForm)
+- Jackson integration with @JsonCreator
+- Error collection with paths
+- Making invalid states unrepresentable
+- Controller pattern for handling valid/invalid cases
+
+**Use when:**
+- Parsing external input (JSON, CSV, user forms)
+- Need to collect multiple validation errors
+- Want type-safe guarantees about data validity
+- Building domain models with complex validation
+- Integrating with JSON parsing libraries
+
 ### 🧪 kotlin-tdd
 
 Kotlin Test-Driven Development with fakes, object mothers, and Testing Through The Domain.
