@@ -6,29 +6,84 @@ import customer.CustomerRegisterClientFake
 import notifications.UserNotificationClientFake
 
 /**
- * Overrides the relevant properties to make them Fakes
+ * Test context with fakes using typed test implementations pattern.
  *
- * Notice that this Context only overrides the Repos/Clients with fakes.
- * The actual injection of Services (that I usually don't fake) is done in the superclass via the lazy construct.
+ * This pattern provides two access paths:
+ * 1. repositories.applicationRepo - typed as ApplicationRepository (interface type, used by services)
+ * 2. testRepositories.applicationRepo - typed as ApplicationRepositoryFake (concrete type, for test assertions)
  *
- * See here for the super class that this test context inherits/overrides:
+ * Benefits:
+ * - No casting needed to access fake-specific methods
+ * - Type safety: IDE autocomplete shows fake methods when using testRepositories
+ * - Clear separation: production code uses abstract interfaces, tests use concrete fakes
+ *
+ * Usage in tests:
+ * ```
+ * with(SystemTestContext()) {
+ *     // Arrange
+ *     applicationService.registerInitialApplication(customer, application)
+ *
+ *     // Assert - direct access to fake methods, no casting needed
+ *     assertThat(testRepositories.applicationRepo.getAllApplications())
+ *         .contains(application)
+ * }
+ * ```
+ *
+ * See the production context:
  * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
  *
- * To see usage, you can see here: https://github.com/anderssv/the-example/blob/main/src/test/kotlin/tttd/TestingThroughTheDomainTest.kt#L26
+ * See usage examples:
+ * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/application/TestingThroughTheDomainTest.kt
  */
 class SystemTestContext : SystemContext() {
-    class Repositories : SystemContext.Repositories() {
+    /**
+     * Test implementation with concrete fake types.
+     * Properties are typed as ApplicationRepositoryFake (not ApplicationRepository),
+     * which allows accessing fake-specific methods without casting.
+     */
+    class TestRepositories : Repositories {
         override val applicationRepo = ApplicationRepositoryFake()
     }
 
-    class Clients : SystemContext.Clients() {
+    /**
+     * Test implementation with concrete fake types.
+     * Properties are typed as *ClientFake (not the interface),
+     * which allows accessing fake-specific methods without casting.
+     */
+    class TestClients : Clients {
         override val customerRepository = CustomerRegisterClientFake()
         override val userNotificationClient = UserNotificationClientFake()
         override val brregClient = BrregClientFake()
     }
 
-    // Override the contexts with Fakes
-    override val repositories = Repositories()
-    override val clients = Clients()
+    /**
+     * Typed test repositories - use this in test assertions to access fake-specific methods.
+     * Type: TestRepositories (concrete class with ApplicationRepositoryFake properties)
+     */
+    val testRepositories = TestRepositories()
+
+    /**
+     * Typed test clients - use this in test assertions to access fake-specific methods.
+     * Type: TestClients (concrete class with *ClientFake properties)
+     */
+    val testClients = TestClients()
+
+    /**
+     * Override abstract interface property with test implementation.
+     * Production code accesses this as Repositories (abstract interface).
+     * Type: Repositories (interface)
+     */
+    override val repositories: Repositories get() = testRepositories
+
+    /**
+     * Override abstract interface property with test implementation.
+     * Production code accesses this as Clients (abstract interface).
+     * Type: Clients (interface)
+     */
+    override val clients: Clients get() = testClients
+
+    /**
+     * Override clock with TestClock for time control in tests.
+     */
     override val clock = TestClock.now()
 }

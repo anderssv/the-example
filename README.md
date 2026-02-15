@@ -32,6 +32,18 @@ But special thanks goes out to Asgaut Mjølne, Ola Hast, and Terje Heen for the 
 
 If you're looking for the workshop, you can [find it here](doc/workshop/README.md).
 
+# Claude Code Skills
+
+This repository includes reusable [Claude Code skills](skills/README.md) that teach Claude the patterns and practices used here:
+
+- **kotlin-tdd** 🧪 - Test-Driven Development with fakes, object mothers, and Testing Through The Domain
+- **kotlin-context-di** 🔌 - Manual dependency injection using SystemContext and TestContext patterns
+
+Install them to teach Claude Code about the approaches in this codebase:
+```bash
+npx skills add anderssv/the-example/skills
+```
+
 # Using this code and building
 
 ## Prerequisites

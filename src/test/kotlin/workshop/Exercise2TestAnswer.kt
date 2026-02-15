@@ -89,7 +89,7 @@ class Exercise2TestAnswer {
             applicationService.expireApplications()
 
             // Assert: Verify notification was sent
-            val notifications = clients.userNotificationClient.getNotificationForUser(application.name)
+            val notifications = testClients.userNotificationClient.getNotificationForUser(application.name)
             assertThat(notifications).contains("Your application ${application.id} has expired")
         }
     }
@@ -112,7 +112,7 @@ class Exercise2TestAnswer {
                 withStoredApplication {
                     copy(applicationDate = LocalDate.of(2023, 1, 1))
                 }
-            clients.userNotificationClient.registerApplicationIdForFailure(application.id)
+            testClients.userNotificationClient.registerApplicationIdForFailure(application.id)
 
             // Act & Assert: Verify that approval attempt throws NotificationSendException
             val exception =
