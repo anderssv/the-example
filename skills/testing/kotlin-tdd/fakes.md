@@ -169,12 +169,138 @@ fun shouldFetchEntityByOrganizationNumber() = runTest {
 
 | Test Double | State | Verification | Reusability | When to use |
 |-------------|-------|--------------|-------------|-------------|
+| **Dummy** | None (never used) | None | N/A | Fill parameter lists |
 | **Fake** | Working implementation | Via state | High | Default choice |
 | **Stub** | Canned responses | None | Medium | Simple return values |
-| **Mock** | Records calls | Interaction | Low | Very rare (5 times in 5 years) |
 | **Spy** | Real + recording | Interaction | Low | Testing framework internals |
+| **Mock** | Records calls | Interaction | Low | Very rare (5 times in 5 years) |
 
 Default to fakes. Use mocks only for testing error codes (like HTTP 500) that are hard to simulate otherwise.
+
+### State vs behavior verification
+
+**State verification** (preferred): Check what happened to the system's state:
+```kotlin
+@Test
+fun orderReducesInventory() {
+    val warehouse = WarehouseFake()
+    warehouse.add("Whiskey", 50)
+
+    order.fill(warehouse)
+
+    assertThat(warehouse.inventory("Whiskey")).isEqualTo(0)
+}
+```
+
+**Behavior verification** (avoid): Check that methods were called:
+```kotlin
+// Coupled to implementation - breaks on refactoring
+val warehouse = mock<Warehouse>()
+verify(warehouse, times(1)).remove("Whiskey", 50)
+```
+
+State verification works with Fakes, Stubs, and Spies. Behavior verification requires Mocks. Prefer state verification because it survives refactoring.
+
+## Advanced fake patterns
+
+### Composite keys
+
+When entities have composite keys:
+
+```kotlin
+data class OrderKey(val customerId: String, val orderNumber: Int)
+
+class OrderRepositoryFake : OrderRepository {
+    private val db = mutableMapOf<OrderKey, Order>()
+
+    override fun save(order: Order) {
+        db[OrderKey(order.customerId, order.orderNumber)] = order
+    }
+
+    override fun findByCustomerAndNumber(
+        customerId: String,
+        orderNumber: Int
+    ): Order? = db[OrderKey(customerId, orderNumber)]
+}
+```
+
+### Collections and filtering
+
+```kotlin
+class ProductRepositoryFake : ProductRepository {
+    private val db = mutableMapOf<String, Product>()
+
+    override fun findByCategory(category: String): List<Product> =
+        db.values.filter { it.category == category }
+
+    override fun findInStock(): List<Product> =
+        db.values.filter { it.quantity > 0 }
+
+    override fun search(query: String): List<Product> =
+        db.values.filter {
+            it.name.contains(query, ignoreCase = true) ||
+            it.description.contains(query, ignoreCase = true)
+        }
+}
+```
+
+### Global failure mode
+
+Simulate catastrophic failures (connection loss, service outage):
+
+```kotlin
+class CustomerRepositoryFake : CustomerRepository {
+    private val db = mutableMapOf<String, Customer>()
+    private var connectionLost = false
+
+    fun simulateConnectionLoss() { connectionLost = true }
+    fun restoreConnection() { connectionLost = false }
+
+    override fun save(customer: Customer) {
+        checkConnection()
+        db[customer.id] = customer
+    }
+
+    override fun findById(id: String): Customer? {
+        checkConnection()
+        return db[id]
+    }
+
+    private fun checkConnection() {
+        if (connectionLost) throw ConnectionException("Database unavailable")
+    }
+}
+```
+
+### Configurable responses
+
+Return different values on successive calls:
+
+```kotlin
+class RandomGeneratorFake : RandomGenerator {
+    private val queue = mutableListOf<Int>()
+
+    fun queueValues(vararg values: Int) {
+        queue.addAll(values.toList())
+    }
+
+    override fun nextInt(): Int {
+        if (queue.isEmpty()) throw IllegalStateException("No more values queued")
+        return queue.removeFirst()
+    }
+}
+```
+
+### When fakes get too complex
+
+If your fake approaches the complexity of the real implementation:
+
+1. **Reconsider the interface** - Maybe it's doing too much
+2. **Use the real implementation** - With test containers or embedded versions
+3. **Split the interface** - Separate concerns into smaller interfaces
+4. **Consider a mock** - For truly complex third-party interfaces
+
+Fakes should be simpler than production. If they're not, something needs to change.
 
 ## Getting started in existing codebases
 

@@ -98,7 +98,7 @@ Central test context with fakes injected:
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRegisterClientFake()
+        override val customerRepository = CustomerRepositoryFake()
     }
 
     class Clients : SystemContext.Clients() {
@@ -218,7 +218,7 @@ Run specific tags:
 
 ## Parallel-safe assertions
 
-Tests run in parallel by default. Never assert on absolute counts or global state:
+Whether using shared databases or shared fake instances, always set up unique data and assert on that specific data. Never assert on absolute counts or global state:
 
 ```kotlin
 // BAD - fails when other tests create data concurrently
@@ -251,31 +251,4 @@ Key principles:
 
 ## When mocks are appropriate
 
-Mocks (e.g., Ktor's `MockEngine`, WireMock) are the right choice for testing HTTP protocol behavior:
-
-```kotlin
-@Test
-fun shouldHandle404Response() = runTest {
-    val mockEngine = MockEngine { request ->
-        respond(
-            content = """{"error": "not found"}""",
-            status = HttpStatusCode.NotFound,
-            headers = headersOf(HttpHeaders.ContentType, "application/json")
-        )
-    }
-    val client = MyApiClient(mockEngine)
-
-    val result = client.getResource("missing-id")
-
-    assertThat(result).isInstanceOf(ResourceNotFound::class.java)
-}
-```
-
-Use mocks when testing:
-- Specific HTTP status codes (404, 500, 503)
-- Timeout and retry behavior
-- Header handling and content negotiation
-- Rate limiting responses
-- Protocol-level error conditions
-
-For everything else (business logic, component interactions), prefer fakes.
+Mocks are rarely needed but are the right choice for testing HTTP protocol behavior (status codes, timeouts, retries, headers). For everything else, prefer fakes. See [fakes.md](fakes.md) for detailed comparison and examples.

@@ -16,7 +16,7 @@ fun testDataOrientedTest() {
     val application = Application.valid()
 
     applicationRepo.addApplication(application)  // Direct data manipulation
-    appService.approveApplication(application.id)
+    applicationService.approveApplication(application.id)
 
     assertThat(applicationRepo.getApplication(application.id).status)
         .isEqualTo(ApplicationStatus.APPROVED)
@@ -34,15 +34,17 @@ The data-oriented test fails with a null pointer in `approveApplication()` becau
 fun testDomainOrientedTest() {
     val application = Application.valid()
 
-    appService.registerInitialApplication(application)  // Domain operation
-    appService.approveApplication(application.id)
+    applicationService.registerInitialApplication(application)  // Domain operation
+    applicationService.approveApplication(application.id)
 
     assertThat(applicationRepo.getApplication(application.id).status)
         .isEqualTo(ApplicationStatus.APPROVED)
 }
 ```
 
-When the requirement changes, `registerInitialApplication` handles customer creation. The test keeps working because it uses the domain, not assumptions about internal data.
+When the requirement changes, `registerInitialApplication` handles customer creation internally. The test keeps working because it uses the domain, not assumptions about internal data.
+
+Note: As the domain evolves further, the method signature may change too — e.g., requiring a `Customer` argument (`registerInitialApplication(customer, application)`). Even then, the compiler guides you to update test setup, and the fix is straightforward. The data-oriented test, by contrast, fails at runtime with a confusing null pointer.
 
 ## Benefits
 
@@ -67,7 +69,7 @@ fun shouldExpireOldApplications() {
     applicationRepo.addApplication(application)
     // If expiration logic changes to check more fields, this breaks
 
-    appService.expireApplications()
+    applicationService.expireApplications()
 
     assertThat(applicationRepo.getApplication(application.id).status)
         .isEqualTo(ApplicationStatus.EXPIRED)
@@ -130,6 +132,79 @@ fun shouldRejectApplicationWhenCustomerInactive() {
 ```
 
 Object Mother provides the *what* (test data). TTTD handles the *how* (getting state into the system).
+
+## Extracting setup helpers
+
+As setup grows, extract to helper methods that still use the domain:
+
+```kotlin
+// Test helper that uses domain methods
+fun SystemTestContext.createApprovedApplication(): Application {
+    val customer = Customer.valid()
+    val application = Application.valid(customer.id)
+    applicationService.registerInitialApplication(customer, application)
+    applicationService.approveApplication(application.id)
+    return applicationService.getApplication(application.id)
+}
+
+// Test stays focused
+@Test
+fun approvedApplicationCanBeRenewed() {
+    with(testContext) {
+        val approved = createApprovedApplication()
+
+        applicationService.renewApplication(approved.id)
+
+        assertThat(repositories.applicationRepo.getApplication(approved.id).status)
+            .isEqualTo(ApplicationStatus.RENEWED)
+    }
+}
+```
+
+These helpers still use domain methods (`registerInitialApplication`, `approveApplication`) rather than directly manipulating repositories.
+
+## Decision guide
+
+**Use domain methods when:**
+- Setting up entity state that goes through domain logic
+- State transitions involve validation or business rules
+- Multiple entities need to be created together (aggregates)
+
+**Direct infrastructure is OK when:**
+- Testing the infrastructure itself (repository query logic)
+- Setting up unrelated background data (test fixtures)
+- The domain method doesn't exist and creating it would be artificial
+
+## Anti-patterns
+
+**Bypassing validation** -- Don't create impossible state just because it's convenient:
+```kotlin
+// BAD: Creates impossible state
+applicationRepo.save(Application(status = APPROVED, approvalDate = null))
+
+// GOOD: Use domain method that maintains invariants
+applicationService.registerInitialApplication(application)
+applicationService.approveApplication(application.id)
+```
+
+**Over-testing implementation** -- Don't verify intermediate repository calls:
+```kotlin
+// BAD: Coupled to implementation (Mockito syntax)
+verify(applicationRepo).save(any())
+
+// GOOD: Verify outcomes
+assertThat(applicationRepo.getApplication(id).status).isEqualTo(APPROVED)
+```
+
+**Creating "test-only" domain methods** -- If you need a domain method only for tests, that's a smell:
+```kotlin
+// BAD: Method only exists for tests
+applicationService.createApplicationInApprovedState(...)
+
+// GOOD: Use the real workflow
+applicationService.registerInitialApplication(...)
+applicationService.approveApplication(...)
+```
 
 ## Evolution path
 

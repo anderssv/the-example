@@ -81,12 +81,122 @@ fun Application.Companion.invalid() = Application(
     // Invalid state configuration
 )
 
+fun Customer.Companion.premium(
+    name: String = "Premium Customer",
+    tier: Tier = Tier.GOLD
+) = Customer(
+    id = UUID.randomUUID(),
+    name = name,
+    active = true,
+    tier = tier,
+)
+
+fun Customer.Companion.unverified(
+    name: String = "Unverified Customer"
+) = Customer(
+    id = UUID.randomUUID(),
+    name = name,
+    active = true,
+    verified = false,
+)
+
 fun PaymentBasket.Companion.valid(numberOfTransactions: Int = 1) = PaymentBasket(
     transactions = (1..numberOfTransactions).map { Transaction.valid() }
 )
 ```
 
 Best when: You need the same variation in many tests.
+
+**When to extract a named method:**
+1. The scenario appears in 2+ tests
+2. It represents a meaningful domain state (premium, expired, minor, rejected)
+3. The setup involves complex logic or multiple related objects
+
+Otherwise, use `.valid().copy()` inline in the test.
+
+## Composing Object Mothers for relationships
+
+When objects have relationships, compose Object Mothers:
+
+```kotlin
+fun Account.Companion.valid(
+    owner: Customer = Customer.valid(),
+    balance: BigDecimal = BigDecimal("1000.00"),
+    transactions: List<Transaction> = emptyList()
+) = Account(
+    id = UUID.randomUUID(),
+    owner = owner,
+    balance = balance,
+    transactions = transactions,
+)
+
+fun Account.Companion.withTransactions(
+    owner: Customer = Customer.valid(),
+    count: Int = 3
+): Account {
+    val transactions = (1..count).map {
+        Transaction.valid(amount = BigDecimal("100.$it"))
+    }
+    return Account(
+        id = UUID.randomUUID(),
+        owner = owner,
+        balance = BigDecimal.ZERO,
+        transactions = transactions,
+    )
+}
+```
+
+Usage:
+```kotlin
+@Test
+fun accountSummaryIncludesOwnerName() {
+    val customer = Customer.valid().copy(name = "Alice")
+    val account = Account.valid(owner = customer)
+
+    val summary = formatter.format(account)
+
+    assertThat(summary).contains("Alice")
+}
+```
+
+## Object Mother anti-patterns
+
+**Avoid builder complexity:**
+```kotlin
+// BAD: Over-engineered
+Customer.builder()
+    .withName("Alice")
+    .withAge(30)
+    .build()
+
+// GOOD: Simple factory
+Customer.valid(name = "Alice", age = 30)
+```
+
+**Avoid randomization:**
+```kotlin
+// BAD: Non-deterministic, hard to debug
+fun Customer.Companion.random() = Customer(
+    name = UUID.randomUUID().toString(),
+    age = Random.nextInt(0, 100)
+)
+
+// GOOD: Predictable defaults
+fun Customer.Companion.valid(
+    name: String = "Alice Smith",
+    age: Int = 30
+) = Customer(name, age)
+```
+
+**Avoid generic naming:**
+```kotlin
+// BAD: Unclear intent
+fun Customer.Companion.create() = ...
+
+// GOOD: Explicit scenarios
+fun Customer.Companion.valid() = ...
+fun Customer.Companion.invalid() = ...
+```
 
 ## SystemTestContext pattern
 
@@ -119,7 +229,7 @@ open class SystemContext {
 class SystemTestContext : SystemContext() {
     class Repositories : SystemContext.Repositories() {
         override val applicationRepo = ApplicationRepositoryFake()
-        override val customerRepository = CustomerRegisterClientFake()
+        override val customerRepository = CustomerRepositoryFake()
     }
 
     class Clients : SystemContext.Clients() {
