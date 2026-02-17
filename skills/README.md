@@ -4,7 +4,7 @@ This directory contains reusable Claude Code skills that teach Claude Code patte
 
 ## Installation
 
-Add these skills to your Claude Code installation:
+Add these skills to your Claude Code (or any other agent, like Opencode) installation:
 
 ```bash
 npx skills add anderssv/the-example/skills
