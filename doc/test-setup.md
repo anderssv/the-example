@@ -109,27 +109,31 @@ There can be variations of this:
 Setting up a dependency-injected test context should be as easy as:
 
 ```kotlin
-private val testContext = SystemTestContext()
+with(SystemTestContext()) {
+    // All services, repositories, and clients available here
+}
 ```
 
-There are always some DB dependencies etc. to set up too, but that will have to wait for a later post.
+See [Manual Dependency Injection](manual-dependency-injection.md) for the full pattern.
 
-The SystemTestContext then looks like this:
+The SystemTestContext looks like this:
 
 ```kotlin
 class SystemTestContext : SystemContext() {
-    class Repositories : SystemContext.Repositories() {
+    class TestRepositories : Repositories {
         override val applicationRepo = ApplicationRepositoryFake()
     }
 
-    class Clients : SystemContext.Clients() {
+    class TestClients : Clients {
         override val customerRepository = CustomerRegisterClientFake()
         override val userNotificationClient = UserNotificationClientFake()
         override val brregClient = BrregClientFake()
     }
 
-    override val repositories = Repositories()
-    override val clients = Clients()
+    val testRepositories = TestRepositories()
+    val testClients = TestClients()
+    override val repositories: Repositories get() = testRepositories
+    override val clients: Clients get() = testClients
     override val clock = TestClock.now()
 }
 ```
@@ -141,7 +145,7 @@ You can see the [superclass (production DI context) here](../src/main/kotlin/sys
 This way of creating a context with references enables us to use it in a test like this:
 
 ```kotlin
-with(testContext) {
+with(SystemTestContext()) {
     // ...
     repositories.applicationRepo.addApplication(application)
     applicationService.approveApplication(application.id)
@@ -157,6 +161,42 @@ the [scope functions in Kotlin](https://kotlinlang.org/docs/scope-functions.html
 that makes this kind of code nice.
 But you can survive fine without.
 😊
+
+## Setting up the system with a real database
+
+When you need integration tests against a real database, the challenge is that the context should be fresh per test (to avoid state leakage), but the database connection pool should be **shared** across tests (to avoid spinning up a new container for every test).
+
+The solution is a JUnit 5 `ParameterResolver` that owns the shared connection pool and injects the `DataSource` directly into the test constructor. The test then passes it into a fresh `SystemTestContext`:
+
+```kotlin
+@Tag("database")
+@ExtendWith(SharedDataSourceParameterResolver::class)
+class ApplicationRepositoryIntegrationTest(private val dataSource: DataSource) {
+
+    @Test
+    fun shouldStoreAndRetrieveApplication() {
+        with(SystemTestContext(dataSource)) {
+            val customer = Customer.valid()
+            val application = Application.valid(customerId = customer.id)
+
+            repositories.applicationRepo.addApplication(application)
+
+            val retrieved = repositories.applicationRepo.getApplication(application.id)
+            assertThat(retrieved).isEqualTo(application)
+        }
+    }
+}
+```
+
+> ✅ See [SharedDataSourceParameterResolver.kt](../src/test/kotlin/system/SharedDataSourceParameterResolver.kt) for the implementation and [ApplicationRepositoryIntegrationTest.kt](../src/test/kotlin/application/ApplicationRepositoryIntegrationTest.kt) for usage.
+
+This keeps the pattern consistent:
+- **Fresh context per test** — `with(SystemTestContext(dataSource)) { ... }` creates a new context each time
+- **Shared infrastructure** — the `DataSource` (and its Testcontainers Postgres + HikariCP pool) is created once per test run via JUnit's `ExtensionContext.Store`
+- **Same `with()` pattern** — integration tests look and feel the same as fake-based tests
+- **Interfaces solve the constructor problem** — `SystemTestContext()` (no args) uses fakes and never touches the `DataSource`. `SystemTestContext(dataSource)` wires real JDBC repositories. The interface pattern means no dummy objects are needed in either case.
+
+See [Manual Dependency Injection](manual-dependency-injection.md) for why interfaces are used instead of open classes — this is exactly the situation that pattern was designed for.
 
 # Parallel-safe assertions
 

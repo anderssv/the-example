@@ -1,9 +1,11 @@
 package system
 
 import application.ApplicationRepositoryFake
+import application.ApplicationRepositoryImpl
 import brreg.BrregClientFake
 import customer.CustomerRegisterClientFake
 import notifications.UserNotificationClientFake
+import javax.sql.DataSource
 
 /**
  * Test context with fakes using typed test implementations pattern.
@@ -17,17 +19,16 @@ import notifications.UserNotificationClientFake
  * - Type safety: IDE autocomplete shows fake methods when using testRepositories
  * - Clear separation: production code uses abstract interfaces, tests use concrete fakes
  *
- * Usage in tests:
+ * For integration tests that need a real database, pass a [DataSource]:
  * ```
- * with(SystemTestContext()) {
- *     // Arrange
- *     applicationService.registerInitialApplication(customer, application)
- *
- *     // Assert - direct access to fake methods, no casting needed
- *     assertThat(testRepositories.applicationRepo.getAllApplications())
- *         .contains(application)
+ * @ExtendWith(SharedDataSourceParameterResolver::class)
+ * class MyIntegrationTest(private val dataSource: DataSource) {
+ *     private val testContext = SystemTestContext(dataSource)
  * }
  * ```
+ * The [DataSource] is wired into real repository implementations while
+ * clients remain fakes, allowing focused integration testing of the
+ * database layer.
  *
  * See the production context:
  * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
@@ -35,7 +36,7 @@ import notifications.UserNotificationClientFake
  * See usage examples:
  * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/application/TestingThroughTheDomainTest.kt
  */
-class SystemTestContext : SystemContext() {
+class SystemTestContext(dataSource: DataSource? = null) : SystemContext() {
     /**
      * Test implementation with concrete fake types.
      * Properties are typed as ApplicationRepositoryFake (not ApplicationRepository),
@@ -69,11 +70,18 @@ class SystemTestContext : SystemContext() {
     val testClients = TestClients()
 
     /**
-     * Override abstract interface property with test implementation.
-     * Production code accesses this as Repositories (abstract interface).
-     * Type: Repositories (interface)
+     * Override with test implementation.
+     * When a [DataSource] is provided, uses real JDBC repositories backed by that DataSource.
+     * Otherwise uses in-memory fakes via [testRepositories].
      */
-    override val repositories: Repositories get() = testRepositories
+    override val repositories: Repositories =
+        if (dataSource != null) {
+            object : Repositories {
+                override val applicationRepo = ApplicationRepositoryImpl(dataSource)
+            }
+        } else {
+            testRepositories
+        }
 
     /**
      * Override abstract interface property with test implementation.

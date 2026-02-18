@@ -10,6 +10,7 @@ import customer.CustomerRegisterClientImpl
 import notifications.UserNotificationClient
 import notifications.UserNotificationClientImpl
 import java.time.Clock
+import javax.sql.DataSource
 
 /**
  * Manual dependency injection using interfaces and anonymous objects.
@@ -27,7 +28,7 @@ import java.time.Clock
  * See the test context that provides fakes:
  * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/system/SystemTestContext.kt
  */
-open class SystemContext { // You can pass things like config and DB in here
+open class SystemContext {
     /**
      * Interface for repository dependencies.
      * Using an interface (not an open class) means:
@@ -54,12 +55,19 @@ open class SystemContext { // You can pass things like config and DB in here
 
     /**
      * Production implementation of repositories using anonymous objects.
-     * The anonymous object captures context properties (like dataSource if we had one).
+     * The anonymous object captures the dataSource from the enclosing scope.
      * Using lazy prevents initialization if overridden in test contexts.
+     *
+     * Note: Production code must set [dataSource] before accessing repositories.
+     * Test contexts override [repositories] entirely and never touch dataSource.
      */
+    open val dataSource: DataSource by lazy {
+        error("DataSource not configured. Provide a DataSource or override repositories.")
+    }
+
     open val repositories: Repositories by lazy {
         object : Repositories {
-            override val applicationRepo: ApplicationRepository by lazy { ApplicationRepositoryImpl() }
+            override val applicationRepo: ApplicationRepository by lazy { ApplicationRepositoryImpl(dataSource) }
         }
     }
 

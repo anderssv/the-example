@@ -23,19 +23,27 @@ and how to set up a separate context for testing in [SystemTestContext.kt](../sr
 
 ## The Pattern: Interfaces with Anonymous Objects
 
-The core pattern uses **interfaces** for dependency grouping, implemented as **anonymous objects** inside the context:
+The core pattern uses **interfaces** for dependency grouping, implemented as **anonymous objects** inside the context. Infrastructure like `DataSource` lives as an `open val` on the context — the anonymous object captures it from the enclosing scope:
 
 ```kotlin
-interface Repositories {
-    val applicationRepo: ApplicationRepository
-}
+open class SystemContext {
+    interface Repositories {
+        val applicationRepo: ApplicationRepository
+    }
 
-open val repositories: Repositories by lazy {
-    object : Repositories {
-        override val applicationRepo by lazy { ApplicationRepositoryImpl() }
+    open val dataSource: DataSource by lazy {
+        error("DataSource not configured. Provide a DataSource or override repositories.")
+    }
+
+    open val repositories: Repositories by lazy {
+        object : Repositories {
+            override val applicationRepo by lazy { ApplicationRepositoryImpl(dataSource) }
+        }
     }
 }
 ```
+
+The `dataSource` property uses a lazy error default — production code overrides it with a real `DataSource`, while test contexts override `repositories` entirely and never touch `dataSource`.
 
 ### Why Interfaces Instead of Open Classes?
 
@@ -93,6 +101,51 @@ with(SystemTestContext()) {
         .contains(app)
 }
 ```
+
+### Integration Tests with a Real Database
+
+The interface pattern also solves a common problem with database integration tests: the test context should be **fresh per test** (to prevent state leakage), but the database connection pool should be **shared** (to avoid spinning up a new container for each test).
+
+The solution uses a JUnit 5 `ParameterResolver` to own the shared `DataSource` and inject it into the test constructor. The test passes it into a fresh `SystemTestContext`:
+
+```kotlin
+@ExtendWith(SharedDataSourceParameterResolver::class)
+class MyIntegrationTest(private val dataSource: DataSource) {
+
+    @Test
+    fun shouldStoreAndRetrieve() {
+        with(SystemTestContext(dataSource)) {
+            val application = Application.valid(customerId = customer.id)
+            repositories.applicationRepo.addApplication(application)
+
+            val retrieved = repositories.applicationRepo.getApplication(application.id)
+            assertThat(retrieved).isEqualTo(application)
+        }
+    }
+}
+```
+
+The `SystemTestContext` wires the `DataSource` into real repository implementations when provided, while still using fakes for clients:
+
+```kotlin
+class SystemTestContext(dataSource: DataSource? = null) : SystemContext() {
+    override val repositories: Repositories =
+        if (dataSource != null) {
+            object : Repositories {
+                override val applicationRepo = ApplicationRepositoryImpl(dataSource)
+            }
+        } else {
+            testRepositories  // In-memory fakes
+        }
+}
+```
+
+This works because:
+- **Interfaces have no constructor parameters** — `SystemTestContext()` (no args) never needs a `DataSource`
+- **`with()` pattern is consistent** — integration tests look identical to fake-based tests
+- **Connection pool is shared** — the `ParameterResolver` stores it in JUnit's root `ExtensionContext.Store`, so one Testcontainers Postgres + one HikariCP pool serves all test classes
+
+> ✅ See [SharedDataSourceParameterResolver.kt](../src/test/kotlin/system/SharedDataSourceParameterResolver.kt) and [ApplicationRepositoryIntegrationTest.kt](../src/test/kotlin/application/ApplicationRepositoryIntegrationTest.kt) for the full implementation.
 
 ## Benefits of Manual DI
 

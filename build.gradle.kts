@@ -23,11 +23,14 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
     implementation("io.ktor:ktor-serialization-jackson:3.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-client-mock:3.1.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
     testImplementation("org.slf4j:slf4j-simple:2.0.16") // Eliminates SLF4J warnings in tests
+    testImplementation("org.testcontainers:postgresql:1.20.4")
 }
 
 tasks {
