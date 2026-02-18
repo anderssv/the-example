@@ -16,8 +16,8 @@ class ApplicationFakeTest {
             val customer = Customer.valid()
 
             val application = Application.valid(customerId = customer.id)
-            applicationService.registerInitialApplication(customer, application)
-            assertThat(applicationService.applicationsForName(application.name)).contains(application)
+            services.applicationService.registerInitialApplication(customer, application)
+            assertThat(services.applicationService.applicationsForName(application.name)).contains(application)
         }
     }
 
@@ -36,7 +36,7 @@ class ApplicationFakeTest {
                         .valid(customer.id)
                         .copy(applicationDate = LocalDate.now(clock).plusMonths(counter.toLong()))
                         .also {
-                            applicationService.registerInitialApplication(customer, it)
+                            services.applicationService.registerInitialApplication(customer, it)
                         }
                 }
 
@@ -44,10 +44,10 @@ class ApplicationFakeTest {
             // First app: 2022-01-01 + 6 months = 2022-07-01 (expired)
             // Last app: 2022-03-01 + 6 months = 2022-09-01 (still valid)
             clock.advance(Duration.ofDays(7 * 30)) // Advance 7 months
-            applicationService.expireApplications()
+            services.applicationService.expireApplications()
 
             // Assertions
-            applicationService.activeApplicationFor(applications.first().name).let {
+            services.applicationService.activeApplicationFor(applications.first().name).let {
                 assertThat(it).doesNotContain(applications.first()) // First application should be expired
                 assertThat(it).contains(applications.last()) // Last application should still be active
             }
@@ -63,14 +63,14 @@ class ApplicationFakeTest {
             val customer = Customer.valid()
 
             val application = Application.valid(customer.id).copy(applicationDate = LocalDate.now(clock))
-            applicationService.registerInitialApplication(customer, application)
+            services.applicationService.registerInitialApplication(customer, application)
 
             // Move time forward past expiration
             clock.advance(Duration.ofDays(7 * 30)) // Advance 7 months
-            applicationService.expireApplications()
+            services.applicationService.expireApplications()
 
-            assertThat(applicationService.activeApplicationFor(application.name)).isEmpty()
-            testClients.userNotificationClient.getNotificationForUser(application.name).also {
+            assertThat(services.applicationService.activeApplicationFor(application.name)).isEmpty()
+            clients.userNotificationClient.getNotificationForUser(application.name).also {
                 // Notice how this is a specific method in the Fake. In the case of something
                 // like e-mail, there is no way of fetching the actual messages after the fact.
                 // So this method is used to verify the outcome, which should be that notifications

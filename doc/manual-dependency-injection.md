@@ -16,34 +16,67 @@ This feedback is of immense value in enhancing your system structure.
 If you are not writing tests, or mostly writing integration tests, you might not feel that DI is important.
 But once you write fine-grained tests and isolate out infrastructure and dependencies, it becomes essential.
 
-I usually do manual dependency injection. 🚀
+I usually do manual dependency injection.
 
-> ✅ You can see a dependency injection example in [SystemContext.kt](../src/main/kotlin/system/SystemContext.kt)
+> See the dependency injection example in [SystemContext.kt](../src/main/kotlin/system/SystemContext.kt)
 and how to set up a separate context for testing in [SystemTestContext.kt](../src/test/kotlin/system/SystemTestContext.kt).
 
-## The Pattern: Interfaces with Anonymous Objects
+## The Pattern: Interface-First Contract
 
-The core pattern uses **interfaces** for dependency grouping, implemented as **anonymous objects** inside the context. Infrastructure like `DataSource` lives as an `open val` on the context — the anonymous object captures it from the enclosing scope:
+The core pattern uses an **interface** (`AppDependencies`) as the contract, with nested grouping interfaces for `Repositories`, `Clients`, and `Services`. Both production (`SystemContext`) and test (`SystemTestContext`) contexts implement it **independently** — no inheritance between them.
 
 ```kotlin
-open class SystemContext {
+interface AppDependencies {
     interface Repositories {
         val applicationRepo: ApplicationRepository
     }
 
-    open val dataSource: DataSource by lazy {
-        error("DataSource not configured. Provide a DataSource or override repositories.")
+    interface Clients {
+        val customerRepository: CustomerRegisterClient
+        val userNotificationClient: UserNotificationClient
     }
 
-    open val repositories: Repositories by lazy {
-        object : Repositories {
-            override val applicationRepo by lazy { ApplicationRepositoryImpl(dataSource) }
-        }
+    interface Services {
+        val applicationService: ApplicationService
     }
+
+    val repositories: Repositories
+    val clients: Clients
+    val services: Services
+    val clock: Clock
 }
 ```
 
-The `dataSource` property uses a lazy error default — production code overrides it with a real `DataSource`, while test contexts override `repositories` entirely and never touch `dataSource`.
+### Production: SystemContext
+
+A plain class — no `open`, no `lazy`, eager val initialization throughout. Infrastructure (like `DataSource`) lives directly on `SystemContext`, not exposed through `AppDependencies`. Grouping implementations are anonymous objects:
+
+```kotlin
+class SystemContext(
+    private val dataSource: DataSource,
+) : AppDependencies {
+
+    override val clock: Clock = Clock.systemDefaultZone()
+
+    override val repositories = object : AppDependencies.Repositories {
+        override val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl(dataSource)
+    }
+
+    override val clients = object : AppDependencies.Clients {
+        override val customerRepository: CustomerRegisterClient = CustomerRegisterClientImpl()
+        override val userNotificationClient: UserNotificationClient = UserNotificationClientImpl()
+    }
+
+    override val services = object : AppDependencies.Services {
+        override val applicationService = ApplicationService(
+            repositories.applicationRepo,
+            clients.customerRepository,
+            clients.userNotificationClient,
+            clock,
+        )
+    }
+}
+```
 
 ### Why Interfaces Instead of Open Classes?
 
@@ -64,40 +97,82 @@ class TestRepositories : Repositories(DummyDataSource()) {  // <- Awkward!
 }
 ```
 
-This became a real problem in production code when repositories started needing database connections, configuration objects, or HTTP clients in their constructors. Test code had to create dummy instances of these just to satisfy the superclass constructor, even though fakes are in-memory and never touch databases or HTTP.
+**The problem with lazy in open classes:**
 
-**The interfaces solution:**
-- No constructor parameters
-- No dummy objects needed in tests
-- Test implementations must explicitly provide every dependency (no hidden inherited behavior)
-- Production wiring stays in one place (anonymous objects inside SystemContext)
-
-### Typed Test Implementations Pattern
-
-The test context provides **two access paths** using Kotlin's covariant return types:
+Even with `lazy`, overriding an eager val in a subclass does NOT prevent the base class initializer from running. This means production initialization code executes even in tests:
 
 ```kotlin
-class SystemTestContext : SystemContext() {
-    class TestRepositories : Repositories {
-        override val applicationRepo = ApplicationRepositoryFake()  // Concrete type!
+// Don't do this — lazy doesn't protect against production initialization in subclasses
+open class SystemContext {
+    open val repositories by lazy {
+        object : Repositories {
+            override val applicationRepo = ApplicationRepositoryImpl(dataSource) // Still runs!
+        }
     }
-
-    val testRepositories = TestRepositories()
-    override val repositories: Repositories get() = testRepositories
 }
 ```
 
-In tests:
-- `repositories.applicationRepo` - typed as `ApplicationRepository` (interface, used by production code)
-- `testRepositories.applicationRepo` - typed as `ApplicationRepositoryFake` (concrete, for test assertions)
+This is why interface + standalone implementations was chosen over open class with overrides.
 
-No casting needed:
+**The interfaces solution:**
+- No constructor parameters to satisfy
+- No dummy objects needed in tests
+- Test implementations must explicitly provide every dependency (no hidden inherited behavior)
+- Production wiring stays in one place (anonymous objects inside SystemContext)
+- No lazy needed — each context handles its own initialization independently
+
+### Test: SystemTestContext
+
+A **standalone class** — does NOT extend `SystemContext`. Uses **inner classes** for groupings (allows access to enclosing context properties). **Covariant override inference** means `repositories.applicationRepo` resolves to `ApplicationRepositoryFake` in test scope — no dual-access needed:
+
+```kotlin
+class SystemTestContext(
+    dataSource: DataSource? = null,
+) : AppDependencies {
+
+    override val clock = TestClock.now()
+
+    inner class TestRepositories : AppDependencies.Repositories {
+        override val applicationRepo = ApplicationRepositoryFake()  // Concrete type!
+    }
+
+    inner class TestClients : AppDependencies.Clients {
+        override val customerRepository = CustomerRegisterClientFake()
+        override val userNotificationClient = UserNotificationClientFake()
+    }
+
+    override val repositories =
+        if (dataSource != null) {
+            object : AppDependencies.Repositories {
+                override val applicationRepo = ApplicationRepositoryImpl(dataSource)
+            }
+        } else {
+            TestRepositories()
+        }
+
+    override val clients = TestClients()
+
+    override val services = object : AppDependencies.Services {
+        override val applicationService = ApplicationService(
+            repositories.applicationRepo,
+            clients.customerRepository,
+            clients.userNotificationClient,
+            clock,
+        )
+    }
+}
+```
+
+### Covariant Override Inference
+
+Because `SystemTestContext` declares `override val repositories = TestRepositories()`, Kotlin infers the property type as `TestRepositories` (the concrete type). When test code uses `with(SystemTestContext())`, the receiver type is `SystemTestContext`, and `repositories.applicationRepo` resolves to `ApplicationRepositoryFake` — giving direct access to fake methods without casting and without dual-access properties:
+
 ```kotlin
 with(SystemTestContext()) {
-    applicationService.registerApplication(app)
+    services.applicationService.registerApplication(app)
 
-    // Access fake-specific methods directly - no casting!
-    assertThat(testRepositories.applicationRepo.getAllApplications())
+    // Direct access to fake-specific methods — no casting, no testRepositories!
+    assertThat(repositories.applicationRepo.getAllApplications())
         .contains(app)
 }
 ```
@@ -114,7 +189,7 @@ class MyIntegrationTest(private val dataSource: DataSource) {
 
     @Test
     fun shouldStoreAndRetrieve() {
-        with(SystemTestContext(dataSource)) {
+        with(SystemTestContext(dataSource = dataSource)) {
             val application = Application.valid(customerId = customer.id)
             repositories.applicationRepo.addApplication(application)
 
@@ -125,27 +200,25 @@ class MyIntegrationTest(private val dataSource: DataSource) {
 }
 ```
 
-The `SystemTestContext` wires the `DataSource` into real repository implementations when provided, while still using fakes for clients:
-
-```kotlin
-class SystemTestContext(dataSource: DataSource? = null) : SystemContext() {
-    override val repositories: Repositories =
-        if (dataSource != null) {
-            object : Repositories {
-                override val applicationRepo = ApplicationRepositoryImpl(dataSource)
-            }
-        } else {
-            testRepositories  // In-memory fakes
-        }
-}
-```
-
 This works because:
 - **Interfaces have no constructor parameters** — `SystemTestContext()` (no args) never needs a `DataSource`
 - **`with()` pattern is consistent** — integration tests look identical to fake-based tests
 - **Connection pool is shared** — the `ParameterResolver` stores it in JUnit's root `ExtensionContext.Store`, so one Testcontainers Postgres + one HikariCP pool serves all test classes
 
-> ✅ See [SharedDataSourceParameterResolver.kt](../src/test/kotlin/system/SharedDataSourceParameterResolver.kt) and [ApplicationRepositoryIntegrationTest.kt](../src/test/kotlin/application/ApplicationRepositoryIntegrationTest.kt) for the full implementation.
+> See [SharedDataSourceParameterResolver.kt](../src/test/kotlin/system/SharedDataSourceParameterResolver.kt) and [ApplicationRepositoryIntegrationTest.kt](../src/test/kotlin/application/ApplicationRepositoryIntegrationTest.kt) for the full implementation.
+
+### E2E: Delegation for Partial Overrides
+
+For end-to-end tests that need to replace specific services while keeping the rest intact, use Kotlin's delegation:
+
+```kotlin
+val testContext = SystemTestContext()
+val dependencies = object : AppDependencies by testContext {
+    override val services = object : AppDependencies.Services by testContext.services {
+        override val applicationService = customService
+    }
+}
+```
 
 ## Benefits of Manual DI
 
@@ -155,8 +228,9 @@ My reasons for this approach:
 - It makes it possible to inject whatever I want, whenever I want. Think Test Doubles like Fakes. Or even once in a while Mocks.
 - I TDD a lot more. Because I control how much is being loaded and when, I only load what's necessary and it's fast. I can decide to make the feedback loop efficient even if I am writing automated tests that do actual HTTP and database calls.
 - I re-factor more. Sometimes when I re-factor, the specific patterns of the framework get in the way. Without framework annoyances, it is easier and more fun to do refactorings.
-- No casting needed in tests (typed test implementations give you concrete fake types)
-- Test contexts are lightweight - fresh context per test prevents state leakage
+- No casting needed in tests (covariant override inference gives you concrete fake types)
+- Test contexts are lightweight — fresh context per test prevents state leakage
+- No lazy pitfalls — each context initializes independently
 
 # Related Reading
 - [Rolling your own dependency injection](https://anderssv.medium.com/rolling-your-own-dependency-injection-7045f8b64403)

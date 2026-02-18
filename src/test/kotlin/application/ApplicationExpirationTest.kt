@@ -19,7 +19,7 @@ class ApplicationExpirationTest {
             val customer = Customer.valid()
 
             val application = Application.valid(customer.id).copy(applicationDate = LocalDate.now(clock))
-            applicationService.registerInitialApplication(customer, application)
+            services.applicationService.registerInitialApplication(customer, application)
 
             // Verify it's active
             assertThat(repositories.applicationRepo.getApplication(application.id).status)
@@ -29,7 +29,7 @@ class ApplicationExpirationTest {
             clock.advance(Duration.ofDays(7 * 30))
 
             // Run expiration check
-            applicationService.expireApplications()
+            services.applicationService.expireApplications()
 
             // Verify the application is now expired
             assertThat(repositories.applicationRepo.getApplication(application.id).status)

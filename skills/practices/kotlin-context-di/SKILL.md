@@ -5,98 +5,249 @@ description: Manual dependency injection using SystemContext (production) and Te
 
 STARTER_CHARACTER = 🔌
 
-# Manual Dependency Injection with SystemContext and TestContext
+# Manual Dependency Injection with AppDependencies, SystemContext and TestContext
 
-Structure Kotlin applications using manual DI with SystemContext (production) and TestContext (test) patterns. This approach provides type-safe dependency management, full control over initialization, and excellent testability without framework overhead.
+Structure Kotlin applications using manual DI with an interface-first contract (`AppDependencies`), a production context (`SystemContext`), and a standalone test context (`SystemTestContext`). This approach provides type-safe dependency management, full control over initialization, and excellent testability without framework overhead.
 
-## Core Pattern: SystemContext
+## Core Pattern: AppDependencies Interface
 
-Create an open class that holds all application dependencies. Use **interfaces** to group related components, and implement them as **anonymous objects** inside the context.
+Define an interface as the contract for all application dependencies. Use nested interfaces to group related components:
 
 ```kotlin
-open class SystemContext {
+interface AppDependencies {
     interface Repositories {
         val customerRepo: CustomerRepository
         val orderRepo: OrderRepository
     }
-    
-    open val repositories: Repositories by lazy {
-        object : Repositories {
-            override val customerRepo by lazy { CustomerRepositoryImpl(dataSource) }
-            override val orderRepo by lazy { OrderRepositoryImpl(dataSource) }
-        }
+
+    interface Clients {
+        val paymentClient: PaymentClient
+        val emailClient: EmailClient
     }
-    
-    open val customerService by lazy { 
-        CustomerService(repositories.customerRepo) 
+
+    interface Services {
+        val customerService: CustomerService
+        val orderService: OrderService
     }
-    
-    open val orderService by lazy {
-        OrderService(repositories.orderRepo, customerService)
+
+    val repositories: Repositories
+    val clients: Clients
+    val services: Services
+    val clock: Clock
+}
+```
+
+Both production and test contexts implement this interface **independently** — no inheritance between them.
+
+**Why an interface (not an open class):**
+- Open classes with constructor parameters force test subclasses to satisfy those parameters, even when test fakes never use them (e.g., creating a dummy `DataSource` just to satisfy a constructor)
+- `lazy` doesn't protect against production initialization in subclasses — overriding an eager val in a subclass does NOT prevent the base class initializer from running
+- Interfaces have no constructors and no inherited behavior — test implementations must explicitly provide every dependency
+- Each context handles its own initialization independently — no lazy needed
+
+## Production: SystemContext
+
+A plain class implementing `AppDependencies` — no `open`, no `lazy`, eager val initialization throughout. Infrastructure (DataSource, credentials, JWKS) lives directly on `SystemContext`, not exposed through `AppDependencies`. Grouping implementations are anonymous objects:
+
+```kotlin
+class SystemContext(
+    private val config: Config,
+) : AppDependencies {
+    // Infrastructure — not exposed through AppDependencies
+    private val dataSource = HikariDataSource(config.dbConfig)
+
+    override val clock: Clock = Clock.systemDefaultZone()
+
+    override val repositories = object : AppDependencies.Repositories {
+        override val customerRepo: CustomerRepository = CustomerRepositoryImpl(dataSource)
+        override val orderRepo: OrderRepository = OrderRepositoryImpl(dataSource)
+    }
+
+    override val clients = object : AppDependencies.Clients {
+        override val paymentClient: PaymentClient = PaymentClientImpl(config.paymentApiKey)
+        override val emailClient: EmailClient = EmailClientImpl(config.smtpConfig)
+    }
+
+    override val services = object : AppDependencies.Services {
+        override val customerService = CustomerService(repositories.customerRepo)
+        override val orderService = OrderService(
+            repositories.orderRepo,
+            clients.paymentClient,
+            clients.emailClient,
+        )
     }
 }
 ```
 
 **Key characteristics:**
-- Group related dependencies using **interfaces** (not open classes — see rationale below)
-- Implement production wiring as **anonymous objects** inside the context
-- Services reference repositories and other services directly
-- Use `lazy` for initialization that depends on other context properties or is expensive
-- Use direct instantiation when initialization is trivial and has no dependencies
+- No `open` — this class is not designed for extension
+- No `lazy` — eager initialization throughout
+- No default values in production config — all config must be explicit per environment
+- Infrastructure captured by anonymous objects from the enclosing scope
+- Anonymous objects keep production wiring in one place
 
-**Why interfaces instead of open classes:**
-- Open classes with constructor parameters force test subclasses to satisfy those parameters, even when test fakes never use them (e.g., creating a dummy `DataSource` just to satisfy a constructor)
-- Open classes carry implicit coupling: test subclasses inherit production defaults, which can mask test setup errors
-- Interfaces have no constructors and no inherited behavior — test implementations must explicitly provide every dependency
+## Test: SystemTestContext (Standalone)
 
-**Why anonymous objects for production wiring:**
-- Production wiring stays in one place (`SystemContext`)
-- Implementation details are private to the context
-- The anonymous object naturally captures `dataSource` and other context properties from the enclosing scope
-- No need for constructor parameters on the grouping interface
-
-## Test Pattern: TestContext with Typed Test Implementations
-
-Extend SystemContext and override dependency groups with typed test implementations. Use **concrete types** in test implementations to avoid casting.
+A **standalone class** implementing `AppDependencies` — does NOT extend `SystemContext`. Uses **inner classes** for groupings (access to enclosing context properties). **Covariant override inference** means concrete fake types are available directly — no dual-access needed:
 
 ```kotlin
-class SystemTestContext : SystemContext() {
-    class TestRepositories : Repositories {
+class SystemTestContext(
+    dataSource: DataSource? = null,
+) : AppDependencies {
+
+    override val clock = TestClock.now()
+
+    inner class TestRepositories : AppDependencies.Repositories {
         override val customerRepo = CustomerRepositoryFake()   // concrete type!
         override val orderRepo = OrderRepositoryFake()         // concrete type!
     }
-    
-    val testRepositories = TestRepositories()
-    override val repositories: Repositories get() = testRepositories
+
+    inner class TestClients : AppDependencies.Clients {
+        override val paymentClient = PaymentClientFake()       // concrete type!
+        override val emailClient = EmailClientFake()           // concrete type!
+    }
+
+    override val repositories =
+        if (dataSource != null) {
+            object : AppDependencies.Repositories {
+                override val customerRepo = CustomerRepositoryImpl(dataSource)
+                override val orderRepo = OrderRepositoryImpl(dataSource)
+            }
+        } else {
+            TestRepositories()
+        }
+
+    override val clients = TestClients()
+
+    override val services = object : AppDependencies.Services {
+        override val customerService = CustomerService(repositories.customerRepo)
+        override val orderService = OrderService(
+            repositories.orderRepo,
+            clients.paymentClient,
+            clients.emailClient,
+        )
+    }
 }
 ```
 
-This exploits Kotlin's **covariant return types**: `TestRepositories.customerRepo` has type `CustomerRepositoryFake` (concrete), while still satisfying the interface contract `CustomerRepository` (abstract).
+**Key characteristics:**
+- Does NOT extend SystemContext — no inheritance between production and test
+- **Inner class** for groupings — allows access to enclosing context properties
+- **Covariant override inference** — `override val repositories = TestRepositories()` infers the concrete type, so `repositories.customerRepo` resolves to `CustomerRepositoryFake` in test scope
+- **No dual-access needed** — no separate `testRepositories` vs `repositories`
+- **Constructor injection with defaults** — `SystemTestContext(dataSource = realDs)` for integration, no-arg for unit tests
 
-**Two access paths exist in tests:**
-- `repositories.customerRepo` — typed as `CustomerRepository` (used by production code)
-- `testRepositories.customerRepo` — typed as `CustomerRepositoryFake` (for test assertions and setup)
+## Covariant Override Inference
 
-**In tests — create a fresh context per test:**
+This is the key mechanism that eliminates dual-access properties. When `SystemTestContext` declares:
+
+```kotlin
+override val repositories = TestRepositories()
+```
+
+Kotlin infers the property type as `TestRepositories` (the concrete type), not `AppDependencies.Repositories` (the interface type). When test code uses `with(SystemTestContext())`, the receiver type is `SystemTestContext`, and `repositories.customerRepo` resolves to `CustomerRepositoryFake`.
+
+**In tests — direct access to fake methods, no casting needed:**
 
 ```kotlin
 @Test
 fun testOrderCreation() {
     with(SystemTestContext()) {
-        // Arrange - use service methods to set up state
-        customerService.registerCustomer(Customer.valid())
-        
         // Act
-        val order = orderService.createOrder(customerId, items)
-        
-        // Assert — direct access to fake methods, no casting needed
-        assertThat(testRepositories.orderRepo.getSavedOrders())
+        services.orderService.createOrder(customerId, items)
+
+        // Assert — direct access to fake methods via covariant inference
+        assertThat(repositories.orderRepo.getSavedOrders())
             .contains(order)
     }
 }
 ```
 
-The `with(SystemTestContext()) { ... }` pattern creates a fresh context per test, provides clean access to all services and repositories, and prevents state leakage between tests.
+## Fresh Context Per Test
+
+**Create a fresh context per test when fakes are stateful (the common case):**
+
+```kotlin
+@Test
+fun `should save order`() {
+    with(SystemTestContext()) {
+        services.orderService.createOrder(request)
+        assertThat(repositories.orderRepo.getSavedOrders()).hasSize(1)
+    }
+}
+
+@Test
+fun `should not save order when payment fails`() {
+    with(SystemTestContext()) {
+        clients.paymentClient.failOnNextCharge()
+        services.orderService.createOrder(request)
+        assertThat(repositories.orderRepo.getSavedOrders()).isEmpty()
+    }
+}
+```
+
+**Why:** Fakes are stateful — `OrderRepositoryFake` accumulates saved orders, `EmailClientFake` accumulates sent emails. Sharing a context across tests causes state from one test to leak into the next, leading to order-dependent failures and flaky tests.
+
+The `with(SystemTestContext()) { ... }` pattern is idiomatic, cheap (no real I/O), and prevents test pollution.
+
+**Share a context only when fakes are truly stateless or when you have explicit reset logic** — this is uncommon.
+
+## E2E: Delegation for Partial Overrides
+
+For end-to-end tests that need to replace specific services while keeping the rest intact, use Kotlin's delegation:
+
+```kotlin
+val testContext = SystemTestContext()
+val dependencies = object : AppDependencies by testContext {
+    override val services = object : AppDependencies.Services by testContext.services {
+        override val orderService = customOrderService
+    }
+}
+```
+
+This creates a new `AppDependencies` that delegates everything to `testContext` except `services.orderService`, which is replaced with a custom implementation.
+
+## Nullable-to-Non-nullable Narrowing in Tests
+
+When production interfaces have nullable dependencies (because configuration may be absent), test implementations can narrow them to non-nullable:
+
+```kotlin
+// Production interface — nullable because config may not exist
+interface Clients {
+    val authClient: AuthClient?
+    val notificationClient: NotificationClient?
+}
+
+// Test implementation — non-nullable
+inner class TestClients : AppDependencies.Clients {
+    override val authClient = AuthClientStub()            // non-nullable!
+    override val notificationClient = NotificationClientStub()  // non-nullable!
+}
+```
+
+This is valid Kotlin because non-nullable types are subtypes of nullable types. Tests never need null checks when accessing test clients, even though production code handles the nullable case. This is a significant ergonomic win — test code stays clean and focused on behavior.
+
+## Route Functions Accept AppDependencies
+
+Route functions (or controllers) accept the `AppDependencies` interface, not the context object — destructure inside:
+
+```kotlin
+fun Application.orderRoutes(deps: AppDependencies) {
+    routing {
+        get("/orders/{id}") {
+            val orderId = call.parameters["id"]!!
+            val order = deps.services.orderService.getOrder(orderId)
+            call.respond(order)
+        }
+
+        post("/orders") {
+            val request = call.receive<CreateOrderRequest>()
+            val order = deps.services.orderService.createOrder(request)
+            call.respond(order)
+        }
+    }
+}
+```
 
 ## Type Safety Benefits
 
@@ -115,192 +266,6 @@ The `with(SystemTestContext()) { ... }` pattern creates a fresh context per test
 - Easy to trace where any component is used
 - No hidden framework magic
 
-## Initialization Control
-
-**Direct instantiation** (default):
-```kotlin
-open val customerService = CustomerService(repositories.customerRepo)
-```
-Use when initialization is cheap and there are no circular dependencies.
-
-**Lazy initialization:**
-```kotlin
-open val customerService by lazy {
-    CustomerService(repositories.customerRepo)
-}
-```
-Use when:
-- Circular dependencies exist (A needs B, B needs A)
-- Initialization is expensive (database connections, HTTP clients)
-- Component may not be used in all test scenarios
-- The value depends on other context properties that may be overridden
-
-**When in doubt, start with direct instantiation.** Add `lazy` only when needed.
-
-## Grouping Dependencies
-
-Organize dependencies by layer or concern using interfaces:
-
-```kotlin
-open class SystemContext(private val config: Config) {
-    // Data layer
-    interface Repositories {
-        val userRepo: UserRepository
-        val productRepo: ProductRepository
-    }
-    
-    // External services
-    interface Clients {
-        val paymentClient: PaymentClient
-        val emailClient: EmailClient
-    }
-    
-    // Infrastructure
-    interface Infrastructure {
-        val database: Database
-        val cache: Cache
-    }
-    
-    open val infrastructure: Infrastructure by lazy {
-        object : Infrastructure {
-            override val database by lazy { DatabaseImpl(config.dbUrl) }
-            override val cache by lazy { RedisCache(config.redisUrl) }
-        }
-    }
-    
-    open val repositories: Repositories by lazy {
-        object : Repositories {
-            override val userRepo by lazy { UserRepositoryImpl(infrastructure.database) }
-            override val productRepo by lazy { ProductRepositoryImpl(infrastructure.database) }
-        }
-    }
-    
-    open val clients: Clients by lazy {
-        object : Clients {
-            override val paymentClient by lazy { PaymentClientImpl(config.paymentApiKey) }
-            override val emailClient by lazy { EmailClientImpl(config.smtpConfig) }
-        }
-    }
-    
-    // Business logic
-    open val userService by lazy { UserService(repositories.userRepo) }
-    open val orderService by lazy {
-        OrderService(
-            repositories.productRepo,
-            clients.paymentClient,
-            clients.emailClient
-        )
-    }
-}
-```
-
-This structure:
-- Makes test overriding straightforward (override entire groups)
-- Clarifies architectural layers
-- Keeps production wiring in one place
-- Anonymous objects capture config and other context properties from the enclosing scope
-
-## Test Context: Full Example
-
-```kotlin
-class SystemTestContext : SystemContext(Config.test()) {
-    class TestRepositories : Repositories {
-        override val userRepo = UserRepositoryFake()        // concrete type
-        override val productRepo = ProductRepositoryFake()  // concrete type
-    }
-    
-    class TestClients : Clients {
-        override val paymentClient = PaymentClientFake()    // concrete type
-        override val emailClient = EmailClientFake()        // concrete type
-    }
-    
-    val testRepositories = TestRepositories()
-    override val repositories: Repositories get() = testRepositories
-    
-    val testClients = TestClients()
-    override val clients: Clients get() = testClients
-}
-```
-
-**In tests — no casting needed:**
-
-```kotlin
-@Test
-fun testEmailSent() {
-    with(SystemTestContext()) {
-        orderService.completeOrder(orderId)
-        
-        // Direct access to fake methods via testClients — no casting
-        assertThat(testClients.emailClient.sentEmails).hasSize(1)
-        assertThat(testClients.emailClient.sentEmails[0].subject)
-            .contains("Order Confirmed")
-    }
-}
-
-@Test
-fun testPaymentFailure() {
-    with(SystemTestContext()) {
-        // Configure fake behavior — no casting
-        testClients.paymentClient.failOnNextCharge()
-        
-        val result = orderService.createOrder(request)
-        
-        assertThat(result.status).isEqualTo(OrderStatus.PAYMENT_FAILED)
-    }
-}
-```
-
-## Fresh Context Per Test
-
-**Create a fresh context per test when fakes are stateful (the common case):**
-
-```kotlin
-@Test
-fun `should save order`() {
-    with(SystemTestContext()) {
-        // Fresh fakes with no accumulated state
-        orderService.createOrder(request)
-        assertThat(testRepositories.orderRepo.getSavedOrders()).hasSize(1)
-    }
-}
-
-@Test
-fun `should not save order when payment fails`() {
-    with(SystemTestContext()) {
-        // Independent from the test above
-        testClients.paymentClient.failOnNextCharge()
-        orderService.createOrder(request)
-        assertThat(testRepositories.orderRepo.getSavedOrders()).isEmpty()
-    }
-}
-```
-
-**Why:** Fakes are stateful — `OrderRepositoryFake` accumulates saved orders, `EmailClientFake` accumulates sent emails. Sharing a context across tests causes state from one test to leak into the next, leading to order-dependent failures and flaky tests.
-
-The `with(SystemTestContext()) { ... }` pattern is idiomatic, cheap (no real I/O), and prevents test pollution.
-
-**Share a context only when fakes are truly stateless or when you have explicit reset logic** — this is uncommon.
-
-## Nullable-to-Non-nullable Narrowing in Tests
-
-When production interfaces have nullable dependencies (because configuration may be absent), test implementations can narrow them to non-nullable:
-
-```kotlin
-// Production interface — nullable because config may not exist
-interface Clients {
-    val authClient: AuthClient?
-    val notificationClient: NotificationClient?
-}
-
-// Test implementation — non-nullable
-class TestClients : Clients {
-    override val authClient = AuthClientStub()            // non-nullable!
-    override val notificationClient = NotificationClientStub()  // non-nullable!
-}
-```
-
-This is valid Kotlin because non-nullable types are subtypes of nullable types. Tests never need null checks when accessing test clients, even though production code handles the nullable case. This is a significant ergonomic win — test code stays clean and focused on behavior.
-
 ## Integration with Test Doubles
 
 TestContext typically contains Fakes (in-memory implementations of interfaces):
@@ -308,35 +273,34 @@ TestContext typically contains Fakes (in-memory implementations of interfaces):
 ```kotlin
 class CustomerRepositoryFake : CustomerRepository {
     private val db = mutableMapOf<String, Customer>()
-    
+
     override fun save(customer: Customer) {
         db[customer.id] = customer
     }
-    
+
     override fun findById(id: String): Customer? {
         return db[id]
     }
-    
+
     // Test-specific methods (not in interface)
     fun getSavedCustomers(): List<Customer> = db.values.toList()
     fun failOnNextSave() { /* ... */ }
 }
 ```
 
-The TestContext wires these Fakes and exposes them with concrete types:
+The TestContext wires these Fakes and exposes them with concrete types via covariant override inference:
 
 ```kotlin
-class SystemTestContext : SystemContext() {
-    class TestRepositories : Repositories {
+class SystemTestContext : AppDependencies {
+    inner class TestRepositories : AppDependencies.Repositories {
         override val customerRepo = CustomerRepositoryFake()  // concrete type
     }
-    
-    val testRepositories = TestRepositories()
-    override val repositories: Repositories get() = testRepositories
+
+    override val repositories = TestRepositories()  // inferred as TestRepositories
 }
 ```
 
-Now `customerService` uses `CustomerRepositoryFake` automatically because it references `repositories.customerRepo`, and tests access fake-specific methods via `testRepositories.customerRepo` without casting.
+Now `services.customerService` uses `CustomerRepositoryFake` automatically because it references `repositories.customerRepo`, and tests access fake-specific methods via `repositories.customerRepo` without casting — the covariant inference gives you the concrete type.
 
 ## Application Wiring
 
@@ -344,13 +308,12 @@ Now `customerService` uses `CustomerRepositoryFake` automatically because it ref
 ```kotlin
 fun main() {
     val context = SystemContext(Config.fromEnvironment())
-    
-    // Start application with context
+
     val app = Application(
-        context.orderService,
-        context.userService
+        context.services.orderService,
+        context.services.userService,
     )
-    
+
     app.start()
 }
 ```
@@ -359,24 +322,13 @@ fun main() {
 ```kotlin
 fun Application.module() {
     val context = SystemContext(Config.fromEnvironment())
-    
-    routing {
-        get("/orders/{id}") {
-            val orderId = call.parameters["id"]!!
-            val order = context.orderService.getOrder(orderId)
-            call.respond(order)
-        }
-        
-        post("/orders") {
-            val request = call.receive<CreateOrderRequest>()
-            val order = context.orderService.createOrder(request)
-            call.respond(order)
-        }
-    }
+
+    orderRoutes(context)
+    userRoutes(context)
 }
 ```
 
-Routes access services directly from the context. No framework-specific annotations or registrations needed.
+Routes accept `AppDependencies`, not the context object. No framework-specific annotations or registrations needed.
 
 ## Why This Pattern Works
 
@@ -406,7 +358,7 @@ Routes access services directly from the context. No framework-specific annotati
 **Flexibility:**
 - Change initialization order easily
 - Add conditional logic (feature flags, environment checks)
-- Compose contexts (production + feature flags)
+- Compose contexts using delegation
 
 **Scalability:**
 - Pattern stays simple as project grows
@@ -425,6 +377,26 @@ open class Repositories(private val dataSource: DataSource) {
 
 Use interfaces instead — they have no constructors and force explicit implementation.
 
+**Avoid lazy in production context:**
+```kotlin
+// Don't do this — lazy doesn't protect against production initialization in subclasses
+open class SystemContext {
+    open val repositories by lazy { ... }
+}
+```
+
+Lazy adds complexity and gives false security. With interface + standalone implementations, each context initializes independently.
+
+**Avoid inheritance between production and test contexts:**
+```kotlin
+// Don't do this
+class SystemTestContext : SystemContext() {  // Inherits production initialization!
+    override val repositories = TestRepositories()
+}
+```
+
+Use standalone classes that both implement the `AppDependencies` interface.
+
 **Avoid casting to access test-specific methods:**
 ```kotlin
 // Don't do this
@@ -432,17 +404,16 @@ val emailClient = clients.emailClient as EmailClientFake
 assertThat(emailClient.sentEmails).hasSize(1)
 ```
 
-Use typed test implementations with dual access (`testClients.emailClient`) instead.
+Use covariant override inference — inner class groupings give you concrete types automatically.
 
-**Avoid making everything lazy:**
+**Avoid dual-access properties:**
 ```kotlin
-// Don't do this unless needed
-open val customerService by lazy { CustomerService(...) }
-open val orderService by lazy { OrderService(...) }
-open val productService by lazy { ProductService(...) }
+// Don't do this
+val testRepositories = TestRepositories()
+override val repositories: Repositories get() = testRepositories
 ```
 
-Lazy adds complexity. Use direct instantiation unless circular dependencies or expensive initialization require it.
+With standalone test context and covariant override inference, `repositories` already resolves to `TestRepositories`.
 
 **Avoid deep context hierarchies:**
 ```kotlin
@@ -453,7 +424,7 @@ open class ServiceContext : RepositoryContext()
 open class SystemContext : ServiceContext()
 ```
 
-Keep it flat: one SystemContext with nested interface groups for organization.
+Keep it flat: one AppDependencies interface with nested interface groups for organization.
 
 **Don't mix with annotation-based DI:**
 ```kotlin
@@ -468,15 +439,16 @@ Choose one approach and stick with it.
 
 **Adding to existing project:**
 
-1. Create SystemContext with existing components
-2. Wire main entry point to use context
-3. Gradually move initialization logic into context
-4. Create TestContext and migrate tests incrementally
+1. Create `AppDependencies` interface with nested grouping interfaces
+2. Create `SystemContext` implementing it with existing components
+3. Wire main entry point to use context
+4. Gradually move initialization logic into context
+5. Create `SystemTestContext` and migrate tests incrementally
 
 **From framework DI:**
 
-1. Create parallel SystemContext alongside framework
-2. New code uses SystemContext
+1. Create parallel `AppDependencies` + `SystemContext` alongside framework
+2. New code uses the interface-first pattern
 3. Gradually migrate existing code
 4. Remove framework once migration complete
 

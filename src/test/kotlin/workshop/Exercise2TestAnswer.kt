@@ -34,7 +34,7 @@ class Exercise2TestAnswer {
             .valid(customerId = customer.id)
             .copy(applicationDate = defaultDate)
             .let(configure)
-            .also { applicationService.registerInitialApplication(customer, it) }
+            .also { services.applicationService.registerInitialApplication(customer, it) }
     }
 
     /**
@@ -86,10 +86,10 @@ class Exercise2TestAnswer {
             // Act: Advance time and expire applications,
             // you could have just set time back in time but wouldn't show the usage
             clock.advance(Duration.ofDays(180))
-            applicationService.expireApplications()
+            services.applicationService.expireApplications()
 
             // Assert: Verify notification was sent
-            val notifications = testClients.userNotificationClient.getNotificationForUser(application.name)
+            val notifications = clients.userNotificationClient.getNotificationForUser(application.name)
             assertThat(notifications).contains("Your application ${application.id} has expired")
         }
     }
@@ -112,12 +112,12 @@ class Exercise2TestAnswer {
                 withStoredApplication {
                     copy(applicationDate = LocalDate.of(2023, 1, 1))
                 }
-            testClients.userNotificationClient.registerApplicationIdForFailure(application.id)
+            clients.userNotificationClient.registerApplicationIdForFailure(application.id)
 
             // Act & Assert: Verify that approval attempt throws NotificationSendException
             val exception =
                 assertThrows(NotificationSendException::class.java) {
-                    applicationService.approveApplication(application.id)
+                    services.applicationService.approveApplication(application.id)
                 }
 
             // Verify that the underlying cause is IOException

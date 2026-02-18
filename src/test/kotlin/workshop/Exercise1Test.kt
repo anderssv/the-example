@@ -26,7 +26,7 @@ class Exercise1Test {
     /**
      * Write a test that registers an application and verifies that it was stored correctly.
      *
-     * Hint: Use the applicationService to register the application and the applicationRepo to verify that it was stored correctly.
+     * Hint: Use the services.applicationService to register the application and the applicationRepo to verify that it was stored correctly.
      *
      * Questions:
      * - How do we set up and re-use test data?
@@ -37,7 +37,7 @@ class Exercise1Test {
         with(testContext) {
             // TODO: Implement this test
             // 1. Set up test data (customer and application)
-            // 2. Register the application using applicationService
+            // 2. Register the application using services.applicationService
             // 3. Verify that the application was stored correctly in the repository
         }
     }
@@ -56,7 +56,7 @@ class Exercise1Test {
             // TODO: Implement this test
             // 1. Set up test data with an application older than 6 months
             // 2. Register the application
-            // 3. Expire the application through domain logic in applicationService
+            // 3. Expire the application through domain logic in services.applicationService
             // 4. Verify the application is expired in the repository
         }
     }

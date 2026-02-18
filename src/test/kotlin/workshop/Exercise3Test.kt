@@ -60,7 +60,7 @@ class Exercise3Test {
         // 1. Set up all dependencies manually (applicationRepo, customerRepo, notificationClient, clock)
         // 2. Create a service with manual dependencies
         // 3. Set up test data (customer and application)
-        // 4. Register the application using applicationService
+        // 4. Register the application using services.applicationService
         // 5. Verify that the application was stored correctly in the repository
     }
 

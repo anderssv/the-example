@@ -2,33 +2,47 @@ package system
 
 import application.ApplicationRepositoryFake
 import application.ApplicationRepositoryImpl
+import application.ApplicationService
 import brreg.BrregClientFake
 import customer.CustomerRegisterClientFake
 import notifications.UserNotificationClientFake
 import javax.sql.DataSource
 
 /**
- * Test context with fakes using typed test implementations pattern.
+ * Test context — standalone class implementing [AppDependencies] independently.
+ * Does NOT extend [SystemContext] — no inheritance between production and test contexts.
  *
- * This pattern provides two access paths:
- * 1. repositories.applicationRepo - typed as ApplicationRepository (interface type, used by services)
- * 2. testRepositories.applicationRepo - typed as ApplicationRepositoryFake (concrete type, for test assertions)
+ * Uses inner classes for groupings, which allows access to enclosing context properties.
+ * Covariant override inference means `repositories.applicationRepo` resolves to
+ * [ApplicationRepositoryFake] in test scope — no dual-access (testRepositories vs repositories) needed.
  *
- * Benefits:
- * - No casting needed to access fake-specific methods
- * - Type safety: IDE autocomplete shows fake methods when using testRepositories
- * - Clear separation: production code uses abstract interfaces, tests use concrete fakes
+ * Constructor injection with defaults for E2E flexibility:
+ * ```
+ * val testContext = SystemTestContext(dataSource = realDataSource)
+ * ```
  *
  * For integration tests that need a real database, pass a [DataSource]:
  * ```
  * @ExtendWith(SharedDataSourceParameterResolver::class)
  * class MyIntegrationTest(private val dataSource: DataSource) {
- *     private val testContext = SystemTestContext(dataSource)
+ *     @Test
+ *     fun shouldStoreAndRetrieve() {
+ *         with(SystemTestContext(dataSource = dataSource)) {
+ *             // ...
+ *         }
+ *     }
  * }
  * ```
- * The [DataSource] is wired into real repository implementations while
- * clients remain fakes, allowing focused integration testing of the
- * database layer.
+ *
+ * E2E partial overrides using delegation:
+ * ```
+ * val testContext = SystemTestContext()
+ * val dependencies = object : AppDependencies by testContext {
+ *     override val services = object : AppDependencies.Services by testContext.services {
+ *         override val applicationService = customService
+ *     }
+ * }
+ * ```
  *
  * See the production context:
  * https://github.com/anderssv/the-example/blob/main/src/main/kotlin/system/SystemContext.kt
@@ -36,62 +50,60 @@ import javax.sql.DataSource
  * See usage examples:
  * https://github.com/anderssv/the-example/blob/main/src/test/kotlin/application/TestingThroughTheDomainTest.kt
  */
-class SystemTestContext(dataSource: DataSource? = null) : SystemContext() {
+class SystemTestContext(
+    dataSource: DataSource? = null,
+) : AppDependencies {
+
+    override val clock = TestClock.now()
+
     /**
-     * Test implementation with concrete fake types.
-     * Properties are typed as ApplicationRepositoryFake (not ApplicationRepository),
-     * which allows accessing fake-specific methods without casting.
+     * Inner class for repository grouping — allows access to enclosing context properties.
+     * Covariant override: [applicationRepo] is typed as [ApplicationRepositoryFake],
+     * which satisfies the interface contract while giving tests direct access to fake methods.
      */
-    class TestRepositories : Repositories {
+    inner class TestRepositories : AppDependencies.Repositories {
         override val applicationRepo = ApplicationRepositoryFake()
     }
 
     /**
-     * Test implementation with concrete fake types.
-     * Properties are typed as *ClientFake (not the interface),
-     * which allows accessing fake-specific methods without casting.
+     * Inner class for client grouping — allows access to enclosing context properties.
+     * Each property is typed as the concrete fake, not the interface.
      */
-    class TestClients : Clients {
+    inner class TestClients : AppDependencies.Clients {
         override val customerRepository = CustomerRegisterClientFake()
         override val userNotificationClient = UserNotificationClientFake()
         override val brregClient = BrregClientFake()
     }
 
     /**
-     * Typed test repositories - use this in test assertions to access fake-specific methods.
-     * Type: TestRepositories (concrete class with ApplicationRepositoryFake properties)
-     */
-    val testRepositories = TestRepositories()
-
-    /**
-     * Typed test clients - use this in test assertions to access fake-specific methods.
-     * Type: TestClients (concrete class with *ClientFake properties)
-     */
-    val testClients = TestClients()
-
-    /**
      * Override with test implementation.
      * When a [DataSource] is provided, uses real JDBC repositories backed by that DataSource.
-     * Otherwise uses in-memory fakes via [testRepositories].
+     * Otherwise uses in-memory fakes via [TestRepositories].
+     *
+     * Covariant override inference: when no DataSource is provided, the inferred type is
+     * [TestRepositories], so `repositories.applicationRepo` resolves to [ApplicationRepositoryFake].
      */
-    override val repositories: Repositories =
+    override val repositories =
         if (dataSource != null) {
-            object : Repositories {
+            object : AppDependencies.Repositories {
                 override val applicationRepo = ApplicationRepositoryImpl(dataSource)
             }
         } else {
-            testRepositories
+            TestRepositories()
         }
 
     /**
-     * Override abstract interface property with test implementation.
-     * Production code accesses this as Clients (abstract interface).
-     * Type: Clients (interface)
+     * Covariant override inference: the inferred type is [TestClients],
+     * so `clients.userNotificationClient` resolves to [UserNotificationClientFake].
      */
-    override val clients: Clients get() = testClients
+    override val clients = TestClients()
 
-    /**
-     * Override clock with TestClock for time control in tests.
-     */
-    override val clock = TestClock.now()
+    override val services = object : AppDependencies.Services {
+        override val applicationService = ApplicationService(
+            repositories.applicationRepo,
+            clients.customerRepository,
+            clients.userNotificationClient,
+            clock,
+        )
+    }
 }

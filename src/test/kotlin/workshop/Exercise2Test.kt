@@ -47,7 +47,7 @@ class Exercise2Test {
             .valid(customerId = customer.id)
             .copy(applicationDate = defaultDate)
             .let(configure)
-            .also { applicationService.registerInitialApplication(customer, it) }
+            .also { services.applicationService.registerInitialApplication(customer, it) }
     }
 
     /**

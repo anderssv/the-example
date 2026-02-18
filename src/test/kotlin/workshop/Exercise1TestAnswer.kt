@@ -22,7 +22,7 @@ class Exercise1TestAnswer {
     /**
      * Write a test that registers an application and verifies that it was stored correctly.
      *
-     * Hint: Use the applicationService to register the application and the applicationRepo to verify that it was stored correctly.
+     * Hint: Use the services.applicationService to register the application and the applicationRepo to verify that it was stored correctly.
      *
      * Questions:
      * - How do we set up and re-use test data?
@@ -35,8 +35,8 @@ class Exercise1TestAnswer {
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
 
-            // Act: Register the application, use applicationService
-            applicationService.registerInitialApplication(customer, application)
+            // Act: Register the application, use services.applicationService
+            services.applicationService.registerInitialApplication(customer, application)
 
             // Assert: Verify that the application was stored correctly in the repository
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
@@ -63,10 +63,10 @@ class Exercise1TestAnswer {
                     name = "Custom Name",
                     applicationDate = LocalDate.of(2023, 1, 1),
                 )
-            applicationService.registerInitialApplication(customer, application)
+            services.applicationService.registerInitialApplication(customer, application)
 
-            // Act: Expire the application through domain logic in applicationService
-            applicationService.expireApplications()
+            // Act: Expire the application through domain logic in services.applicationService
+            services.applicationService.expireApplications()
 
             // Assert: Verify the application is expired in the repository
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
@@ -89,12 +89,12 @@ class Exercise1TestAnswer {
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
 
-            applicationService.registerInitialApplication(customer, application)
-            applicationService.rejectApplication(application.id)
+            services.applicationService.registerInitialApplication(customer, application)
+            services.applicationService.rejectApplication(application.id)
 
             // Act & Assert: Verify that attempting to approve throws IllegalStateException
             assertThrows(IllegalStateException::class.java) {
-                applicationService.approveApplication(application.id)
+                services.applicationService.approveApplication(application.id)
             }
         }
     }

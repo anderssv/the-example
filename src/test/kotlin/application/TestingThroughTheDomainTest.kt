@@ -34,7 +34,7 @@ class TestingThroughTheDomainTest {
                 // Data is set up, store directly in DB. Ignoring anything else the
                 // system does to reach the state.
                 repositories.applicationRepo.addApplication(application)
-                applicationService.approveApplication(application.id)
+                services.applicationService.approveApplication(application.id)
 
                 // Assert
                 assertThat(
@@ -60,8 +60,8 @@ class TestingThroughTheDomainTest {
             // Act
             // Start the process of registering application, thus manipulating through
             // the system and getting everything in a consistent state
-            applicationService.registerInitialApplication(customer, application)
-            applicationService.approveApplication(application.id)
+            services.applicationService.registerInitialApplication(customer, application)
+            services.applicationService.approveApplication(application.id)
 
             // Assert
             assertThat(
@@ -80,8 +80,8 @@ class TestingThroughTheDomainTest {
             val customer = Customer.valid()
             val application = Application.valid(customerId = customer.id)
 
-            applicationService.registerInitialApplication(customer, application)
-            applicationService.approveApplication(application.id)
+            services.applicationService.registerInitialApplication(customer, application)
+            services.applicationService.approveApplication(application.id)
 
             val storedApplication = repositories.applicationRepo.getApplication(application.id)
             assertThat(storedApplication.status).isEqualTo(ApplicationStatus.APPROVED)
