@@ -24,7 +24,7 @@
 ## Development Setup
 1. Install prerequisites:
    - Mise version manager
-   - Java 21 (via Mise)
+   - Java 25 (via Mise)
    - Git
 
 2. Build project:

@@ -51,7 +51,7 @@ npx skills add anderssv/the-example/skills
 Install [mise](https://mise.jdx.dev/getting-started.html)
 
 Mise will make sure you have the right tools and versions. If not:
-- Java 21
+- Java 25
 - Git
 
 ## Build and terminal
@@ -62,7 +62,7 @@ Mise will make sure you have the right tools and versions. If not:
    ```
 2. Install Java using mise:
    ```bash
-   mise install            # This will install Java 21 as specified in .mise.toml
+   mise install            # This will install Java 25 as specified in .mise.toml
    ```
 3. Build the project:
    ```bash
@@ -75,5 +75,4 @@ It works with most editors, but I recommend using IntelliJ IDEA.
 Most stuff is good with default plugins, but I also recommend:
 - [Mermaid](https://plugins.jetbrains.com/plugin/20146-mermaid) plugin
 - [Markdown](https://plugins.jetbrains.com/plugin/7793-markdown) plugin
-- [Supermaven](https://plugins.jetbrains.com/plugin/23893-supermaven) plugin
 - [GitHub Copilot](https://plugins.jetbrains.com/plugin/17718-github-copilot) plugin

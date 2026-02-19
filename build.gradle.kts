@@ -79,8 +79,8 @@ tasks {
     }
 
     compileJava {
-        sourceCompatibility = "21"
-        targetCompatibility = "21"
+        sourceCompatibility = "25"
+        targetCompatibility = "25"
     }
 
     compileKotlin {
