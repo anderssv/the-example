@@ -48,9 +48,9 @@ npx skills add anderssv/the-example/skills
 # Using this code and building
 
 ## Prerequisites
-Install [asdf-vm.com](https://asdf-vm.com/guide/getting-started.html)
+Install [mise](https://mise.jdx.dev/getting-started.html)
 
-ASDF will make sure you have the right tools and versions. If not:
+Mise will make sure you have the right tools and versions. If not:
 - Java 21
 - Git
 
@@ -60,10 +60,9 @@ ASDF will make sure you have the right tools and versions. If not:
    git clone https://github.com/anderssv/the-example.git
    cd the-example
    ```
-2. Install Java using ASDF:
+2. Install Java using mise:
    ```bash
-   asdf plugin add java    # Only needed if you haven't installed the Java plugin before
-   asdf install           # This will install Java 21 as specified in .tool-versions
+   mise install            # This will install Java 21 as specified in .mise.toml
    ```
 3. Build the project:
    ```bash

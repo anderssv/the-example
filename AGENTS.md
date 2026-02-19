@@ -23,8 +23,8 @@
 
 ## Development Setup
 1. Install prerequisites:
-   - ASDF version manager
-   - Java 21 (via ASDF)
+   - Mise version manager
+   - Java 21 (via Mise)
    - Git
 
 2. Build project:
