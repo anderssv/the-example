@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
-import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.postgresql.PostgreSQLContainer
 import javax.sql.DataSource
 
 /**
@@ -80,11 +80,11 @@ class SharedDataSourceParameterResolver : ParameterResolver {
      */
     private class CloseableDataSource(
         val dataSource: HikariDataSource,
-        private val container: PostgreSQLContainer<*>,
+        private val container: PostgreSQLContainer,
     ) : ExtensionContext.Store.CloseableResource {
         override fun close() {
             dataSource.close()
-            container.stop()
+            container.close()
         }
     }
 }
