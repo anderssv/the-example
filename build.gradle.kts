@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import kotlin.text.RegexOption.IGNORE_CASE
 
 plugins {
-    kotlin("jvm") version "2.1.20"
-    id("com.github.ben-manes.versions") version "0.52.0"
-    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    kotlin("jvm") version "2.3.10"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     jacoco
 }
 
@@ -16,20 +16,20 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.3")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
-    implementation("io.ktor:ktor-client-core:3.1.2")
-    implementation("io.ktor:ktor-client-okhttp:3.1.2")
-    implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
-    implementation("io.ktor:ktor-serialization-jackson:3.1.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("org.postgresql:postgresql:42.7.5")
-    implementation("com.zaxxer:HikariCP:6.2.1")
-    testImplementation("org.assertj:assertj-core:3.27.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.0")
+    implementation("io.ktor:ktor-client-core:3.4.0")
+    implementation("io.ktor:ktor-client-okhttp:3.4.0")
+    implementation("io.ktor:ktor-client-content-negotiation:3.4.0")
+    implementation("io.ktor:ktor-serialization-jackson:3.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.postgresql:postgresql:42.7.10")
+    implementation("com.zaxxer:HikariCP:7.0.2")
+    testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock:3.1.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
-    testImplementation("org.slf4j:slf4j-simple:2.0.16") // Eliminates SLF4J warnings in tests
+    testImplementation("io.ktor:ktor-client-mock:3.4.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("org.slf4j:slf4j-simple:2.0.17") // Eliminates SLF4J warnings in tests
     testImplementation("org.testcontainers:testcontainers-postgresql:2.0.3")
 }
 
@@ -85,13 +85,13 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            this.jvmTarget = JvmTarget.JVM_21
+            this.jvmTarget = JvmTarget.JVM_25
         }
     }
 }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    version.set("1.7.1")
+    version.set("1.8.0")
     verbose.set(true)
     outputToConsole.set(true)
     filter {

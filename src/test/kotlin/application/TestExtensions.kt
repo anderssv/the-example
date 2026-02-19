@@ -2,7 +2,7 @@ package application
 
 import customer.Customer
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 fun Customer.Companion.valid() =
     Customer(

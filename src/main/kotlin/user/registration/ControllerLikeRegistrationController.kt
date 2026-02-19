@@ -35,6 +35,8 @@ class ControllerLikeRegistrationController(
                 }
             }
 
-            is RegistrationForm.Invalid -> ControllerResponse.ErrorResponse(parsed.getErrors())
+            is RegistrationForm.Invalid -> {
+                ControllerResponse.ErrorResponse(parsed.getErrors())
+            }
         }
 }

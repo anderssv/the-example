@@ -36,19 +36,24 @@ import javax.sql.DataSource
  * test context (and its fakes) remain per-test.
  */
 class SharedDataSourceParameterResolver : ParameterResolver {
-    override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean =
-        parameterContext.parameter.type == DataSource::class.java
+    override fun supportsParameter(
+        parameterContext: ParameterContext,
+        extensionContext: ExtensionContext,
+    ): Boolean = parameterContext.parameter.type == DataSource::class.java
 
-    override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any =
-        getOrCreateDataSource(extensionContext)
+    override fun resolveParameter(
+        parameterContext: ParameterContext,
+        extensionContext: ExtensionContext,
+    ): Any = getOrCreateDataSource(extensionContext)
 
     private fun getOrCreateDataSource(extensionContext: ExtensionContext): DataSource {
         val store = extensionContext.root.getStore(NAMESPACE)
-        return store.getOrComputeIfAbsent(
-            DATASOURCE_KEY,
-            { createDataSource() },
-            CloseableDataSource::class.java,
-        ).dataSource
+        return store
+            .getOrComputeIfAbsent(
+                DATASOURCE_KEY,
+                { createDataSource() },
+                CloseableDataSource::class.java,
+            ).dataSource
     }
 
     companion object {
@@ -56,18 +61,20 @@ class SharedDataSourceParameterResolver : ParameterResolver {
         private const val DATASOURCE_KEY = "shared-datasource"
 
         private fun createDataSource(): CloseableDataSource {
-            val container = PostgreSQLContainer("postgres:17-alpine").apply {
-                start()
-            }
+            val container =
+                PostgreSQLContainer("postgres:17-alpine").apply {
+                    start()
+                }
 
-            val hikariDataSource = HikariDataSource(
-                HikariConfig().apply {
-                    jdbcUrl = container.jdbcUrl
-                    username = container.username
-                    password = container.password
-                    maximumPoolSize = 5
-                },
-            )
+            val hikariDataSource =
+                HikariDataSource(
+                    HikariConfig().apply {
+                        jdbcUrl = container.jdbcUrl
+                        username = container.username
+                        password = container.password
+                        maximumPoolSize = 5
+                    },
+                )
 
             return CloseableDataSource(hikariDataSource, container)
         }

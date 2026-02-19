@@ -1,6 +1,6 @@
 package application
 
-import java.util.*
+import java.util.UUID
 
 class ApplicationRepositoryFake : ApplicationRepository {
     private val db = mutableMapOf<UUID, Application>()

@@ -20,8 +20,9 @@ interface ApplicationRepository {
  *
  * Requires a [DataSource] and creates the necessary table on initialization.
  */
-class ApplicationRepositoryImpl(private val dataSource: DataSource) : ApplicationRepository {
-
+class ApplicationRepositoryImpl(
+    private val dataSource: DataSource,
+) : ApplicationRepository {
     init {
         createTableIfNotExists()
     }
@@ -47,17 +48,18 @@ class ApplicationRepositoryImpl(private val dataSource: DataSource) : Applicatio
 
     override fun addApplication(application: Application) {
         dataSource.connection.use { conn ->
-            conn.prepareStatement(
-                "INSERT INTO applications (id, customer_id, name, birth_date, application_date, status) VALUES (?, ?, ?, ?, ?, ?)",
-            ).use { stmt ->
-                stmt.setObject(1, application.id)
-                stmt.setObject(2, application.customerId)
-                stmt.setString(3, application.name)
-                stmt.setObject(4, application.birthDate)
-                stmt.setObject(5, application.applicationDate)
-                stmt.setString(6, application.status.name)
-                stmt.executeUpdate()
-            }
+            conn
+                .prepareStatement(
+                    "INSERT INTO applications (id, customer_id, name, birth_date, application_date, status) VALUES (?, ?, ?, ?, ?, ?)",
+                ).use { stmt ->
+                    stmt.setObject(1, application.id)
+                    stmt.setObject(2, application.customerId)
+                    stmt.setString(3, application.name)
+                    stmt.setObject(4, application.birthDate)
+                    stmt.setObject(5, application.applicationDate)
+                    stmt.setString(6, application.status.name)
+                    stmt.executeUpdate()
+                }
         }
     }
 
@@ -95,17 +97,18 @@ class ApplicationRepositoryImpl(private val dataSource: DataSource) : Applicatio
 
     override fun updateApplication(application: Application) {
         dataSource.connection.use { conn ->
-            conn.prepareStatement(
-                "UPDATE applications SET customer_id = ?, name = ?, birth_date = ?, application_date = ?, status = ? WHERE id = ?",
-            ).use { stmt ->
-                stmt.setObject(1, application.customerId)
-                stmt.setString(2, application.name)
-                stmt.setObject(3, application.birthDate)
-                stmt.setObject(4, application.applicationDate)
-                stmt.setString(5, application.status.name)
-                stmt.setObject(6, application.id)
-                stmt.executeUpdate()
-            }
+            conn
+                .prepareStatement(
+                    "UPDATE applications SET customer_id = ?, name = ?, birth_date = ?, application_date = ?, status = ? WHERE id = ?",
+                ).use { stmt ->
+                    stmt.setObject(1, application.customerId)
+                    stmt.setString(2, application.name)
+                    stmt.setObject(3, application.birthDate)
+                    stmt.setObject(4, application.applicationDate)
+                    stmt.setString(5, application.status.name)
+                    stmt.setObject(6, application.id)
+                    stmt.executeUpdate()
+                }
         }
     }
 
@@ -124,11 +127,12 @@ class ApplicationRepositoryImpl(private val dataSource: DataSource) : Applicatio
         }
 }
 
-private fun java.sql.ResultSet.toApplication() = Application(
-    id = getObject("id", UUID::class.java),
-    customerId = getObject("customer_id", UUID::class.java),
-    name = getString("name"),
-    birthDate = getDate("birth_date").toLocalDate(),
-    applicationDate = getDate("application_date").toLocalDate(),
-    status = ApplicationStatus.valueOf(getString("status")),
-)
+private fun java.sql.ResultSet.toApplication() =
+    Application(
+        id = getObject("id", UUID::class.java),
+        customerId = getObject("customer_id", UUID::class.java),
+        name = getString("name"),
+        birthDate = getDate("birth_date").toLocalDate(),
+        applicationDate = getDate("application_date").toLocalDate(),
+        status = ApplicationStatus.valueOf(getString("status")),
+    )

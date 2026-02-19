@@ -61,25 +61,28 @@ interface AppDependencies {
 class SystemContext(
     private val dataSource: DataSource,
 ) : AppDependencies {
-
     override val clock: Clock = Clock.systemDefaultZone()
 
-    override val repositories = object : AppDependencies.Repositories {
-        override val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl(dataSource)
-    }
+    override val repositories =
+        object : AppDependencies.Repositories {
+            override val applicationRepo: ApplicationRepository = ApplicationRepositoryImpl(dataSource)
+        }
 
-    override val clients = object : AppDependencies.Clients {
-        override val customerRepository: CustomerRegisterClient = CustomerRegisterClientImpl()
-        override val userNotificationClient: UserNotificationClient = UserNotificationClientImpl()
-        override val brregClient: BrregClient = BrregClientImpl()
-    }
+    override val clients =
+        object : AppDependencies.Clients {
+            override val customerRepository: CustomerRegisterClient = CustomerRegisterClientImpl()
+            override val userNotificationClient: UserNotificationClient = UserNotificationClientImpl()
+            override val brregClient: BrregClient = BrregClientImpl()
+        }
 
-    override val services = object : AppDependencies.Services {
-        override val applicationService = ApplicationService(
-            repositories.applicationRepo,
-            clients.customerRepository,
-            clients.userNotificationClient,
-            clock,
-        )
-    }
+    override val services =
+        object : AppDependencies.Services {
+            override val applicationService =
+                ApplicationService(
+                    repositories.applicationRepo,
+                    clients.customerRepository,
+                    clients.userNotificationClient,
+                    clock,
+                )
+        }
 }

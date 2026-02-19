@@ -1,6 +1,8 @@
+@file:Suppress("ktlint:standard:filename")
+
 package customer
 
-import java.util.*
+import java.util.UUID
 
 data class Customer(
     val id: UUID,

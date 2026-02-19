@@ -1,6 +1,6 @@
 package notifications
 
-import java.util.*
+import java.util.UUID
 
 interface UserNotificationClient {
     fun notifyUser(

@@ -7,7 +7,7 @@ import notifications.UserNotificationClient
 import java.io.IOException
 import java.time.Clock
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 class ApplicationService(
     private val applicationRepo: ApplicationRepository,

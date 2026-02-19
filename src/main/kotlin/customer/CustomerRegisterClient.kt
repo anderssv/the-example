@@ -1,6 +1,6 @@
 package customer
 
-import java.util.*
+import java.util.UUID
 
 interface CustomerRegisterClient {
     fun addCustomer(customer: Customer)

@@ -8,8 +8,15 @@ class RegistrationRepository {
         // Don't do this kind string manipulation. It is just added as an example to get close to real
         // life on how to access the type system.
         when (newRegistration) {
-            is RegistrationForm.Valid.Registration -> "INSERT INTO registrations(email, name, anonymous) VALUES ('${newRegistration.email.stringRepresentation()}', '${newRegistration.name}', 'false' )"
-            is RegistrationForm.Valid.AnonymousRegistration -> "INSERT INTO registrations(email, anonymous) VALUES ('${newRegistration.email.stringRepresentation()}, 'true' )"
+            is RegistrationForm.Valid.Registration -> {
+                "INSERT INTO registrations(email, name, anonymous) " +
+                    "VALUES ('${newRegistration.email.stringRepresentation()}', '${newRegistration.name}', 'false' )"
+            }
+
+            is RegistrationForm.Valid.AnonymousRegistration -> {
+                "INSERT INTO registrations(email, anonymous) " +
+                    "VALUES ('${newRegistration.email.stringRepresentation()}, 'true' )"
+            }
         }
     }
 

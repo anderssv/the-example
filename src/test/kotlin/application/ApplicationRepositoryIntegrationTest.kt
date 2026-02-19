@@ -11,8 +11,9 @@ import javax.sql.DataSource
 
 @Tag("database")
 @ExtendWith(SharedDataSourceParameterResolver::class)
-class ApplicationRepositoryIntegrationTest(private val dataSource: DataSource) {
-
+class ApplicationRepositoryIntegrationTest(
+    private val dataSource: DataSource,
+) {
     @Test
     fun shouldStoreAndRetrieveApplication() {
         with(SystemTestContext(dataSource)) {

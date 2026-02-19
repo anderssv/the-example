@@ -53,7 +53,6 @@ import javax.sql.DataSource
 class SystemTestContext(
     dataSource: DataSource? = null,
 ) : AppDependencies {
-
     override val clock = TestClock.now()
 
     /**
@@ -98,12 +97,14 @@ class SystemTestContext(
      */
     override val clients = TestClients()
 
-    override val services = object : AppDependencies.Services {
-        override val applicationService = ApplicationService(
-            repositories.applicationRepo,
-            clients.customerRepository,
-            clients.userNotificationClient,
-            clock,
-        )
-    }
+    override val services =
+        object : AppDependencies.Services {
+            override val applicationService =
+                ApplicationService(
+                    repositories.applicationRepo,
+                    clients.customerRepository,
+                    clients.userNotificationClient,
+                    clock,
+                )
+        }
 }
