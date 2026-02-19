@@ -30,7 +30,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock:3.1.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
     testImplementation("org.slf4j:slf4j-simple:2.0.16") // Eliminates SLF4J warnings in tests
-    testImplementation("org.testcontainers:postgresql:1.20.4")
+    testImplementation("org.testcontainers:postgresql:1.19.8")
 }
 
 tasks {
