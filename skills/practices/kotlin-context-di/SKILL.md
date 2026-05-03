@@ -1,6 +1,8 @@
 ---
 name: kotlin-context-di
 description: Manual dependency injection using SystemContext (production) and TestContext (test doubles) patterns for Kotlin. Use when structuring service dependencies, wiring application components, or creating test contexts without DI frameworks.
+domain: kotlin
+tags: [kotlin, dependency-injection, testcontext, wiring]
 ---
 
 STARTER_CHARACTER = 🔌

@@ -1,6 +1,8 @@
 ---
 name: kotlin-tdd
 description: Kotlin Test-Driven Development with fakes, object mothers, and Testing Through The Domain. Uses TestContext for dependency injection, extension functions for test data, and fakes instead of mocks. Use when writing Kotlin tests or setting up test infrastructure.
+domain: kotlin
+tags: [kotlin, tdd, fakes, test-doubles, object-mother]
 ---
 
 STARTER_CHARACTER = 🧪

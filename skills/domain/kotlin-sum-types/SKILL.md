@@ -1,6 +1,8 @@
 ---
 name: kotlin-sum-types
 description: Parse, don't validate - using sealed classes for type-safe validation and state representation. Model valid/invalid states explicitly, validate at boundaries, operate on valid types internally.
+domain: kotlin
+tags: [kotlin, sealed-class, validation, parse-dont-validate]
 ---
 
 STARTER_CHARACTER = 🔀
