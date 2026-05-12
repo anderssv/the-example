@@ -20,6 +20,9 @@ called Test Doubles](https://martinfowler.com/bliki/TestDouble.html).
 
 All types of test doubles have their uses, but I generally start with Fakes for everything, including the local
 database.
+
+> **Stub vs Fake:** A stub returns hardcoded values with no internal state — `findById()` always returns the same thing regardless of what was saved. A fake is a working implementation that maintains state (typically a HashMap), so if you save something, you get it back. This is what makes fakes reusable and lets you verify behaviour through state rather than interactions.
+
 They have very few downsides, and their speed (blazing fast) and maintainability makes them an excellent choice.
 I find Fakes strike the best balance and are less vulnerable to unnecessary changes:
 

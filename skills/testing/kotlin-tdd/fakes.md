@@ -177,6 +177,28 @@ fun shouldFetchEntityByOrganizationNumber() = runTest {
 
 Default to fakes. Use mocks only for testing error codes (like HTTP 500) that are hard to simulate otherwise.
 
+### Stub vs Fake — the critical difference
+
+A **stub** returns hardcoded values with no internal state. A **fake** is a working implementation that maintains state across calls, just like the real thing (but simpler).
+
+```kotlin
+// ❌ STUB — returns a hardcoded value, no matter what was saved
+class CustomerRepositoryStub : CustomerRepository {
+    override fun save(customer: Customer) { /* does nothing */ }
+    override fun findById(id: String): Customer = Customer("hardcoded-id", "John")
+}
+
+// ✅ FAKE — actually stores and retrieves, like a real implementation
+class CustomerRepositoryFake : CustomerRepository {
+    private val db = mutableMapOf<String, Customer>()
+
+    override fun save(customer: Customer) { db[customer.id] = customer }
+    override fun findById(id: String): Customer = db[id]!!
+}
+```
+
+The fake behaves like the real repository: if you save a customer, you get that customer back. The stub always returns the same thing regardless of what (or whether) you saved. This is why fakes are preferred — they let you verify system behaviour through state, and they work correctly across multiple tests without per-test configuration.
+
 ### State vs behavior verification
 
 **State verification** (preferred): Check what happened to the system's state:
