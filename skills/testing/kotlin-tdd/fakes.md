@@ -324,6 +324,55 @@ If your fake approaches the complexity of the real implementation:
 
 Fakes should be simpler than production. If they're not, something needs to change.
 
+### Anti-pattern: Hard-to-fake adapters
+
+If writing a fake for a repository/client/adapter is difficult, that's a design smell. It usually means **too much logic lives inside the adapter** that should be extracted to a higher level (e.g., a service or domain layer).
+
+Well-designed adapters are thin wrappers around I/O with a minimal interface:
+- Repositories: `save`, `update`, `delete`, `findById`, `findByX`
+- Clients: `get`, `post`, `put` — returning domain objects
+- No business logic, no orchestration, no conditional flows
+
+```kotlin
+// ❌ BAD — logic buried in the adapter, hard to fake
+interface OrderRepository {
+    fun findActiveOrdersOlderThanAndNotifyIfOverBudget(
+        days: Int, budgetLimit: Money
+    ): List<NotificationResult>
+}
+
+// ✅ GOOD — adapter is simple CRUD, logic lives in a service
+interface OrderRepository {
+    fun findByStatusAndCreatedBefore(
+        status: OrderStatus, before: LocalDate
+    ): List<Order>
+}
+
+// Logic extracted to a service where it's easy to test with fakes
+class OrderExpirationService(
+    private val orderRepository: OrderRepository,
+    private val notificationClient: NotificationClient,
+) {
+    fun processOverdueOrders(budgetLimit: Money) {
+        val overdueOrders = orderRepository.findByStatusAndCreatedBefore(
+            OrderStatus.ACTIVE, LocalDate.now().minusDays(30)
+        )
+        overdueOrders.filter { it.total > budgetLimit }
+            .forEach { notificationClient.notify(it.customerId, "Over budget") }
+    }
+}
+```
+
+Signs your adapter has too much logic:
+- The fake needs conditional logic or complex state machines
+- You need multiple test setups just to test the adapter's behavior
+- The interface has methods that combine query + action + side effect
+- You find yourself wanting to mock the adapter instead of faking it
+
+The fix: extract logic upward, keep adapters as dumb I/O boundaries, and minimize the interface surface exposed to consumers.
+
+**Exception: performance.** Sometimes you need to push logic into an adapter (e.g., a complex SQL query that filters/aggregates server-side instead of fetching everything into memory). That's a valid trade-off, but treat it as an exception — the default should be to keep adapters simple and move logic up.
+
 ## Getting started in existing codebases
 
 1. Find code that makes an important business decision
