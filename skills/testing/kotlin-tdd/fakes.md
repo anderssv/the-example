@@ -371,7 +371,7 @@ Signs your adapter has too much logic:
 
 The fix: extract logic upward, keep adapters as dumb I/O boundaries, and minimize the interface surface exposed to consumers.
 
-**Exception: performance.** Sometimes you need to push logic into an adapter (e.g., a complex SQL query that filters/aggregates server-side instead of fetching everything into memory). That's a valid trade-off, but treat it as an exception — the default should be to keep adapters simple and move logic up.
+**Exception: performance.** Sometimes you need to push logic into an adapter (e.g., a complex SQL query that filters/aggregates server-side instead of fetching everything into memory). That's a valid trade-off, but treat it as an exception — the default should be to keep adapters simple and move logic up. Also consider alternative solutions before adding complexity to the adapter: streaming results, pagination, or cursor-based iteration can keep the adapter interface simple while still avoiding loading everything into memory at once.
 
 ## Getting started in existing codebases
 
